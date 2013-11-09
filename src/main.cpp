@@ -27,17 +27,13 @@ bool appInit()
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 8;
 	window.create(sf::VideoMode(800, 600), "War Dance", sf::Style::Close, settings);
-	window.setVerticalSyncEnabled(true);
+	window.setVerticalSyncEnabled(false);
+	window.setFramerateLimit(60);
 	window.setKeyRepeatEnabled(false);
 	window.setView(camera);
 	mAgent.gameInit();
-	try {
-		guiAgent.init();
-	}
-	catch (const char* msg) {
-		std::cerr << "Error: " << msg << "\n";
-	}
-	if (!gAgent.loadTextures()) return false;
+	if (!guiAgent.init()) return false;
+	if (!gAgent.init()) return false;
 	return true;
 }
 

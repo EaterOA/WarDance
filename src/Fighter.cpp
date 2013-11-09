@@ -6,7 +6,13 @@ Fighter::Fighter(int type, sf::Vector2f size, sf::Vector2f pos, int hp, int fact
 {
 	m_size = size;
 	m_hp = hp;
+	m_maxHp = hp;
 	m_faction = faction;
+}
+
+int Fighter::getMaxHP() const
+{
+	return m_maxHp;
 }
 
 int Fighter::getHP() const
@@ -14,12 +20,12 @@ int Fighter::getHP() const
 	return m_hp;
 }
 
-sf::Vector2f Fighter::getSize()
+sf::Vector2f Fighter::getSize() const
 {
 	return m_size;
 }
 
-void Fighter::hit(int damage)
+void Fighter::hit(int damage, GameState &state)
 {
 	m_hp -= damage;
 }
@@ -33,6 +39,25 @@ void Fighter::cooldown()
 bool Fighter::isDead()
 {
 	return m_hp <= 0;
+}
+
+void Fighter::shoot(GameState &state, float offsetX, float offsetY)
+{
+	float normX, normY, rotX, rotY, outX, outY;
+	
+	if (offsetX != 0 || offsetY != 0) {
+		normX = std::cos(m_dir);
+		normY = std::sin(m_dir);
+		rotX = normY * -1 * offsetY;
+		rotY = normX * offsetY;
+		outX = normX * offsetX;
+		outY = normY * offsetX;
+	}
+	else {
+		outX = outY = rotX = rotY = 0;
+	}
+	Projectile* bullet = new RegularBullet(sf::Vector2f(m_pos.x + outX + rotX, m_pos.y + outY + rotY), m_dir, m_faction);
+	state.projectiles.push_back(bullet);
 }
 
 void Fighter::shootTowards(GameState &state, sf::Vector2f &dest, float offsetX, float offsetY)
@@ -51,15 +76,8 @@ void Fighter::shootTowards(GameState &state, sf::Vector2f &dest, float offsetX, 
 	else {
 		rotX = rotY = 0;
 	}
-	if (offsetX > 0) {
-		outX = normX * offsetX;
-		outY = normY * offsetX;
-	}
-	else {
-		outX = outY = 0;
-	}
-	Projectile* bullet = new RegularBullet(sf::Vector2f(m_pos.x + outX + rotX, m_pos.y + outY + rotY), m_faction);
-	bullet->setVel(sf::Vector2f(normX * 100.f, normY * 100.f));
-	bullet->setDir(dir);
+	outX = normX * offsetX;
+	outY = normY * offsetX;
+	Projectile* bullet = new RegularBullet(sf::Vector2f(m_pos.x + outX + rotX, m_pos.y + outY + rotY), dir, m_faction);
 	state.projectiles.push_back(bullet);
 }

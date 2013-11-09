@@ -1,6 +1,8 @@
 #include <SFML/Graphics.hpp>
 #include <math.h>
 
+#define PI 3.14159265f
+
 class Util
 {
 public:

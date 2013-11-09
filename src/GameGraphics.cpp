@@ -1,8 +1,9 @@
 #include "GameGraphics.hpp"
 #include "GameMechanics.hpp"
+#include "Actors.hpp"
 #include "Util.hpp"
 
-bool GameGraphics::loadTextures()
+bool GameGraphics::init()
 {
 	if (!m_map_tex[0].loadFromFile("Images/map0.png") || !m_spritesheet.loadFromFile("Images/spritesheet.png"))
 		return 0;
@@ -14,12 +15,17 @@ bool GameGraphics::loadTextures()
 	return 1;
 }
 
-void GameGraphics::affixPos(sf::Vertex sprite[4], sf::Vector2f center)
+void GameGraphics::affixPos(sf::Vertex sprite[4], const sf::Vector2f &center, float offsetLY, float offsetRY, float offsetLX, float offsetRX)
 {
-	sprite[0].position = center + sf::Vector2f(-50.f, -50.f);
-	sprite[1].position = center + sf::Vector2f(50.f, -50.f);
-	sprite[2].position = center + sf::Vector2f(50.f, 50.f);
-	sprite[3].position = center + sf::Vector2f(-50.f, 50.f);
+	sprite[0].position = center + sf::Vector2f(offsetLX, offsetLY);
+	sprite[1].position = center + sf::Vector2f(offsetRX, offsetLY);
+	sprite[2].position = center + sf::Vector2f(offsetRX, offsetRY);
+	sprite[3].position = center + sf::Vector2f(offsetLX, offsetRY);
+}
+
+void GameGraphics::affixPos(sf::Vertex sprite[4], const sf::Vector2f &center)
+{
+	affixPos(sprite, center, -50.f, 50.f, -50.f, 50.f);
 }
 
 void GameGraphics::affixTexture(sf::Vertex sprite[4], int type)
@@ -44,18 +50,29 @@ void GameGraphics::transformSprite(sf::Vertex sprite[4], const Actor &actor)
 {
 	affixPos(sprite, actor.getPos());
 	affixTexture(sprite, actor.getType());
-	if (actor.getDir() != 0.f) rotateSprite(sprite, actor.getDir(), actor.getPos());
+	if (actor.getDir() != 0.f) rotateSprite(sprite, actor.getDir() * 180.f / PI, actor.getPos());
+}
+
+void GameGraphics::affixHealthBar(sf::Vertex bar[8], const Fighter &fighter)
+{
+	float hpOffset = 40.f * fighter.getHP() / fighter.getMaxHP();
+	affixPos(bar, fighter.getPos() + sf::Vector2f(0, -30), -50.f, 50.f, -20.f, 20.f);
+	affixPos(bar+4, fighter.getPos() + sf::Vector2f(0, -30), -50.f, 50.f, -20.f, -20.f + hpOffset);
+	affixTexture(bar, 4);
+	affixTexture(bar+4, 5);
 }
 
 void GameGraphics::updateSprites(const GameState &state)
 {
 	unsigned i = 4, j;
-	unsigned numSprites = 1 + state.enemies.size() + state.projectiles.size();
+	unsigned numSprites = 1 + 3*state.enemies.size() + state.projectiles.size();
 	m_sprites = sf::VertexArray(sf::Quads, 4*numSprites);
 
 	transformSprite(&m_sprites[0], *state.player);
-	for (j = 0; j < state.enemies.size(); i += 4, j++)
+	for (j = 0; j < state.enemies.size(); i += 3*4, j++) {
 		transformSprite(&m_sprites[i], *state.enemies[j]);
+		affixHealthBar(&m_sprites[i+4], *state.enemies[j]);
+	}
 	for (j = 0; j < state.projectiles.size(); i += 4, j++)
 		transformSprite(&m_sprites[i], *state.projectiles[j]);
 
