@@ -27,7 +27,7 @@ class Fighter: public Actor
 public:
 	Fighter(int type, sf::Vector2f size, sf::Vector2f pos, int hp, int faction);
 	virtual void act(GameState &state) = 0;
-	virtual bool isDead();
+	virtual bool isDead(const GameState &state);
 	virtual void hit(int damage, GameState &state);
 	sf::Vector2f getSize() const;
 	int getHP() const;
@@ -60,7 +60,7 @@ class RegularBullet: public Projectile
 public:
 	RegularBullet(sf::Vector2f pos, float dir, int faction);
 	virtual void act(GameState& state);
-	virtual bool isDead();
+	virtual bool isDead(const GameState &state);
 protected:
 	virtual void attack(GameState& state);
 };
@@ -70,7 +70,7 @@ class SplittingBullet: public Projectile
 public:
 	SplittingBullet(sf::Vector2f pos, float dir, int hp, int faction);
 	virtual void act(GameState& state);
-	virtual bool isDead();
+	virtual bool isDead(const GameState &state);
 protected:
 	virtual void attack(GameState& state);
 };

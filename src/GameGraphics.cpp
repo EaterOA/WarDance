@@ -5,12 +5,12 @@
 
 bool GameGraphics::init()
 {
-	if (!m_map_tex[0].loadFromFile("Images/map0.png") || !m_spritesheet.loadFromFile("Images/spritesheet.png"))
+	if (!m_map_tex[0].loadFromFile("images/map0.png") || !m_spritesheet.loadFromFile("images/spritesheet.png"))
 		return 0;
 	m_map_tex[0].setSmooth(true);
 	m_map_tex[0].setRepeated(true);
 	m_map.setTexture(m_map_tex[0]);
-	m_map.setTextureRect(sf::IntRect(0, 0, Util::MAP_WIDTH, Util::MAP_HEIGHT));
+	m_map.setTextureRect(sf::IntRect(0, 0, 1600, 1200));
 	m_spritesheet.setSmooth(true);
 	return 1;
 }
@@ -32,6 +32,14 @@ void GameGraphics::affixTexture(sf::Vertex sprite[4], int type)
 {
 	float offsetX = (type % 2) * 100.f;
 	float offsetY = (type / 2) * 100.f;
+	if (type == 1) {
+		sprite[0].texCoords = sf::Vector2f(140.f, 45.f);
+		sprite[1].texCoords = sf::Vector2f(160.f, 45.f);
+		sprite[2].texCoords = sf::Vector2f(160.f, 55.f);
+		sprite[3].texCoords = sf::Vector2f(140.f, 55.f);
+		affixPos(sprite, sf::Vector2f((sprite[0].position.x + sprite[1].position.x)/2, (sprite[0].position.y + sprite[2].position.y)/2), -5.f, 5.f, -10.f, 10.f);
+		return ;
+	}
 	sprite[0].texCoords = sf::Vector2f(offsetX, offsetY);
 	sprite[1].texCoords = sf::Vector2f(offsetX+100, offsetY);
 	sprite[2].texCoords = sf::Vector2f(offsetX+100, offsetY+100);
@@ -50,7 +58,7 @@ void GameGraphics::transformSprite(sf::Vertex sprite[4], const Actor &actor)
 {
 	affixPos(sprite, actor.getPos());
 	affixTexture(sprite, actor.getType());
-	if (actor.getDir() != 0.f) rotateSprite(sprite, actor.getDir() * 180.f / PI, actor.getPos());
+	if (actor.getDir() != 0.f) rotateSprite(sprite, actor.getDir() * 180.f / util::PI, actor.getPos());
 }
 
 void GameGraphics::affixHealthBar(sf::Vertex bar[8], const Fighter &fighter)

@@ -1,12 +1,8 @@
-#include <vector>
+#include "App.hpp"
 #include "GameMechanics.hpp"
 #include "GameGraphics.hpp"
 #include "GameGUI.hpp"
-#include "Util.hpp"
-
-enum AppState {
-	SPLASH, MENU, GAME, PAUSED, DEAD
-};
+#include <vector>
 
 struct AppSavedState {
 	sf::Time pausedTime;
@@ -15,7 +11,8 @@ struct AppSavedState {
 AppState appState;
 AppSavedState savedState;
 sf::RenderWindow window;
-sf::View camera(sf::FloatRect(0, 0, 800, 600)), hud(sf::FloatRect(0, 0, 800, 600));
+sf::View camera(sf::FloatRect(0, 0, (float)APP_WIDTH, (float)APP_HEIGHT));
+sf::View hud(sf::FloatRect(0, 0, (float)APP_WIDTH, (float)APP_HEIGHT));
 GameMechanics mAgent;
 GameGraphics gAgent;
 GameGUI guiAgent;
@@ -26,7 +23,7 @@ bool appInit()
 	srand((unsigned)time(0));
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 8;
-	window.create(sf::VideoMode(800, 600), "War Dance", sf::Style::Close, settings);
+	window.create(sf::VideoMode(APP_WIDTH, APP_HEIGHT), "War Dance", sf::Style::Close, settings);
 	window.setVerticalSyncEnabled(false);
 	window.setFramerateLimit(60);
 	window.setKeyRepeatEnabled(false);
@@ -39,11 +36,25 @@ bool appInit()
 
 void updateView(sf::Vector2f pos)
 {
-	if (pos.x < 400) pos.x = 400;
-	else if (pos.x > Util::MAP_WIDTH - 400) pos.x = Util::MAP_WIDTH - 400;
-	if (pos.y < 300) pos.y = 300;
-	else if (pos.y > Util::MAP_HEIGHT - 300) pos.y = Util::MAP_HEIGHT - 300;
+	if (pos.x < APP_WIDTH/2)
+		pos.x = APP_WIDTH/2;
+	else if (pos.x > mAgent.getState().map_width - APP_WIDTH/2)
+		pos.x = (float)mAgent.getState().map_width - APP_WIDTH/2;
+	if (pos.y < 300)
+		pos.y = 300;
+	else if (pos.y > mAgent.getState().map_height - APP_HEIGHT/2)
+		pos.y = (float)mAgent.getState().map_height - APP_HEIGHT/2;
 	camera.setCenter(pos);
+}
+
+void paint()
+{
+	window.setView(camera);
+	window.draw(gAgent);
+	window.setView(hud);
+	window.draw(guiAgent);
+	window.setView(camera);
+	window.display();
 }
 
 void appStart()
@@ -58,18 +69,27 @@ void appStart()
 				window.close();
 				return;
 			}
-			if (event.type == sf::Event::LostFocus) {
-				appState = PAUSED;
+			else if (event.type == sf::Event::LostFocus) {
+				appState = NOFOCUS;
 				savedState.pausedTime = elapsed;
 			}
-			if (event.type == sf::Event::GainedFocus) {
-				appState = GAME;
+			else if (event.type == sf::Event::GainedFocus) {
+				appState = PAUSED;
+				guiAgent.transitionState(appState);
 				elapsed = savedState.pausedTime;
 				clock.restart();
 			}
-			eventList.push_back(event);
+			else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+				if (appState == PAUSED) appState = GAME;
+				else appState = PAUSED;
+				guiAgent.transitionState(appState);
+			}
+			else eventList.push_back(event);
 		}
 		
+		if (appState == PAUSED) {
+			paint();
+		}
 		if (appState == GAME) {
 			mAgent.processEvents(eventList);
 			mAgent.updateState(window, elapsed);
@@ -78,13 +98,7 @@ void appStart()
 			gAgent.updateSprites(mAgent.getState());
 			guiAgent.updateDisplay(mAgent.getState());
 			updateView(mAgent.getState().player->getPos());
-			window.setView(camera);
-			window.draw(gAgent);
-			window.setView(hud);
-			window.draw(guiAgent);
-			window.setView(camera);
-			window.display();
-
+			paint();
 			if (playerDead) {
 				window.close();
 				return;

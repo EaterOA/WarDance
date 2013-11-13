@@ -3,12 +3,14 @@
 
 #include <SFML/Graphics.hpp>
 
+enum AppState;
 struct GameState;
 
 class GameGUI : public sf::Drawable, public sf::Transformable
 {
 public:
 	bool init();
+	void transitionState(AppState state);
 	void updateDisplay(const GameState& state);
 private:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;

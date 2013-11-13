@@ -1,15 +1,16 @@
 #include "GameGUI.hpp"
 #include "GameMechanics.hpp"
+#include "App.hpp"
 #include "Util.hpp"
 #include <sstream>
 
 bool GameGUI::init()
 {
-	if (!m_displayBarTex.loadFromFile("Images/hud.png"))
+	if (!m_displayBarTex.loadFromFile("images/hud.png"))
 		return 0;
-	if (!m_guisheet.loadFromFile("Images/guisheet.png"))
+	if (!m_guisheet.loadFromFile("images/guisheet.png"))
 		return 0;
-	if (!m_regFont.loadFromFile("Fonts/stenc_ex.ttf"))
+	if (!m_regFont.loadFromFile("fonts/stenc_ex.ttf"))
 		return 0;
 	m_guisheet.setSmooth(true);
 	m_displayBar.setTexture(m_displayBarTex);
@@ -32,6 +33,10 @@ void GameGUI::updateDisplay(const GameState& state)
 	std::wstringstream wss;
 	wss << "Score: " << state.score;
 	m_score.setString(wss.str());
+}
+
+void GameGUI::transitionState(AppState state)
+{
 }
 
 void GameGUI::draw(sf::RenderTarget& target, sf::RenderStates states) const

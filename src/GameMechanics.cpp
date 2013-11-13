@@ -16,6 +16,8 @@ GameState::~GameState()
 
 void GameMechanics::gameInit()
 {
+	m_state.map_width = 1600;
+	m_state.map_height = 1200;
 	m_state.player = new Player(sf::Vector2f(100.f, 100.f), 50);
 }
 
@@ -54,9 +56,9 @@ void GameMechanics::tick()
 
 bool GameMechanics::cleanUp()
 {
-	if (m_state.player->isDead()) return 1;
+	if (m_state.player->isDead(m_state)) return 1;
 	for (unsigned i = 0; i < m_state.projectiles.size(); i++) {
-		if (m_state.projectiles[i]->isDead()) {
+		if (m_state.projectiles[i]->isDead(m_state)) {
 			delete m_state.projectiles[i];
 			std::swap(m_state.projectiles[i], m_state.projectiles.back());
 			m_state.projectiles.pop_back();
@@ -64,7 +66,7 @@ bool GameMechanics::cleanUp()
 		}
 	}
 	for (unsigned i = 0; i < m_state.enemies.size(); i++) {
-		if (m_state.enemies[i]->isDead()) {
+		if (m_state.enemies[i]->isDead(m_state)) {
 			delete m_state.enemies[i];
 			std::swap(m_state.enemies[i], m_state.enemies.back());
 			m_state.enemies.pop_back();

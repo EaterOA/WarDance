@@ -6,7 +6,7 @@ The basic premise is that you run faster than your own bullets. What happens whe
 
 You dance.
 
-![Still in development!](hub/screenshot.jpg)
+![screenshot](hub/screenshot.jpg "Still in development!")
 
 # Development
 

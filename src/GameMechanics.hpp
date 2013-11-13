@@ -7,6 +7,8 @@
 struct GameState {
 	GameState();
 	~GameState();
+
+	int map_width, map_height;
 	std::vector<Fighter*> enemies;
 	std::vector<Projectile*> projectiles;
 	Player* player;

@@ -15,9 +15,9 @@ void Grunt::attack(GameState& state)
 
 void Grunt::hit(int damage, GameState &state)
 {
-	if (isDead()) return;
+	if (isDead(state)) return;
 	m_hp -= damage;
-	if (isDead()) state.score += 500;
+	if (isDead(state)) state.score += 500;
 }
 
 void Grunt::act(GameState& state)
@@ -28,11 +28,11 @@ void Grunt::act(GameState& state)
 	m_decision_cd = 10;
 	if (std::rand() % 100 < 75) {
 		sf::Vector2f vec = state.player->getPos() - m_pos;
-		float vr = Util::getHyp(vec);
+		float vr = util::getHyp(vec);
 		float ny = vec.y / vr;
 		float nx = vec.x / vr;
 		m_dir = std::atan(vec.y / vec.x);
-		if (vec.x < 0) m_dir += PI;
+		if (vec.x < 0) m_dir += util::PI;
 		m_vel = sf::Vector2f(nx * 50.f, ny * 50.f);
 
 		if (m_attack_cd <= 0 && std::rand() % 100 < 50) attack(state);

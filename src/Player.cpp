@@ -18,7 +18,7 @@ void Player::act(GameState &state)
 	else if (!state.A && state.D) m_vel.x = m_max_vx;
 	Actor::act(state);
 	m_dir = std::atan((state.mouse.y - m_pos.y)/(state.mouse.x - m_pos.x));
-	if (state.mouse.x < m_pos.x) m_dir += PI;
+	if (state.mouse.x < m_pos.x) m_dir += util::PI;
 	cooldown();
 	if (state.mouseLeft && m_attack_cd <= 0) attack(state);
 }

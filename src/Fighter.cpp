@@ -4,6 +4,7 @@
 
 Fighter::Fighter(int type, sf::Vector2f size, sf::Vector2f pos, int hp, int faction): Actor(type, pos)
 {
+	m_attack_cd = 0;
 	m_size = size;
 	m_hp = hp;
 	m_maxHp = hp;
@@ -36,7 +37,7 @@ void Fighter::cooldown()
 	if (m_attack_cd < -100) m_attack_cd = 0;
 }
 
-bool Fighter::isDead()
+bool Fighter::isDead(const GameState &state)
 {
 	return m_hp <= 0;
 }
@@ -56,7 +57,7 @@ void Fighter::shoot(GameState &state, float offsetX, float offsetY)
 	else {
 		outX = outY = rotX = rotY = 0;
 	}
-	Projectile* bullet = new RegularBullet(sf::Vector2f(m_pos.x + outX + rotX, m_pos.y + outY + rotY), m_dir, m_faction);
+	Projectile* bullet = new SplittingBullet(sf::Vector2f(m_pos.x + outX + rotX, m_pos.y + outY + rotY), m_dir, rand() % 100 + 50, m_faction);
 	state.projectiles.push_back(bullet);
 }
 
@@ -64,7 +65,7 @@ void Fighter::shootTowards(GameState &state, sf::Vector2f &dest, float offsetX, 
 {
 	float dist, normX, normY, dir, rotX, rotY, outX, outY;
 
-	dist = Util::getDist(m_pos, dest);
+	dist = util::getDist(m_pos, dest);
 	normX = (dest.x - m_pos.x) / dist;
 	normY = (dest.y - m_pos.y) / dist;
 	dir = std::atan(normY / normX) * 57.29578f;

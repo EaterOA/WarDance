@@ -15,22 +15,22 @@ void RegularBullet::act(GameState &state)
 	attack(state);
 }
 
-bool RegularBullet::isDead()
+bool RegularBullet::isDead(const GameState &state)
 {
-	return m_hp <= 0 || !Util::inMap(m_pos);
+	return m_hp <= 0 || !util::inMap(m_pos, state);
 }
 
 void RegularBullet::attack(GameState& state)
 {
 	sf::Vector2f hSize(state.player->getSize().x/2, state.player->getSize().y/2);
-	if (Util::hasCollided(sf::FloatRect(state.player->getPos() - hSize, state.player->getSize()), m_pos, m_radius)) {
+	if (util::hasCollided(sf::FloatRect(state.player->getPos() - hSize, state.player->getSize()), m_pos, m_radius)) {
 		state.player->hit(m_damage, state);
 		hit(m_damage, state);
 	}
 	else if (m_faction == 0) {
 		for (unsigned i = 0; i < state.enemies.size(); i++) {
 			hSize = sf::Vector2f(state.enemies[i]->getSize().x/2, state.enemies[i]->getSize().y/2);
-			if (Util::hasCollided(sf::FloatRect(state.enemies[i]->getPos() - hSize, state.enemies[i]->getSize()), m_pos, m_radius)) {
+			if (util::hasCollided(sf::FloatRect(state.enemies[i]->getPos() - hSize, state.enemies[i]->getSize()), m_pos, m_radius)) {
 				state.enemies[i]->hit(m_damage, state);
 				hit(m_damage, state);
 				break;
