@@ -14,12 +14,16 @@ public:
 	void updateDisplay(const GameState& state);
 private:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+	void affixTexture(sf::Vertex sprite[4], float* coord);
+	void affixPos(sf::Vertex sprite[4], float* coord, float* pos);
+	AppState m_appState;
 	sf::Font m_regFont;
-	sf::Text m_hp;
 	sf::Text m_score;
 	sf::Sprite m_displayBar;
-	sf::Sprite m_hpCase, m_hpBar;
 	sf::Texture m_displayBarTex;
+	sf::Vertex* m_hpBar;
+	sf::VertexArray m_hudElements;
+	sf::VertexArray m_ingameMenu;
 	sf::Texture m_guisheet;
 };
 

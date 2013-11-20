@@ -1,0 +1,7 @@
+0 0 350 40      # HP Bar case
+0 35 350 30     # HP Bar
+0 65 350 60     # Pause menu title
+0 125 350 50    # Pause menu resume highlight
+0 175 350 50    # Pause menu resume blank
+0 225 350 50    # Pause menu quit highlight
+0 275 350 50    # Pause menu quit blank

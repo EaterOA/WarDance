@@ -1,0 +1,7 @@
+30.0 515.0      # HP Bar case
+37.0 520.0      # HP Bar
+220.0 100.0     # Pause menu title
+220.0 160.0     # Pause menu resume highlight
+220.0 160.0     # Pause menu resume blank
+220.0 210.0     # Pause menu quit highlight
+220.0 210.0     # Pause menu quit blank
