@@ -21,12 +21,6 @@ void GameMechanics::gameInit()
 	m_state.player = new Player(sf::Vector2f(100.f, 100.f), 50);
 }
 
-void GameMechanics::processEvents(const std::vector<sf::Event> &eventList)
-{
-	//for (unsigned i = 0; i < eventList.size(); i++) {
-	//}
-}
-
 void GameMechanics::updateState(const sf::RenderWindow &window, const sf::Time &elapsed)
 {
 	m_state.elapsed = elapsed;

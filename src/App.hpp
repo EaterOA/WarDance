@@ -5,7 +5,7 @@ const int APP_WIDTH = 800;
 const int APP_HEIGHT = 600;
 
 enum AppState {
-	SPLASH, MENU, GAME, PAUSED, DEAD, NOFOCUS
+	SPLASH, MENU, GAME, PAUSED, DEAD, NOFOCUS, CLOSED
 };
 
 #endif
