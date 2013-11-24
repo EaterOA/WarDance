@@ -2,7 +2,7 @@
 #include "GameMechanics.hpp"
 #include "Util.hpp"
 
-Grunt::Grunt(sf::Vector2f pos): Fighter(2, sf::Vector2f(50.f, 50.f), pos, 20, 1)
+Grunt::Grunt(sf::Vector2f pos): Fighter(3, sf::Vector2f(50.f, 50.f), pos, 20, 1)
 {
 	m_decision_cd = 0;
 }

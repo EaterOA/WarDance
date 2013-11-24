@@ -2,7 +2,7 @@
 #include "GameMechanics.hpp"
 #include "Util.hpp"
 
-SplittingBullet::SplittingBullet(sf::Vector2f pos, float dir, int hp, int faction): Projectile(1, pos, 3, hp, 20, faction)
+SplittingBullet::SplittingBullet(sf::Vector2f pos, float dir, int hp, int faction): Projectile(6, pos, 3, hp, 20, faction)
 {
 	m_dir = dir;
 	m_vel.x = 100.f * std::cos(m_dir);

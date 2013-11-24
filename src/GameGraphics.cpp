@@ -2,11 +2,16 @@
 #include "GameMechanics.hpp"
 #include "Actors.hpp"
 #include "Util.hpp"
+#include <fstream>
 
 bool GameGraphics::init()
 {
-	if (!m_map_tex[0].loadFromFile("images/map0.png") || !m_spritesheet.loadFromFile("images/spritesheet.png"))
-		return 0;
+	std::ifstream fin;
+	
+	if (!(fin = std::ifstream("config/spritesheet.txt"))) return 0;
+	for (int i = 0; i < 100*4 && fin >> m_texCoords[i] >> m_texCoords[i+1] >> m_texCoords[i+2] >> m_texCoords[i+3]; i += 4) fin.ignore(1000, '\n');
+	if (!m_map_tex[0].loadFromFile("images/map0.png")) return 0;
+	if (!m_spritesheet.loadFromFile("images/spritesheet.png")) return 0;
 	m_map_tex[0].setSmooth(true);
 	m_map_tex[0].setRepeated(true);
 	m_map.setTexture(m_map_tex[0]);
@@ -15,7 +20,7 @@ bool GameGraphics::init()
 	return 1;
 }
 
-void GameGraphics::affixPos(sf::Vertex sprite[4], const sf::Vector2f &center, float offsetLY, float offsetRY, float offsetLX, float offsetRX)
+void GameGraphics::affixPos(sf::Vertex sprite[4], const sf::Vector2f &center, int type, float offsetLX, float offsetRX, float offsetLY, float offsetRY)
 {
 	sprite[0].position = center + sf::Vector2f(offsetLX, offsetLY);
 	sprite[1].position = center + sf::Vector2f(offsetRX, offsetLY);
@@ -23,27 +28,21 @@ void GameGraphics::affixPos(sf::Vertex sprite[4], const sf::Vector2f &center, fl
 	sprite[3].position = center + sf::Vector2f(offsetLX, offsetRY);
 }
 
-void GameGraphics::affixPos(sf::Vertex sprite[4], const sf::Vector2f &center)
+void GameGraphics::affixPos(sf::Vertex sprite[4], const sf::Vector2f &center, int type)
 {
-	affixPos(sprite, center, -50.f, 50.f, -50.f, 50.f);
+	affixPos(sprite, center, type, -m_texCoords[type*4+2]/2, m_texCoords[type*4+2]/2, -m_texCoords[type*4+3]/2, m_texCoords[type*4+3]/2);
 }
 
 void GameGraphics::affixTexture(sf::Vertex sprite[4], int type)
 {
-	float offsetX = (type % 2) * 100.f;
-	float offsetY = (type / 2) * 100.f;
-	if (type == 1) {
-		sprite[0].texCoords = sf::Vector2f(140.f, 45.f);
-		sprite[1].texCoords = sf::Vector2f(160.f, 45.f);
-		sprite[2].texCoords = sf::Vector2f(160.f, 55.f);
-		sprite[3].texCoords = sf::Vector2f(140.f, 55.f);
-		affixPos(sprite, sf::Vector2f((sprite[0].position.x + sprite[1].position.x)/2, (sprite[0].position.y + sprite[2].position.y)/2), -5.f, 5.f, -10.f, 10.f);
-		return ;
-	}
-	sprite[0].texCoords = sf::Vector2f(offsetX, offsetY);
-	sprite[1].texCoords = sf::Vector2f(offsetX+100, offsetY);
-	sprite[2].texCoords = sf::Vector2f(offsetX+100, offsetY+100);
-	sprite[3].texCoords = sf::Vector2f(offsetX, offsetY+100);
+	float x = m_texCoords[type*4+0];
+	float y = m_texCoords[type*4+1];
+	float w = m_texCoords[type*4+2];
+	float h = m_texCoords[type*4+3];
+	sprite[0].texCoords = sf::Vector2f(x, y);
+	sprite[1].texCoords = sf::Vector2f(x+w, y);
+	sprite[2].texCoords = sf::Vector2f(x+w, y+h);
+	sprite[3].texCoords = sf::Vector2f(x, y+h);
 }
 
 void GameGraphics::rotateSprite(sf::Vertex sprite[4], float dir, sf::Vector2f &center)
@@ -56,7 +55,7 @@ void GameGraphics::rotateSprite(sf::Vertex sprite[4], float dir, sf::Vector2f &c
 
 void GameGraphics::transformSprite(sf::Vertex sprite[4], const Actor &actor)
 {
-	affixPos(sprite, actor.getPos());
+	affixPos(sprite, actor.getPos(), actor.getType());
 	affixTexture(sprite, actor.getType());
 	if (actor.getDir() != 0.f) rotateSprite(sprite, actor.getDir() * 180.f / util::PI, actor.getPos());
 }
@@ -64,10 +63,10 @@ void GameGraphics::transformSprite(sf::Vertex sprite[4], const Actor &actor)
 void GameGraphics::affixHealthBar(sf::Vertex bar[8], const Fighter &fighter)
 {
 	float hpOffset = 40.f * fighter.getHP() / fighter.getMaxHP();
-	affixPos(bar, fighter.getPos() + sf::Vector2f(0, -30), -50.f, 50.f, -20.f, 20.f);
-	affixPos(bar+4, fighter.getPos() + sf::Vector2f(0, -30), -50.f, 50.f, -20.f, -20.f + hpOffset);
-	affixTexture(bar, 4);
-	affixTexture(bar+4, 5);
+	affixPos(bar, fighter.getPos() + sf::Vector2f(0, -30), 0, -20.f, 20.f, -4.5f, 4.5f);
+	affixPos(bar+4, fighter.getPos() + sf::Vector2f(0, -30), 1, -20.f, -20.f + hpOffset, -4.5f, 4.5f);
+	affixTexture(bar, 0);
+	affixTexture(bar+4, 1);
 }
 
 void GameGraphics::updateSprites(const GameState &state)

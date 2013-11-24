@@ -57,7 +57,7 @@ void Fighter::shoot(GameState &state, float offsetX, float offsetY)
 	else {
 		outX = outY = rotX = rotY = 0;
 	}
-	Projectile* bullet = new SplittingBullet(sf::Vector2f(m_pos.x + outX + rotX, m_pos.y + outY + rotY), m_dir, rand() % 100 + 50, m_faction);
+	Projectile* bullet = new RegularBullet(sf::Vector2f(m_pos.x + outX + rotX, m_pos.y + outY + rotY), m_dir, m_faction);
 	state.projectiles.push_back(bullet);
 }
 

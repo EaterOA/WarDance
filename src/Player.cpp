@@ -2,7 +2,7 @@
 #include "GameMechanics.hpp"
 #include "Util.hpp"
 
-Player::Player(sf::Vector2f pos, int hp): Fighter(0, sf::Vector2f(30.f, 30.f), pos, hp, 0)
+Player::Player(sf::Vector2f pos, int hp): Fighter(2, sf::Vector2f(30.f, 30.f), pos, hp, 0)
 {
 	m_firing = 0;
 	m_max_vx = 150.f;

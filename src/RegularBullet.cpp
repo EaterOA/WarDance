@@ -2,7 +2,7 @@
 #include "GameMechanics.hpp"
 #include "Util.hpp"
 
-RegularBullet::RegularBullet(sf::Vector2f pos, float dir, int faction): Projectile(1, pos, 3, 5, 5, faction)
+RegularBullet::RegularBullet(sf::Vector2f pos, float dir, int faction): Projectile(5, pos, 3, 5, 5, faction)
 {
 	m_dir = dir;
 	m_vel.x = 100.f * std::cos(m_dir);
