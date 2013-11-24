@@ -4,7 +4,6 @@
 #include "GameGUI.hpp"
 #include <vector>
 
-AppState appState;
 sf::RenderWindow window;
 sf::View camera(sf::FloatRect(0, 0, (float)APP_WIDTH, (float)APP_HEIGHT));
 sf::View hud(sf::FloatRect(0, 0, (float)APP_WIDTH, (float)APP_HEIGHT));
@@ -12,6 +11,7 @@ GameMechanics mAgent;
 GameGraphics gAgent;
 GameGUI guiAgent;
 sf::Clock gameClock;
+AppState appState;
 
 bool appInit()
 {
@@ -22,7 +22,6 @@ bool appInit()
 	window.create(sf::VideoMode(APP_WIDTH, APP_HEIGHT), "War Dance", sf::Style::Close, settings);
 	window.setVerticalSyncEnabled(false);
 	window.setFramerateLimit(60);
-	window.setKeyRepeatEnabled(false);
 	window.setView(camera);
 	mAgent.gameInit();
 	if (!guiAgent.init()) return false;
@@ -53,29 +52,45 @@ void paint()
 	window.display();
 }
 
-void processEvents()
+void endGame()
 {
+	appState = CLOSED;
+	window.close();
+}
+
+void resumeGame()
+{
+	AppState prev = appState;
+	appState = GAME;
+	guiAgent.transitionState(prev);
+	gameClock.restart();
+}
+
+void pauseGame()
+{
+	AppState prev = appState;
+	appState = PAUSED;
+	guiAgent.transitionState(prev);
+}
+
+std::vector<sf::Event> processEvents()
+{
+	std::vector<sf::Event> keyEvents;
 	sf::Event event;
 	while (window.pollEvent(event)) {
 		if (event.type == sf::Event::Closed) {
-			window.close();
-			appState = CLOSED;
-			return;
+			endGame();
+			break;
 		}
 		else if (event.type == sf::Event::LostFocus) {
 			appState = NOFOCUS;
 		}
 		else if (event.type == sf::Event::GainedFocus) {
-			appState = PAUSED;
-			guiAgent.transitionState(appState);
+			pauseGame();
 		}
-		else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
-			if (appState == PAUSED) appState = GAME;
-			else appState = PAUSED;
-			guiAgent.transitionState(appState);
-			gameClock.restart();
-		}
+		else if (event.type == sf::Event::KeyPressed) keyEvents.push_back(event);
 	}
+	return keyEvents;
 }
 
 void appStart()
@@ -83,13 +98,13 @@ void appStart()
 	gameClock.restart();
 	while (window.isOpen()) {
 
-		processEvents();
+		std::vector<sf::Event> keyEvents = processEvents();
+		
+		guiAgent.updateAppState(keyEvents);
 
 		if (appState == PAUSED) {
-			guiAgent.updatePauseState();
 			paint();
 		}
-
 		else if (appState == GAME) {
 			mAgent.updateState(window, gameClock.restart());
 			mAgent.tick();

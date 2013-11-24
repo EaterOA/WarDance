@@ -2,8 +2,8 @@
 #define GAME_GUI_HPP
 
 #include <SFML/Graphics.hpp>
+#include "App.hpp"
 
-enum AppState;
 struct GameState;
 
 class GameGUI : public sf::Drawable, public sf::Transformable
@@ -12,14 +12,12 @@ public:
 	bool init();
 	void transitionState(AppState state);
 	void updateGameState(const GameState& state);
-	void updatePauseState();
+	void updateAppState(const std::vector<sf::Event> &keyEvents);
 private:
-	AppState m_appState;
-
 	//Pause Menu
 	void selectPauseChoice(int choice);
+	void processPauseChoice(int choice);
 	int m_pauseMenu_choice;
-	int m_pauseMenu_cd;
 
 	//GUI Graphics
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;

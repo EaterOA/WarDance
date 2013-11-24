@@ -30,13 +30,17 @@ bool GameGUI::init()
 		affixTexture(&m_ingameMenu[i*4], coordPtr);
 		affixPos(&m_ingameMenu[i*4], coordPtr, posPtr);
 	}
+	for (int i = 3; i < 5; i += 2) {
+		setAlpha(&m_ingameMenu[i*4], 0);
+	}
+	m_pauseMenu_choice = 1;
 	m_hpBar = &m_hudElements[4];
 	
 	m_displayBar.setTexture(m_displayBarTex);
 	m_displayBar.setPosition(0.0f, 600.0f - m_displayBarTex.getSize().y);
 	m_score.setFont(m_regFont);
 	m_score.setPosition(50, 600-50);
-	m_appState = GAME;
+	appState = GAME;
 
 	return 1;
 }
@@ -53,33 +57,47 @@ void GameGUI::updateGameState(const GameState& state)
 
 void GameGUI::selectPauseChoice(int choice)
 {
-	if (m_pauseMenu_choice) {
-		setAlpha(&m_ingameMenu[m_pauseMenu_choice*8-4], 0);
-		setAlpha(&m_ingameMenu[m_pauseMenu_choice*8], 255);
-	}
+	setAlpha(&m_ingameMenu[m_pauseMenu_choice*8-4], 0);
+	setAlpha(&m_ingameMenu[m_pauseMenu_choice*8], 255);
 	setAlpha(&m_ingameMenu[choice*8-4], 255);
 	setAlpha(&m_ingameMenu[choice*8], 0);
 	m_pauseMenu_choice = choice;
-	m_pauseMenu_cd = 5;
 }
 
-void GameGUI::updatePauseState()
+void GameGUI::processPauseChoice(int choice)
 {
-	if (--m_pauseMenu_cd < -100) m_pauseMenu_cd = 0;
-	if (m_pauseMenu_cd <= 0) {
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && m_pauseMenu_choice < 2)
-			selectPauseChoice(m_pauseMenu_choice + 1);
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && m_pauseMenu_choice > 1)
-			selectPauseChoice(m_pauseMenu_choice - 1);
+	switch (choice) {
+	case 1:
+		resumeGame();
+		break;
+	case 2:
+		endGame();
+		break;
 	}
 }
 
-void GameGUI::transitionState(AppState state)
+void GameGUI::updateAppState(const std::vector<sf::Event> &keyEvents)
 {
-	m_appState = state;
-	if (m_appState == PAUSED) {
+	for (unsigned i = 0; i < keyEvents.size(); i++) {
+		if (appState == PAUSED) {
+			if (keyEvents[i].key.code == sf::Keyboard::S || keyEvents[i].key.code == sf::Keyboard::Down)
+				selectPauseChoice(m_pauseMenu_choice % 2 + 1);
+			else if (keyEvents[i].key.code == sf::Keyboard::W || keyEvents[i].key.code == sf::Keyboard::Up)
+				selectPauseChoice(m_pauseMenu_choice == 1 ? 2 : m_pauseMenu_choice - 1);
+			if (keyEvents[i].key.code == sf::Keyboard::Return)
+				processPauseChoice(m_pauseMenu_choice);
+		}
+		if (keyEvents[i].key.code == sf::Keyboard::Escape) {
+			if (appState == PAUSED) resumeGame();
+			else if (appState == GAME) pauseGame();
+		}
+	}
+}
+
+void GameGUI::transitionState(AppState prevState)
+{
+	if (appState == PAUSED)
 		selectPauseChoice(1);
-	}
 }
 
 void GameGUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -87,7 +105,7 @@ void GameGUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	target.draw(m_displayBar);
 	target.draw(m_score);
 	target.draw(m_hudElements, &m_guisheet);
-	if (m_appState == PAUSED) {
+	if (appState == PAUSED) {
 		sf::RectangleShape fade;
 		fade.setFillColor(sf::Color(0, 0, 0, 100));
 		fade.setPosition(0, 0);
