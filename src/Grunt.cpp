@@ -1,6 +1,7 @@
 #include "Actors.hpp"
 #include "GameMechanics.hpp"
 #include "Util.hpp"
+#include <math.h>
 
 Grunt::Grunt(sf::Vector2f pos): Fighter(3, sf::Vector2f(50.f, 50.f), pos, 20, 1)
 {
@@ -26,15 +27,15 @@ void Grunt::act(GameState& state)
 	cooldown();
 	if (m_decision_cd-- > 0) return;
 	m_decision_cd = 10;
-	if (std::rand() % 100 < 75) {
+	if (rand() % 100 < 75) {
 		sf::Vector2f vec = state.player->getPos() - m_pos;
 		float vr = util::getHyp(vec);
 		float ny = vec.y / vr;
 		float nx = vec.x / vr;
-		m_dir = std::atan(vec.y / vec.x);
+		m_dir = atan(vec.y / vec.x);
 		if (vec.x < 0) m_dir += util::PI;
 		m_vel = sf::Vector2f(nx * 50.f, ny * 50.f);
 
-		if (m_attack_cd <= 0 && std::rand() % 100 < 50) attack(state);
+		if (m_attack_cd <= 0 && rand() % 100 < 50) attack(state);
 	}
 }

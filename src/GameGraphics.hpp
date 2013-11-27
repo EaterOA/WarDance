@@ -17,7 +17,7 @@ private:
 	void affixPos(sf::Vertex sprite[4], const sf::Vector2f &center, int type);
 	void affixPos(sf::Vertex sprite[4], const sf::Vector2f &center, int type, float offsetLY, float offsetRY, float offsetLX, float offsetRX);
 	void affixTexture(sf::Vertex sprite[4], int type);
-	void rotateSprite(sf::Vertex sprite[4], float dir, sf::Vector2f &center);
+	void rotateSprite(sf::Vertex sprite[4], float dir, sf::Vector2f center);
 	void affixHealthBar(sf::Vertex bar[8], const Fighter &fighter);
 	void transformSprite(sf::Vertex sprite[4], const Actor &actor);
 	float m_texCoords[400];

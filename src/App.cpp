@@ -5,18 +5,18 @@
 #include <vector>
 
 sf::RenderWindow window;
-sf::View camera(sf::FloatRect(0, 0, (float)APP_WIDTH, (float)APP_HEIGHT));
-sf::View hud(sf::FloatRect(0, 0, (float)APP_WIDTH, (float)APP_HEIGHT));
+sf::View camera(sf::FloatRect(0, 0, float(APP_WIDTH), float(APP_HEIGHT)));
+sf::View hud(sf::FloatRect(0, 0, float(APP_WIDTH), float(APP_HEIGHT)));
 GameMechanics mAgent;
 GameGraphics gAgent;
 GameGUI guiAgent;
 sf::Clock gameClock;
 AppState appState;
 
-bool appInit()
+static bool appInit()
 {
 	appState = GAME;
-	srand((unsigned)time(0));
+	srand(unsigned(time(0)));
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 8;
 	window.create(sf::VideoMode(APP_WIDTH, APP_HEIGHT), "War Dance", sf::Style::Close, settings);
@@ -29,7 +29,7 @@ bool appInit()
 	return true;
 }
 
-void updateView(sf::Vector2f pos)
+static void updateView(sf::Vector2f pos)
 {
 	if (pos.x < APP_WIDTH/2)
 		pos.x = APP_WIDTH/2;
@@ -42,7 +42,7 @@ void updateView(sf::Vector2f pos)
 	camera.setCenter(pos);
 }
 
-void paint()
+static void paint()
 {
 	window.setView(camera);
 	window.draw(gAgent);
@@ -73,7 +73,7 @@ void pauseGame()
 	guiAgent.transitionState(prev);
 }
 
-std::vector<sf::Event> processEvents()
+static std::vector<sf::Event> processEvents()
 {
 	std::vector<sf::Event> keyEvents;
 	sf::Event event;
@@ -93,7 +93,7 @@ std::vector<sf::Event> processEvents()
 	return keyEvents;
 }
 
-void appStart()
+static void appStart()
 {
 	gameClock.restart();
 	while (window.isOpen()) {

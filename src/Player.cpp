@@ -1,6 +1,7 @@
 #include "Actors.hpp"
 #include "GameMechanics.hpp"
 #include "Util.hpp"
+#include <math.h>
 
 Player::Player(sf::Vector2f pos, int hp): Fighter(2, sf::Vector2f(30.f, 30.f), pos, hp, 0)
 {
@@ -17,7 +18,7 @@ void Player::act(GameState &state)
 	if (state.A && !state.D) m_vel.x = -m_max_vx;
 	else if (!state.A && state.D) m_vel.x = m_max_vx;
 	Actor::act(state);
-	m_dir = std::atan((state.mouse.y - m_pos.y)/(state.mouse.x - m_pos.x));
+	m_dir = atan((state.mouse.y - m_pos.y)/(state.mouse.x - m_pos.x));
 	if (state.mouse.x < m_pos.x) m_dir += util::PI;
 	cooldown();
 	if (state.mouseLeft && m_attack_cd <= 0) attack(state);

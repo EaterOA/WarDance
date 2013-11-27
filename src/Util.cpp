@@ -24,7 +24,7 @@ namespace util
 
 	float getHyp(const sf::Vector2f &vec)
 	{
-		return std::sqrt(vec.x*vec.x + vec.y*vec.y);
+		return sqrt(vec.x*vec.x + vec.y*vec.y);
 	}
 
 	bool insideCircle(const sf::Vector2f &seg, const sf::Vector2f &cpos, float rad)

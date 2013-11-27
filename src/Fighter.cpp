@@ -1,6 +1,7 @@
 #include "Actors.hpp"
 #include "GameMechanics.hpp"
 #include "Util.hpp"
+#include <math.h>
 
 Fighter::Fighter(int type, sf::Vector2f size, sf::Vector2f pos, int hp, int faction): Actor(type, pos)
 {
@@ -47,8 +48,8 @@ void Fighter::shoot(GameState &state, float offsetX, float offsetY)
 	float normX, normY, rotX, rotY, outX, outY;
 	
 	if (offsetX != 0 || offsetY != 0) {
-		normX = std::cos(m_dir);
-		normY = std::sin(m_dir);
+		normX = cos(m_dir);
+		normY = sin(m_dir);
 		rotX = normY * -1 * offsetY;
 		rotY = normX * offsetY;
 		outX = normX * offsetX;
@@ -68,11 +69,11 @@ void Fighter::shootTowards(GameState &state, sf::Vector2f &dest, float offsetX, 
 	dist = util::getDist(m_pos, dest);
 	normX = (dest.x - m_pos.x) / dist;
 	normY = (dest.y - m_pos.y) / dist;
-	dir = std::atan(normY / normX) * 57.29578f;
+	dir = atan(normY / normX) * 57.29578f;
 	if (normX < 0) dir += 180;
 	if (offsetY > 0) {
-		rotX = std::sin(m_dir / 57.29578f) * -1 * offsetY;
-		rotY = std::cos(m_dir / 57.29578f) * offsetY;
+		rotX = sin(m_dir / 57.29578f) * -1 * offsetY;
+		rotY = cos(m_dir / 57.29578f) * offsetY;
 	}
 	else {
 		rotX = rotY = 0;

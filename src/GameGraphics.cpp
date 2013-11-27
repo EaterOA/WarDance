@@ -6,10 +6,11 @@
 
 bool GameGraphics::init()
 {
-	std::ifstream fin;
-	
-	if (!(fin = std::ifstream("config/spritesheet.txt"))) return 0;
+	std::ifstream fin;	
+    fin.open("config/spritesheet.txt");
+	if (!fin) return 0;
 	for (int i = 0; i < 100*4 && fin >> m_texCoords[i] >> m_texCoords[i+1] >> m_texCoords[i+2] >> m_texCoords[i+3]; i += 4) fin.ignore(1000, '\n');
+    fin.close();
 	if (!m_map_tex[0].loadFromFile("images/map0.png")) return 0;
 	if (!m_spritesheet.loadFromFile("images/spritesheet.png")) return 0;
 	m_map_tex[0].setSmooth(true);
@@ -45,7 +46,7 @@ void GameGraphics::affixTexture(sf::Vertex sprite[4], int type)
 	sprite[3].texCoords = sf::Vector2f(x, y+h);
 }
 
-void GameGraphics::rotateSprite(sf::Vertex sprite[4], float dir, sf::Vector2f &center)
+void GameGraphics::rotateSprite(sf::Vertex sprite[4], float dir, sf::Vector2f center)
 {
 	sf::Transform transform;
 	transform.rotate(dir, center);

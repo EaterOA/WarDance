@@ -10,10 +10,14 @@ bool GameGUI::init()
 	std::ifstream fin;
 	float coord[400], pos[400];
 	
-	if (!(fin = std::ifstream("config/guisheet.txt"))) return 0;
+    fin.open("config/guisheet.txt");
+	if (!fin) return 0;
 	for (int i = 0; i < 100*4 && fin >> coord[i] >> coord[i+1] >> coord[i+2] >> coord[i+3]; i += 4) fin.ignore(1000, '\n');
-	if (!(fin = std::ifstream("config/guimap.txt"))) return 0;
+    fin.close();
+    fin.open("config/guimap.txt");
+	if (!fin) return 0;
 	for (int i = 0; i < 100*2 && fin >> pos[i] >> pos[i+1]; i += 2) fin.ignore(1000, '\n');
+    fin.close();
 	if (!m_displayBarTex.loadFromFile("images/hud.png")) return 0;
 	if (!m_guisheet.loadFromFile("images/guisheet.png")) return 0;
 	if (!m_regFont.loadFromFile("fonts/stenc_ex.ttf")) return 0;
@@ -21,16 +25,16 @@ bool GameGUI::init()
 	m_guisheet.setSmooth(true);
 	m_hudElements = sf::VertexArray(sf::Quads, 2*4);
 	float *coordPtr = coord, *posPtr = pos;
-	for (int i = 0; i < 2; i++, coordPtr += 4, posPtr += 2) {
+	for (unsigned i = 0; i < 2; i++, coordPtr += 4, posPtr += 2) {
 		affixTexture(&m_hudElements[i*4], coordPtr);
 		affixPos(&m_hudElements[i*4], coordPtr, posPtr);
 	}
 	m_ingameMenu = sf::VertexArray(sf::Quads, 5*4);
-	for (int i = 0; i < 5; i++, coordPtr += 4, posPtr += 2) {
+	for (unsigned i = 0; i < 5; i++, coordPtr += 4, posPtr += 2) {
 		affixTexture(&m_ingameMenu[i*4], coordPtr);
 		affixPos(&m_ingameMenu[i*4], coordPtr, posPtr);
 	}
-	for (int i = 3; i < 5; i += 2) {
+	for (unsigned i = 3; i < 5; i += 2) {
 		setAlpha(&m_ingameMenu[i*4], 0);
 	}
 	m_pauseMenu_choice = 1;
@@ -55,7 +59,7 @@ void GameGUI::updateGameState(const GameState& state)
 	m_score.setString(wss.str());
 }
 
-void GameGUI::selectPauseChoice(int choice)
+void GameGUI::selectPauseChoice(unsigned choice)
 {
 	setAlpha(&m_ingameMenu[m_pauseMenu_choice*8-4], 0);
 	setAlpha(&m_ingameMenu[m_pauseMenu_choice*8], 255);
@@ -64,7 +68,7 @@ void GameGUI::selectPauseChoice(int choice)
 	m_pauseMenu_choice = choice;
 }
 
-void GameGUI::processPauseChoice(int choice)
+void GameGUI::processPauseChoice(unsigned choice)
 {
 	switch (choice) {
 	case 1:
@@ -73,6 +77,8 @@ void GameGUI::processPauseChoice(int choice)
 	case 2:
 		endGame();
 		break;
+    default:
+        break;
 	}
 }
 

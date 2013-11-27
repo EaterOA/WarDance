@@ -1,12 +1,13 @@
 #include "Actors.hpp"
 #include "GameMechanics.hpp"
 #include "Util.hpp"
+#include <math.h>
 
 SplittingBullet::SplittingBullet(sf::Vector2f pos, float dir, int hp, int faction): Projectile(6, pos, 3, hp, 20, faction)
 {
 	m_dir = dir;
-	m_vel.x = 100.f * std::cos(m_dir);
-	m_vel.y = 100.f * std::sin(m_dir);
+	m_vel.x = 100.f * cos(m_dir);
+	m_vel.y = 100.f * sin(m_dir);
 }
 
 void SplittingBullet::act(GameState &state)
