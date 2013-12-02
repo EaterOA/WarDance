@@ -29,7 +29,7 @@ void Grunt::act(GameState& state)
 	m_decision_cd = 10;
 	if (rand() % 100 < 75) {
 		sf::Vector2f vec = state.player->getPos() - m_pos;
-		float vr = util::getHyp(vec);
+		float vr = util::getLen(vec);
 		float ny = vec.y / vr;
 		float nx = vec.x / vr;
 		m_dir = atan(vec.y / vec.x);

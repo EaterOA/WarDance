@@ -32,14 +32,14 @@ bool SplittingBullet::isDead(const GameState &state)
 void SplittingBullet::attack(GameState& state)
 {
 	sf::Vector2f hSize(state.player->getSize().x/2, state.player->getSize().y/2);
-	if (util::hasCollided(sf::FloatRect(state.player->getPos() - hSize, state.player->getSize()), m_pos, m_radius)) {
+	if (util::hasCollided(sf::FloatRect(state.player->getPos() - hSize, state.player->getSize()), state.player->getDir(), m_pos, m_radius)) {
 		state.player->hit(m_damage, state);
 		m_hp = 0;
 	}
 	else if (m_faction == 0) {
 		for (unsigned i = 0; i < state.enemies.size(); i++) {
 			hSize = sf::Vector2f(state.enemies[i]->getSize().x/2, state.enemies[i]->getSize().y/2);
-			if (util::hasCollided(sf::FloatRect(state.enemies[i]->getPos() - hSize, state.enemies[i]->getSize()), m_pos, m_radius)) {
+			if (util::hasCollided(sf::FloatRect(state.enemies[i]->getPos() - hSize, state.enemies[i]->getSize()), state.enemies[i]->getDir(), m_pos, m_radius)) {
 				state.enemies[i]->hit(m_damage, state);
 				m_hp = 0;
 				break;
