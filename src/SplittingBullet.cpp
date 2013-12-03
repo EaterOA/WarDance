@@ -26,7 +26,7 @@ void SplittingBullet::act(GameState &state)
 
 bool SplittingBullet::isDead(const GameState &state)
 {
-	return m_hp <= 0 || !util::inMap(m_pos, state);
+	return m_hp <= 0 || !state.inMap(m_pos);
 }
 
 void SplittingBullet::attack(GameState& state)

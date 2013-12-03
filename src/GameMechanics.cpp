@@ -14,6 +14,11 @@ GameState::~GameState()
 	delete player;
 }
 
+bool GameState::inMap(sf::Vector2f p) const
+{
+	return p.x >= 0 && p.x <= map_width && p.y >= 0 && p.y <= map_height;
+}
+
 void GameMechanics::gameInit()
 {
 	m_state.map_width = 1600;

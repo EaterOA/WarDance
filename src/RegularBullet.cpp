@@ -18,7 +18,7 @@ void RegularBullet::act(GameState &state)
 
 bool RegularBullet::isDead(const GameState &state)
 {
-	return m_hp <= 0 || !util::inMap(m_pos, state);
+	return m_hp <= 0 || !state.inMap(m_pos);
 }
 
 void RegularBullet::attack(GameState& state)

@@ -7,6 +7,7 @@
 struct GameState {
 	GameState();
 	~GameState();
+	bool inMap(sf::Vector2f p) const;
 
 	int map_width, map_height;
 	std::vector<Fighter*> enemies;
