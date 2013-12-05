@@ -2,6 +2,7 @@
 #include "GameMechanics.hpp"
 #include "Actors.hpp"
 #include <fstream>
+#include <vector>
 
 bool GameGraphics::init()
 {
@@ -69,16 +70,38 @@ void GameGraphics::affixHealthBar(sf::Vertex bar[8], const Fighter &fighter)
 	affixTexture(bar+4, 1);
 }
 
+void GameGraphics::addHitbox(const Fighter &f)
+{
+    sf::Transform tr;
+    util::ShapeVector size = f.getSize();
+    if (size.s == util::Rectangle) {
+        sf::Vector2f fpos = f.getPos();
+        sf::Vector2f hsize(size.x/2.f, size.y/2.f);
+        tr.rotate(f.getDir() * 180.f / util::PI, fpos);
+        sf::Vector2f tp[] = {tr.transformPoint(fpos - hsize),
+                             tr.transformPoint(sf::Vector2f(fpos.x + hsize.x, fpos.y - hsize.y)),
+                             tr.transformPoint(fpos + hsize),
+                             tr.transformPoint(sf::Vector2f(fpos.x - hsize.x, fpos.y + hsize.y))};
+        for (int i = 0, j = 1; i < 4; i++, j = (j+1)%4) {
+            m_hitboxes.push_back(sf::Vertex(tp[i]));
+            m_hitboxes.push_back(sf::Vertex(tp[j]));
+        }
+    }
+}
+
 void GameGraphics::updateSprites(const GameState &state)
 {
 	unsigned i = 4, j;
 	unsigned numSprites = 1 + 3*state.enemies.size() + state.projectiles.size();
 	m_sprites = sf::VertexArray(sf::Quads, 4*numSprites);
+    m_hitboxes = std::vector<sf::Vertex>();
 
 	transformSprite(&m_sprites[0], *state.player);
+    addHitbox(*state.player);
 	for (j = 0; j < state.enemies.size(); i += 3*4, j++) {
 		transformSprite(&m_sprites[i], *state.enemies[j]);
 		affixHealthBar(&m_sprites[i+4], *state.enemies[j]);
+        addHitbox(*state.enemies[j]);
 	}
 	for (j = 0; j < state.projectiles.size(); i += 4, j++)
 		transformSprite(&m_sprites[i], *state.projectiles[j]);
@@ -89,4 +112,5 @@ void GameGraphics::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	target.draw(m_map);
 	target.draw(m_sprites, &m_spritesheet);
+    target.draw(&m_hitboxes[0], m_hitboxes.size(), sf::Lines);
 }

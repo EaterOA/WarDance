@@ -3,6 +3,7 @@
 
 #include "Util.hpp"
 #include <SFML/Graphics.hpp>
+#include <vector>
 
 class Actor;
 class Fighter;
@@ -21,8 +22,10 @@ private:
 	void rotateSprite(sf::Vertex sprite[4], float dir, sf::Vector2f center);
 	void affixHealthBar(sf::Vertex bar[8], const Fighter &fighter);
 	void transformSprite(sf::Vertex sprite[4], const Actor &actor);
+    void addHitbox(const Fighter &fighter);
 	float m_texCoords[400];
 	sf::VertexArray m_sprites;
+    std::vector<sf::Vertex> m_hitboxes;
 	sf::Sprite m_map;
 	sf::Texture m_spritesheet;
 	sf::Texture m_map_tex[5];
