@@ -11,6 +11,11 @@ bool GameGraphics::init()
 	if (!fin) return 0;
 	for (int i = 0; i < 100*4 && fin >> m_texCoords[i] >> m_texCoords[i+1] >> m_texCoords[i+2] >> m_texCoords[i+3]; i += 4) fin.ignore(1000, '\n');
     fin.close();
+	fin.open("config/spritemap.txt");
+	if (!fin) return 0;
+	for (int i = 0; i < 100*2 && fin >> m_sprCoords[i] >> m_sprCoords[i+1]; i += 2) fin.ignore(1000, '\n');
+	fin.close();
+
 	if (!m_map_tex[0].loadFromFile("images/map0.png")) return 0;
 	if (!m_spritesheet.loadFromFile("images/spritesheet.png")) return 0;
 	m_map_tex[0].setSmooth(true);
@@ -21,17 +26,20 @@ bool GameGraphics::init()
 	return 1;
 }
 
-void GameGraphics::affixPos(sf::Vertex sprite[4], const sf::Vector2f &center, int type, float offsetLX, float offsetRX, float offsetLY, float offsetRY)
+void GameGraphics::affixPos(sf::Vertex sprite[4], sf::Vector2f center, int type, float offsetLX, float offsetRX, float offsetLY, float offsetRY)
 {
+	center += sf::Vector2f(m_sprCoords[type*2], m_sprCoords[type*2+1]);
 	sprite[0].position = center + sf::Vector2f(offsetLX, offsetLY);
 	sprite[1].position = center + sf::Vector2f(offsetRX, offsetLY);
 	sprite[2].position = center + sf::Vector2f(offsetRX, offsetRY);
 	sprite[3].position = center + sf::Vector2f(offsetLX, offsetRY);
 }
 
-void GameGraphics::affixPos(sf::Vertex sprite[4], const sf::Vector2f &center, int type)
+void GameGraphics::affixPos(sf::Vertex sprite[4], sf::Vector2f center, int type)
 {
-	affixPos(sprite, center, type, -m_texCoords[type*4+2]/2, m_texCoords[type*4+2]/2, -m_texCoords[type*4+3]/2, m_texCoords[type*4+3]/2);
+	float hwidth = m_texCoords[type*4+2] / 2.f;
+	float hheight = m_texCoords[type*4+3] / 2.f;
+	affixPos(sprite, center, type, -hwidth, hwidth, -hheight, hheight);
 }
 
 void GameGraphics::affixTexture(sf::Vertex sprite[4], int type)
@@ -58,14 +66,14 @@ void GameGraphics::transformSprite(sf::Vertex sprite[4], const Actor &actor)
 {
 	affixPos(sprite, actor.getPos(), actor.getType());
 	affixTexture(sprite, actor.getType());
-	if (actor.getDir() != 0.f) rotateSprite(sprite, actor.getDir() * 180.f / util::PI, actor.getPos());
+	if (actor.getDir() != 0.f) rotateSprite(sprite, util::toDeg(actor.getDir()), actor.getPos());
 }
 
 void GameGraphics::affixHealthBar(sf::Vertex bar[8], const Fighter &fighter)
 {
 	float hpOffset = 40.f * fighter.getHP() / fighter.getMaxHP();
-	affixPos(bar, fighter.getPos() + sf::Vector2f(0, -30), 0, -20.f, 20.f, -4.5f, 4.5f);
-	affixPos(bar+4, fighter.getPos() + sf::Vector2f(0, -30), 1, -20.f, -20.f + hpOffset, -4.5f, 4.5f);
+	affixPos(bar, fighter.getPos(), 0, -20.f, 20.f, -4.5f, 4.5f);
+	affixPos(bar+4, fighter.getPos(), 1, -20.f, -20.f + hpOffset, -4.5f, 4.5f);
 	affixTexture(bar, 0);
 	affixTexture(bar+4, 1);
 }
@@ -77,7 +85,7 @@ void GameGraphics::addHitbox(const Fighter &f)
     if (size.s == util::Rectangle) {
         sf::Vector2f fpos = f.getPos();
         sf::Vector2f hsize(size.x/2.f, size.y/2.f);
-        tr.rotate(f.getDir() * 180.f / util::PI, fpos);
+        tr.rotate(util::toDeg(f.getDir()), fpos);
         sf::Vector2f tp[] = {tr.transformPoint(fpos - hsize),
                              tr.transformPoint(sf::Vector2f(fpos.x + hsize.x, fpos.y - hsize.y)),
                              tr.transformPoint(fpos + hsize),
@@ -103,8 +111,10 @@ void GameGraphics::updateSprites(const GameState &state)
 		affixHealthBar(&m_sprites[i+4], *state.enemies[j]);
         addHitbox(*state.enemies[j]);
 	}
-	for (j = 0; j < state.projectiles.size(); i += 4, j++)
+	for (j = 0; j < state.projectiles.size(); i += 4, j++) {
 		transformSprite(&m_sprites[i], *state.projectiles[j]);
+        addHitbox(*state.projectiles[j]);
+	}
 
 }
 

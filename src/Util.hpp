@@ -19,6 +19,8 @@ namespace util
 
 	const float PI = 3.14159265f;
 
+	float toRad(float deg);
+	float toDeg(float rad);
 	float dot(sf::Vector2f v1, sf::Vector2f v2);
 	float crossZ(sf::Vector2f v1, sf::Vector2f v2);
 	float getLen(sf::Vector2f v);

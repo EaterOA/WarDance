@@ -3,6 +3,16 @@
 
 namespace util
 {
+	float toRad(float deg)
+	{
+		return deg / 180.f * util::PI;
+	}
+
+	float toDeg(float rad)
+	{
+		return rad * 180.f / util::PI;
+	}
+
 	float dot(sf::Vector2f v1, sf::Vector2f v2)
 	{
 		return v1.x * v2.x + v1.y * v2.y;

@@ -3,7 +3,7 @@
 #include <math.h>
 
 Player::Player(sf::Vector2f pos, int hp)
-	: Fighter(2, util::ShapeVector(util::Rectangle, 30.f, 30.f), pos, hp, 0)
+	: Fighter(2, util::ShapeVector(util::Rectangle, 25.f, 30.f), pos, hp, 0)
 {
 	m_firing = 0;
 	m_max_vx = 150.f;
