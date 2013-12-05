@@ -1,7 +1,7 @@
 #ifndef GAME_MECHANICS_HPP
 #define GAME_MECHANICS_HPP
 
-#include <vector>
+#include "Util.hpp"
 #include "Actors.hpp"
 
 struct GameState {

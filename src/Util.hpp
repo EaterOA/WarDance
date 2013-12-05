@@ -1,21 +1,34 @@
 #ifndef UTIL_HPP
 #define UTIL_HPP
 
+#include <iostream> //Debugging purposes
 #include <SFML/Graphics.hpp>
 
 namespace util
 {
+	enum Shape { Circle, Rectangle };
+
+	struct ShapeVector
+	{
+		ShapeVector() {};
+		ShapeVector(Shape ss, float r): s(ss), x(r), y(0) {};
+		ShapeVector(Shape ss, float xx, float yy): s(ss), x(xx), y(yy) {};
+		Shape s;
+		float x, y;
+	};
+
 	const float PI = 3.14159265f;
 
 	float dot(sf::Vector2f v1, sf::Vector2f v2);
 	float crossZ(sf::Vector2f v1, sf::Vector2f v2);
 	float getLen(sf::Vector2f v);
-	float getMaxRad(sf::FloatRect r);
+	float getMaxRad(sf::Vector2f s);
 	float getDist(sf::Vector2f p1, sf::Vector2f p2); //Distance between two points
 	float getDist(sf::Vector2f p, sf::Vector2f p1, sf::Vector2f p2); //Distance between point and segment
-	bool hasCollided(const sf::FloatRect &r1, const sf::FloatRect &r2);
-	bool hasCollided(const sf::FloatRect &r, float dir, const sf::Vector2f &cpos, float rad);
-	bool hasCollided(const sf::FloatRect &r1, float dir1, const sf::FloatRect &r2, float dir2);
+	bool hasCollided(sf::Vector2f c1, util::ShapeVector s1, float dir1, sf::Vector2f c2, util::ShapeVector s2, float dir2);
+	bool hasCollided(sf::Vector2f c1, float r1, sf::Vector2f c2, float r2);
+	bool hasCollided(sf::Vector2f c1, sf::Vector2f s1, float dir1, sf::Vector2f c2, float r2);
+	bool hasCollided(sf::Vector2f c1, sf::Vector2f s1, float dir1, sf::Vector2f c2, sf::Vector2f s2, float dir2);
 }
 
 #endif

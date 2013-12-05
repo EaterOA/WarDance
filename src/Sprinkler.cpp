@@ -1,8 +1,8 @@
 #include "Actors.hpp"
 #include "GameMechanics.hpp"
-#include "Util.hpp"
 
-Sprinkler::Sprinkler(sf::Vector2f pos): Fighter(4, sf::Vector2f(50.f, 50.f), pos, 10, 1)
+Sprinkler::Sprinkler(sf::Vector2f pos)
+	: Fighter(4, util::ShapeVector(util::Rectangle, 50.f, 50.f), pos, 10, 1)
 {
 	m_dir = 0;
 }

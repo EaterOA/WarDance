@@ -1,6 +1,8 @@
 #ifndef APP_HPP
 #define APP_HPP
 
+#include "Util.hpp"
+
 enum AppState {
 	SPLASH, MENU, GAME, PAUSED, DEAD, NOFOCUS, CLOSED
 };

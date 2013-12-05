@@ -1,9 +1,9 @@
 #include "Actors.hpp"
 #include "GameMechanics.hpp"
-#include "Util.hpp"
 #include <math.h>
 
-Grunt::Grunt(sf::Vector2f pos): Fighter(3, sf::Vector2f(50.f, 50.f), pos, 20, 1)
+Grunt::Grunt(sf::Vector2f pos)
+	: Fighter(3, util::ShapeVector(util::Rectangle, 50.f, 50.f), pos, 20, 1)
 {
 	m_decision_cd = 0;
 }

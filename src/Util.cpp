@@ -18,9 +18,9 @@ namespace util
 		return sqrt(dot(v,v));
 	}
 
-	float getMaxRad(sf::FloatRect r)
+	float getMaxRad(sf::Vector2f s)
 	{
-		return getLen(sf::Vector2f(r.width/2, r.height/2));
+		return getLen(sf::Vector2f(s.x/2, s.y/2));
 	}
 
 	float getDist(sf::Vector2f p1, sf::Vector2f p2)
@@ -41,77 +41,99 @@ namespace util
 		return getDist(p, pb);
 	}
 
-	bool inRectangle(sf::Vector2f p1, sf::Vector2f p2, sf::Vector2f p3, sf::Vector2f p4, sf::Vector2f p)
+	bool hasCollided(sf::Vector2f c1, util::ShapeVector s1, float dir1, sf::Vector2f c2, util::ShapeVector s2, float dir2)
 	{
-		float s1 = crossZ(p2 - p1, p - p1);
-		float s2 = crossZ(p3 - p2, p - p2);
-		float s3 = crossZ(p4 - p3, p - p3);
-		float s4 = crossZ(p1 - p4, p - p4);
-		if (s1 < 0 && s2 < 0 && s3 < 0 && s4 < 0) return true;
-		if (s1 > 0 && s2 > 0 && s3 > 0 && s4 > 0) return true;
+		if (s1.s == Circle && s2.s == Circle) return hasCollided(c1, s1.x, c2, s2.x);
+		if (s1.s == Rectangle && s2.s == Circle) return hasCollided(c1, sf::Vector2f(s1.x, s1.y), dir1, c2, s2.x);
+		if (s1.s == Circle && s2.s == Rectangle) return hasCollided(c2, sf::Vector2f(s2.x, s2.y), dir2, c1, s1.x);
+		if (s1.s == Rectangle && s2.s == Rectangle) return hasCollided(c1, sf::Vector2f(s1.x, s1.y), dir1, c2, sf::Vector2f(s2.x, s2.y), dir2);
 		return false;
 	}
 
-	bool hasCollided(const sf::FloatRect &r1, const sf::FloatRect &r2)
+	bool hasCollided(sf::Vector2f c1, float r1, sf::Vector2f c2, float r2)
 	{
-		return !((r1.left > r2.left + r2.width) ||
-				 (r1.top > r2.top + r2.height)  ||
-			 	 (r2.left > r1.left + r1.width) ||
-			 	 (r2.top > r1.top + r1.height)  );
+		if (r1 + r2 < getDist(c1, c2)) return false;
+		return true;
 	}
 
-	bool hasCollided(const sf::FloatRect &r, float dir, const sf::Vector2f &cpos, float rad)
+	bool hasCollided(sf::Vector2f c1, sf::Vector2f s1, float dir1, sf::Vector2f c2, float r2)
 	{
 		//Basic distance check
-		sf::Vector2f center(r.left + r.width/2, r.top + r.height/2);
-		if (getMaxRad(r) + rad < getDist(center, cpos)) return false;
+		if (getMaxRad(s1) + r2 < getDist(c1, c2)) return false;
 
 		//Transforming vectors
-		float normX = cos(dir);
-		float normY = sin(dir);
-		sf::Vector2f rotWidth(normX * r.width / 2.f, normY * r.width / 2.f);
-		sf::Vector2f rotHeight(-normY * r.height / 2.f, normX * r.height / 2.f);
-		sf::Vector2f topLeft = center - rotWidth - rotHeight;
-		sf::Vector2f topRight = center + rotWidth - rotHeight;
-		sf::Vector2f bottomRight = center + rotWidth + rotHeight;
-		sf::Vector2f bottomLeft = center - rotWidth + rotHeight;
+		float normX1 = cos(dir1);
+		float normY1 = sin(dir1);
+		sf::Vector2f rotWidth1(normX1 * s1.x / 2.f, normY1 * s1.x / 2.f);
+		sf::Vector2f rotHeight1(-normY1 * s1.y / 2.f, normX1 * s1.y / 2.f);
+		sf::Vector2f tr1[] = {c1 - rotWidth1 - rotHeight1,
+							  c1 + rotWidth1 - rotHeight1,
+							  c1 + rotWidth1 + rotHeight1,
+							  c1 - rotWidth1 + rotHeight1};
 
 		//Inner check
-		if (inRectangle(topLeft, topRight, bottomRight, bottomLeft, cpos)) return true;
+		float si1 = crossZ(tr1[1] - tr1[0], c2 - tr1[0]);
+		float si2 = crossZ(tr1[2] - tr1[1], c2 - tr1[1]);
+		float si3 = crossZ(tr1[3] - tr1[2], c2 - tr1[2]);
+		float si4 = crossZ(tr1[0] - tr1[3], c2 - tr1[3]);
+		if (si1 < 0 && si2 < 0 && si3 < 0 && si4 < 0) return true;
+		if (si1 > 0 && si2 > 0 && si3 > 0 && si4 > 0) return true;
+		return false;
 
 		//Edge cross check
-		if (getDist(cpos, topLeft, topRight) < rad) return true;
-		if (getDist(cpos, topRight, bottomRight) < rad) return true;
-		if (getDist(cpos, bottomRight, bottomLeft) < rad) return true;
-		if (getDist(cpos, bottomLeft, topLeft) < rad) return true;
+		if (getDist(c2, tr1[0], tr1[1]) < r2) return true;
+		if (getDist(c2, tr1[1], tr1[2]) < r2) return true;
+		if (getDist(c2, tr1[2], tr1[3]) < r2) return true;
+		if (getDist(c2, tr1[3], tr1[0]) < r2) return true;
 
 		return false;
 	}
 
-	bool hasCollided(const sf::FloatRect &r1, float dir1, const sf::FloatRect &r2, float dir2)
+	bool hasCollided(sf::Vector2f c1, sf::Vector2f s1, float dir1, sf::Vector2f c2, sf::Vector2f s2, float dir2)
 	{
-		sf::Vector2f c1(r1.left + r1.width/2, r1.top + r1.height/2);
-		sf::Vector2f c2(r2.left + r2.width/2, r2.top + r2.height/2);
-		if (getMaxRad(r1) + getMaxRad(r2) < getDist(c1, c2)) return false;
+		//Basic distance check
+		if (getMaxRad(s1) + getMaxRad(s2) < getDist(c1, c2)) return false;
 		
 		//Transforming vectors
 		float normX1 = cos(dir1);
 		float normY1 = sin(dir1);
-		sf::Vector2f rotWidth1(normX1 * r1.width / 2.f, normY1 * r1.width / 2.f);
-		sf::Vector2f rotHeight1(-normY1 * r1.height / 2.f, normX1 * r1.height / 2.f);
-		sf::Vector2f topLeft1 = c1 - rotWidth1 - rotHeight1;
-		sf::Vector2f topRight1 = c1 + rotWidth1 - rotHeight1;
-		sf::Vector2f bottomRight1 = c1 + rotWidth1 + rotHeight1;
-		sf::Vector2f bottomLeft1 = c1 - rotWidth1 + rotHeight1;
+		sf::Vector2f rotWidth1(normX1 * s1.x / 2.f, normY1 * s1.x / 2.f);
+		sf::Vector2f rotHeight1(-normY1 * s1.y / 2.f, normX1 * s1.y / 2.f);
+		sf::Vector2f tr1[] = {c1 - rotWidth1 - rotHeight1,
+							  c1 + rotWidth1 - rotHeight1,
+							  c1 + rotWidth1 + rotHeight1,
+							  c1 - rotWidth1 + rotHeight1};
 		float normX2 = cos(dir2);
 		float normY2 = sin(dir2);
-		sf::Vector2f rotWidth2(normX2 * r2.width / 2.f, normY2 * r2.width / 2.f);
-		sf::Vector2f rotHeight2(-normY2 * r2.height / 2.f, normX2 * r2.height / 2.f);
-		sf::Vector2f topLeft2 = c2 - rotWidth2 - rotHeight2;
-		sf::Vector2f topRight2 = c2 + rotWidth2 - rotHeight2;
-		sf::Vector2f bottomRight2 = c2 + rotWidth2 + rotHeight2;
-		sf::Vector2f bottomLeft2 = c2 - rotWidth2 + rotHeight2;
-		
-		return false;
+		sf::Vector2f rotWidth2(normX2 * s2.x / 2.f, normY2 * s2.x / 2.f);
+		sf::Vector2f rotHeight2(-normY2 * s2.y / 2.f, normX2 * s2.y / 2.f);
+		sf::Vector2f tr2[] = {c2 - rotWidth2 - rotHeight2,
+							  c2 + rotWidth2 - rotHeight2,
+							  c2 + rotWidth2 + rotHeight2,
+							  c2 - rotWidth2 + rotHeight2};
+
+		//Axis separation theorem
+		for (int i = 0; i < 4; i++) {
+			sf::Vector2f separator = tr1[(i+1)%4] - tr1[i];
+			float side = crossZ(tr1[(i+2)%4] - tr1[i], separator);
+			int sign = (side > 0? -1 : 1);
+			if (crossZ(tr2[0]-tr1[i], separator) * sign > 0 &&
+				crossZ(tr2[1]-tr1[i], separator) * sign > 0 &&
+				crossZ(tr2[2]-tr1[i], separator) * sign > 0 &&
+				crossZ(tr2[3]-tr1[i], separator) * sign > 0)
+				return false;
+		}
+		for (int i = 0; i < 4; i++) {
+			sf::Vector2f separator = tr2[(i+1)%4] - tr2[i];
+			float side = crossZ(tr2[(i+2)%4] - tr2[i], separator);
+			int sign = (side > 0? -1 : 1);
+			if (crossZ(tr1[0]-tr2[i], separator) * sign > 0 &&
+				crossZ(tr1[1]-tr2[i], separator) * sign > 0 &&
+				crossZ(tr1[2]-tr2[i], separator) * sign > 0 &&
+				crossZ(tr1[3]-tr2[i], separator) * sign > 0)
+				return false;
+		}
+
+		return true;
 	}
 }

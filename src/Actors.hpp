@@ -1,7 +1,7 @@
 #ifndef ACTORS_H
 #define ACTORS_H
 
-#include <iostream> //Debugging purposes
+#include "Util.hpp"
 #include <SFML/Graphics.hpp>
 
 struct GameState;
@@ -25,11 +25,11 @@ protected:
 class Fighter: public Actor
 {
 public:
-	Fighter(int type, sf::Vector2f size, sf::Vector2f pos, int hp, int faction);
+	Fighter(int type, util::ShapeVector size, sf::Vector2f pos, int hp, int faction);
 	virtual void act(GameState &state) = 0;
 	virtual bool isDead(const GameState &state);
 	virtual void hit(int damage, GameState &state);
-	sf::Vector2f getSize() const;
+	util::ShapeVector getSize() const;
 	int getHP() const;
 	int getMaxHP() const;
 protected:
@@ -41,18 +41,17 @@ protected:
 	int m_hp;
 	int m_maxHp;
 	int m_faction;
-	sf::Vector2f m_size;
+	util::ShapeVector m_size;
 };
 
 class Projectile: public Fighter
 {
 public:
-	Projectile(int type, sf::Vector2f pos, float radius, int hp, int damage, int faction);
+	Projectile(int type, sf::Vector2f pos, util::ShapeVector size, int hp, int damage, int faction);
 	void setVel(sf::Vector2f &v);
 	void setDir(float dir);
 protected:
 	int m_damage;
-	float m_radius;
 };
 
 class RegularBullet: public Projectile

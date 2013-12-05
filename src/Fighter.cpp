@@ -1,9 +1,9 @@
 #include "Actors.hpp"
 #include "GameMechanics.hpp"
-#include "Util.hpp"
 #include <math.h>
 
-Fighter::Fighter(int type, sf::Vector2f size, sf::Vector2f pos, int hp, int faction): Actor(type, pos)
+Fighter::Fighter(int type, util::ShapeVector size, sf::Vector2f pos, int hp, int faction)
+	: Actor(type, pos)
 {
 	m_attack_cd = 0;
 	m_size = size;
@@ -22,7 +22,7 @@ int Fighter::getHP() const
 	return m_hp;
 }
 
-sf::Vector2f Fighter::getSize() const
+util::ShapeVector Fighter::getSize() const
 {
 	return m_size;
 }
