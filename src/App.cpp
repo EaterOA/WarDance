@@ -1,4 +1,5 @@
 #include "App.hpp"
+#include "Config.hpp"
 #include "GameMechanics.hpp"
 #include "GameGraphics.hpp"
 #include "GameGUI.hpp"
@@ -23,6 +24,7 @@ static bool appInit()
 	window.setVerticalSyncEnabled(false);
 	window.setFramerateLimit(60);
 	window.setView(camera);
+    init_config("config/config.txt");
 	mAgent.gameInit();
 	if (!guiAgent.init()) return false;
 	if (!gAgent.init()) return false;

@@ -1,3 +1,4 @@
+#include "Config.hpp"
 #include "GameGraphics.hpp"
 #include "GameMechanics.hpp"
 #include "Actors.hpp"
@@ -105,15 +106,15 @@ void GameGraphics::updateSprites(const GameState &state)
     m_hitboxes = std::vector<sf::Vertex>();
 
 	transformSprite(&m_sprites[0], *state.player);
-    addHitbox(*state.player);
+    if (config["hitbox_enabled"]) addHitbox(*state.player);
 	for (j = 0; j < state.enemies.size(); i += 3*4, j++) {
 		transformSprite(&m_sprites[i], *state.enemies[j]);
 		affixHealthBar(&m_sprites[i+4], *state.enemies[j]);
-        addHitbox(*state.enemies[j]);
+        if (config["hitbox_enabled"]) addHitbox(*state.enemies[j]);
 	}
 	for (j = 0; j < state.projectiles.size(); i += 4, j++) {
 		transformSprite(&m_sprites[i], *state.projectiles[j]);
-        addHitbox(*state.projectiles[j]);
+        if (config["hitbox_enabled"] == 2) addHitbox(*state.projectiles[j]);
 	}
 
 }

@@ -30,7 +30,6 @@ private:
 	sf::Sprite m_map;
 	sf::Texture m_spritesheet;
 	sf::Texture m_map_tex[5];
-	bool m_hitbox_enabled;
 };
 
 #endif
