@@ -12,9 +12,9 @@ GameMechanics mAgent;
 GameGraphics gAgent;
 GameGUI guiAgent;
 sf::Clock gameClock;
-AppState appState;
+AppState prevState, appState;
 
-static bool appInit()
+bool appInit()
 {
 	appState = GAME;
 	srand(unsigned(time(0)));
@@ -31,7 +31,7 @@ static bool appInit()
 	return true;
 }
 
-static void updateView(sf::Vector2f pos)
+void updateView(sf::Vector2f pos)
 {
 	if (pos.x < APP_WIDTH/2)
 		pos.x = APP_WIDTH/2;
@@ -44,10 +44,10 @@ static void updateView(sf::Vector2f pos)
 	camera.setCenter(pos);
 }
 
-static void paint()
+void paint()
 {
 	window.setView(camera);
-	window.draw(gAgent);
+	if (appState != SETTINGS) window.draw(gAgent);
 	window.setView(hud);
 	window.draw(guiAgent);
 	window.setView(camera);
@@ -62,20 +62,26 @@ void endGame()
 
 void resumeGame()
 {
-	AppState prev = appState;
 	appState = GAME;
-	guiAgent.transitionState(prev);
+	guiAgent.transitionState();
 	gameClock.restart();
 }
 
 void pauseGame()
 {
-	AppState prev = appState;
+	gAgent.updateSprites(mAgent.getState());
 	appState = PAUSED;
-	guiAgent.transitionState(prev);
+	guiAgent.transitionState();
 }
 
-static std::vector<sf::Event> processEvents()
+void goToSettings()
+{
+	prevState = appState;
+	appState = SETTINGS;
+	guiAgent.transitionState();
+}
+
+std::vector<sf::Event> processEvents()
 {
 	std::vector<sf::Event> keyEvents;
 	sf::Event event;
@@ -95,7 +101,7 @@ static std::vector<sf::Event> processEvents()
 	return keyEvents;
 }
 
-static void appStart()
+void appStart()
 {
 	gameClock.restart();
 	while (window.isOpen()) {
@@ -104,7 +110,7 @@ static void appStart()
 		
 		guiAgent.updateAppState(keyEvents);
 
-		if (appState == PAUSED) {
+		if (appState == PAUSED || appState == SETTINGS) {
 			paint();
 		}
 		else if (appState == GAME) {

@@ -4,15 +4,17 @@
 #include "Util.hpp"
 
 enum AppState {
-	SPLASH, MENU, GAME, PAUSED, DEAD, NOFOCUS, CLOSED
+	SPLASH, MENU, SETTINGS, GAME, PAUSED, DEAD, NOFOCUS, CLOSED
 };
 
 const int APP_WIDTH = 800;
 const int APP_HEIGHT = 600;
 extern AppState appState;
+extern AppState prevState;
 
 void pauseGame();
 void resumeGame();
+void goToSettings();
 void endGame();
 
 #endif

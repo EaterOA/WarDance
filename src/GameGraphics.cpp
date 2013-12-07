@@ -123,5 +123,5 @@ void GameGraphics::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	target.draw(m_map);
 	target.draw(m_sprites, &m_spritesheet);
-    target.draw(&m_hitboxes[0], m_hitboxes.size(), sf::Lines);
+    if (config["hitbox_enabled"]) target.draw(&m_hitboxes[0], m_hitboxes.size(), sf::Lines);
 }
