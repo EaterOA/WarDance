@@ -4,7 +4,7 @@
 13.1 127.8 155.7 44.4   # Pause resume lit
 13.1 177.8 155.7 44.4   # Pause resume dim
 10.9 327.8 188.3 44.4   # Pause settings lit
-10.9 377.8 188.3 44.4   # Pause settings dim
+10.9 377.8 183.3 44.4   # Pause settings dim
 10.9 227.8 92.3 44.4    # Pause quit lit
 10.9 277.8 92.3 44.4    # Pause quit dim
 255.6 87.7 34.8 22.6    # Settings hitbox off

@@ -24,7 +24,7 @@ bool appInit()
 	window.setVerticalSyncEnabled(false);
 	window.setFramerateLimit(60);
 	window.setView(camera);
-    init_config("config/config.txt");
+    conf::init_config("config/config.txt");
 	mAgent.gameInit();
 	if (!guiAgent.init()) return false;
 	if (!gAgent.init()) return false;

@@ -1,3 +1,4 @@
+#include "Config.hpp"
 #include "GameMechanics.hpp"
 
 GameState::GameState()
@@ -33,10 +34,10 @@ void GameMechanics::updateState(const sf::RenderWindow &window, const sf::Time &
 	m_state.mouse.y += window.getView().getCenter().y - window.getView().getSize().y / 2;
 	m_state.mouse.x += window.getView().getCenter().x - window.getView().getSize().x / 2;
 	m_state.mouseLeft = sf::Mouse::isButtonPressed(sf::Mouse::Left);
-	m_state.W = sf::Keyboard::isKeyPressed(sf::Keyboard::W);
-	m_state.A = sf::Keyboard::isKeyPressed(sf::Keyboard::A);
-	m_state.S = sf::Keyboard::isKeyPressed(sf::Keyboard::S);
-	m_state.D = sf::Keyboard::isKeyPressed(sf::Keyboard::D);
+	m_state.W = conf::pressing(conf::UP);
+	m_state.A = conf::pressing(conf::LEFT);
+	m_state.S = conf::pressing(conf::DOWN);
+	m_state.D = conf::pressing(conf::RIGHT);
 }
 
 void GameMechanics::tick()

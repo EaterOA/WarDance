@@ -9,7 +9,6 @@ bool GameGUI::init()
 {
 	if (!m_displayBarTex.loadFromFile("images/hud.png")) return 0;
 	if (!m_settingsTex.loadFromFile("images/settings.png")) return 0;
-	if (!m_settingsheet.loadFromFile("images/settingsheet.png")) return 0;
 	if (!m_guisheet.loadFromFile("images/guisheet.png")) return 0;
 	if (!m_regFont.loadFromFile("fonts/stenc_ex.ttf")) return 0;
 	m_guisheet.setSmooth(true);
@@ -114,17 +113,17 @@ void GameGUI::updateAppState(const std::vector<sf::Event> &keyEvents)
 {
 	for (unsigned i = 0; i < keyEvents.size(); i++) {
 		if (appState == PAUSED) {
-			if (keyEvents[i].key.code == sf::Keyboard::S || keyEvents[i].key.code == sf::Keyboard::Down)
+			if (conf::pressing(conf::DOWN, keyEvents[i].key.code))
 				selectPauseChoice(m_pauseMenu_choice % m_pauseMenu_numChoices + 1);
-			else if (keyEvents[i].key.code == sf::Keyboard::W || keyEvents[i].key.code == sf::Keyboard::Up)
+			else if (conf::pressing(conf::UP, keyEvents[i].key.code))
 				selectPauseChoice(m_pauseMenu_choice == 1 ? m_pauseMenu_numChoices : m_pauseMenu_choice - 1);
 			if (keyEvents[i].key.code == sf::Keyboard::Return)
 				processPauseChoice(m_pauseMenu_choice);
 		}
 		else if (appState == SETTINGS) {
-			if (keyEvents[i].key.code == sf::Keyboard::S || keyEvents[i].key.code == sf::Keyboard::Down)
+			if (conf::pressing(conf::DOWN, keyEvents[i].key.code))
 				selectSettingsChoice(m_settingsMenu_choice % m_settingsMenu_numChoices + 1);
-			else if (keyEvents[i].key.code == sf::Keyboard::W || keyEvents[i].key.code == sf::Keyboard::Up)
+			else if (conf::pressing(conf::UP, keyEvents[i].key.code))
 				selectSettingsChoice(m_settingsMenu_choice == 1 ? m_settingsMenu_numChoices : m_settingsMenu_choice - 1);
 			if (keyEvents[i].key.code == sf::Keyboard::Return)
 				processSettingsChoice(m_settingsMenu_choice);
