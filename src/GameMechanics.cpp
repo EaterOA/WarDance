@@ -45,7 +45,7 @@ void GameMechanics::tick()
 {
 	//Placeholder enemy generator
 	if (rand() % 200 == 0) {
-		if (rand() % 5 == 0) m_state.enemies.push_back(new Alien(sf::Vector2f(float(rand() % 1600), float(rand() % 1200))));
+		if (rand() % 50 == 0) m_state.enemies.push_back(new Alien(sf::Vector2f(float(rand() % 1600), float(rand() % 1200))));
 		else if (rand() % 2 == 0) m_state.enemies.push_back(new Grunt(sf::Vector2f(float(rand() % 1600), float(rand() % 1200))));
 		else m_state.enemies.push_back(new Sprinkler(sf::Vector2f(float(rand() % 1600), float(rand() % 1200))));
 	}
