@@ -8,12 +8,24 @@ Projectile::Projectile(int type, sf::Vector2f pos, util::ShapeVector size, int h
 	m_faction = faction;
 }
 
-void Projectile::setVel(sf::Vector2f &v)
+bool Projectile::isDead(GameState &state)
 {
-	m_vel = v;
+	return m_hp <= 0 || !state.inMap(m_pos);
 }
 
-void Projectile::setDir(float dir)
+void Projectile::attack(GameState &state)
 {
-	m_dir = dir;
+	if (util::hasCollided(state.player->getPos(), state.player->getSize(), state.player->getDir(), m_pos, m_size, m_dir)) {
+		state.player->hit(m_damage, state);
+		m_hp = 0;
+	}
+	else if (m_faction == 0) {
+		for (unsigned i = 0; i < state.enemies.size(); i++) {
+			if (util::hasCollided(state.enemies[i]->getPos(), state.enemies[i]->getSize(), state.enemies[i]->getDir(), m_pos, m_size, m_dir)) {
+				state.enemies[i]->hit(m_damage, state);
+				m_hp = 0;
+				break;
+			}
+		}
+	}
 }

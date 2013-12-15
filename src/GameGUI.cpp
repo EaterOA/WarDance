@@ -7,6 +7,8 @@
 
 bool GameGUI::init()
 {
+	const int BUFF = 100, NUMHUD = 2, NUMP = 7, NUMS = 4;
+
 	if (!m_displayBarTex.loadFromFile("images/hud.png")) return 0;
 	if (!m_settingsTex.loadFromFile("images/settings.png")) return 0;
 	if (!m_guisheet.loadFromFile("images/guisheet.png")) return 0;
@@ -14,17 +16,16 @@ bool GameGUI::init()
 	m_guisheet.setSmooth(true);
 
 	std::ifstream fin;
-	float coord[400], pos[400];
+	float coord[BUFF*4], pos[BUFF*2];
     fin.open("config/guisheet.txt");
 	if (!fin) return 0;
-	for (int i = 0; i < 100*4 && fin >> coord[i] >> coord[i+1] >> coord[i+2] >> coord[i+3]; i += 4) fin.ignore(1000, '\n');
+	for (int i = 0; i < BUFF*4 && fin >> coord[i] >> coord[i+1] >> coord[i+2] >> coord[i+3]; i += 4) fin.ignore(1000, '\n');
     fin.close();
     fin.open("config/guimap.txt");
 	if (!fin) return 0;
-	for (int i = 0; i < 100*2 && fin >> pos[i] >> pos[i+1]; i += 2) fin.ignore(1000, '\n');
+	for (int i = 0; i < BUFF*2 && fin >> pos[i] >> pos[i+1]; i += 2) fin.ignore(1000, '\n');
     fin.close();
 
-	const int NUMHUD = 2, NUMP = 7, NUMS = 4;
 	m_hudElements = sf::VertexArray(sf::Quads, NUMHUD*4);
 	float *coordPtr = coord, *posPtr = pos;
 	for (unsigned i = 0; i < NUMHUD; i++, coordPtr += 4, posPtr += 2) {
@@ -51,13 +52,37 @@ bool GameGUI::init()
 	m_hpBar = &m_hudElements[4];
 	
 	m_displayBar.setTexture(m_displayBarTex);
-	m_displayBar.setPosition(0.0f, 600.0f - m_displayBarTex.getSize().y);
+	m_displayBar.setPosition(0.0f, (float)APP_HEIGHT - m_displayBarTex.getSize().y);
 	m_settings.setTexture(m_settingsTex);
 	m_score.setFont(m_regFont);
-	m_score.setPosition(50, 600-50);
+	m_score.setPosition(50, 550);
 	appState = GAME;
 
 	return 1;
+}
+
+void GameGUI::affixTexture(sf::Vertex sprite[4], float coord[])
+{
+	sprite[0].texCoords = sf::Vector2f(coord[0], coord[1]);
+	sprite[1].texCoords = sf::Vector2f(coord[0] + coord[2], coord[1]);
+	sprite[2].texCoords = sf::Vector2f(coord[0] + coord[2], coord[1] + coord[3]);
+	sprite[3].texCoords = sf::Vector2f(coord[0], coord[1] + coord[3]);
+}
+
+void GameGUI::affixPos(sf::Vertex sprite[4], float coord[], float pos[])
+{
+	sprite[0].position = sf::Vector2f(pos[0] - coord[2] / 2.f, pos[1] - coord[3] / 2.f);
+	sprite[1].position = sf::Vector2f(pos[0] + coord[2] / 2.f, pos[1] - coord[3] / 2.f);
+	sprite[2].position = sf::Vector2f(pos[0] + coord[2] / 2.f, pos[1] + coord[3] / 2.f);
+	sprite[3].position = sf::Vector2f(pos[0] - coord[2] / 2.f, pos[1] + coord[3] / 2.f);
+}
+
+void GameGUI::setAlpha(sf::Vertex sprite[4], unsigned char alpha)
+{
+	sprite[0].color.a = alpha;
+	sprite[1].color.a = alpha;
+	sprite[2].color.a = alpha;
+	sprite[3].color.a = alpha;
 }
 
 void GameGUI::updateGameState(const GameState& state)
@@ -158,7 +183,7 @@ void GameGUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
 			sf::RectangleShape fade;
 			fade.setFillColor(sf::Color(0, 0, 0, 100));
 			fade.setPosition(0, 0);
-			fade.setSize(sf::Vector2f(800.f, 600.f));
+			fade.setSize(sf::Vector2f((float)APP_WIDTH, (float)APP_HEIGHT));
 			target.draw(fade);
 			target.draw(m_pauseMenu, &m_guisheet);
 		}
@@ -167,28 +192,4 @@ void GameGUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
 		target.draw(m_settings);
 		target.draw(m_settingsMenu, &m_guisheet);
 	}
-}
-
-void GameGUI::affixTexture(sf::Vertex sprite[4], float* coord)
-{
-	sprite[0].texCoords = sf::Vector2f(coord[0], coord[1]);
-	sprite[1].texCoords = sf::Vector2f(coord[0] + coord[2], coord[1]);
-	sprite[2].texCoords = sf::Vector2f(coord[0] + coord[2], coord[1] + coord[3]);
-	sprite[3].texCoords = sf::Vector2f(coord[0], coord[1] + coord[3]);
-}
-
-void GameGUI::affixPos(sf::Vertex sprite[4], float* coord, float* pos)
-{
-	sprite[0].position = sf::Vector2f(pos[0] - coord[2] / 2.f, pos[1] - coord[3] / 2.f);
-	sprite[1].position = sf::Vector2f(pos[0] + coord[2] / 2.f, pos[1] - coord[3] / 2.f);
-	sprite[2].position = sf::Vector2f(pos[0] + coord[2] / 2.f, pos[1] + coord[3] / 2.f);
-	sprite[3].position = sf::Vector2f(pos[0] - coord[2] / 2.f, pos[1] + coord[3] / 2.f);
-}
-
-void GameGUI::setAlpha(sf::Vertex sprite[4], unsigned char alpha)
-{
-	sprite[0].color.a = alpha;
-	sprite[1].color.a = alpha;
-	sprite[2].color.a = alpha;
-	sprite[3].color.a = alpha;
 }

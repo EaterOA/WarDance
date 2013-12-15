@@ -1,7 +1,8 @@
 #ifndef UTIL_HPP
 #define UTIL_HPP
 
-#include <iostream> //Debugging purposes
+#include <iostream>
+#include <vector>
 #include <SFML/Graphics.hpp>
 
 namespace util
@@ -19,8 +20,11 @@ namespace util
 
 	const float PI = 3.14159265f;
 
+	float toDir(float vx, float vy);
 	float toRad(float deg);
 	float toDeg(float rad);
+	float rotateRad(float rad, float amt);
+	float rotateDeg(float deg, float amt);
 	float dot(sf::Vector2f v1, sf::Vector2f v2);
 	float crossZ(sf::Vector2f v1, sf::Vector2f v2);
 	float getLen(sf::Vector2f v);

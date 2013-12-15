@@ -21,11 +21,10 @@ bool appInit()
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 8;
 	window.create(sf::VideoMode(APP_WIDTH, APP_HEIGHT), "War Dance", sf::Style::Close, settings);
-	window.setVerticalSyncEnabled(false);
 	window.setFramerateLimit(60);
 	window.setView(camera);
     conf::init_config("config/config.txt");
-	mAgent.gameInit();
+	if (!mAgent.init()) return false;
 	if (!guiAgent.init()) return false;
 	if (!gAgent.init()) return false;
 	return true;
@@ -33,14 +32,10 @@ bool appInit()
 
 void updateView(sf::Vector2f pos)
 {
-	if (pos.x < APP_WIDTH/2)
-		pos.x = APP_WIDTH/2;
-	else if (pos.x > mAgent.getState().map_width - APP_WIDTH/2)
-		pos.x = (float)mAgent.getState().map_width - APP_WIDTH/2;
-	if (pos.y < 300)
-		pos.y = 300;
-	else if (pos.y > mAgent.getState().map_height - APP_HEIGHT/2)
-		pos.y = (float)mAgent.getState().map_height - APP_HEIGHT/2;
+	if (pos.x < APP_WIDTH/2) pos.x = APP_WIDTH/2;
+	else if (pos.x > mAgent.getState().map_width - APP_WIDTH/2) pos.x = (float)mAgent.getState().map_width - APP_WIDTH/2;
+	if (pos.y < 300) pos.y = 300;
+	else if (pos.y > mAgent.getState().map_height - APP_HEIGHT/2) pos.y = (float)mAgent.getState().map_height - APP_HEIGHT/2;
 	camera.setCenter(pos);
 }
 

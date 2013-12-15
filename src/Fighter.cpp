@@ -22,6 +22,11 @@ int Fighter::getHP() const
 	return m_hp;
 }
 
+int Fighter::getFaction() const
+{
+	return m_faction;
+}
+
 util::ShapeVector Fighter::getSize() const
 {
 	return m_size;
@@ -45,11 +50,37 @@ bool Fighter::isDead(const GameState &state)
 
 void Fighter::shoot(GameState &state, float offsetX, float offsetY)
 {
-	float normX, normY, rotX, rotY, outX, outY;
-	
+	shoot(state, m_dir, offsetX, offsetY);
+}
+
+void Fighter::shoot(GameState &state, sf::Vector2f &dest, float offsetX, float offsetY)
+{
+	float dist = util::getDist(m_pos, dest);
+	float normX = (dest.x - m_pos.x) / dist;
+	float normY = (dest.y - m_pos.y) / dist;
+	float dir = util::toDir(normX, normY);
+	shoot(state, dir, normX, normY, offsetX, offsetY);
+}
+
+void Fighter::shoot(GameState &state, float dir, float offsetX, float offsetY)
+{
+	float normX = cos(dir);
+	float normY = sin(dir);
+	shoot(state, dir, normX, normY, offsetX, offsetY);
+}
+
+void Fighter::shoot(GameState &state, float dir, float extraDir, float offsetX, float offsetY)
+{
+	float normX = cos(dir);
+	float normY = sin(dir);
+	shoot(state, dir + extraDir, normX, normY, offsetX, offsetY);
+}
+
+void Fighter::shoot(GameState &state, float dir, float normX, float normY, float offsetX, float offsetY)
+{
+	float rotX, rotY, outX, outY;
+
 	if (offsetX != 0 || offsetY != 0) {
-		normX = cos(m_dir);
-		normY = sin(m_dir);
 		rotX = normY * -1 * offsetY;
 		rotY = normX * offsetY;
 		outX = normX * offsetX;
@@ -58,28 +89,6 @@ void Fighter::shoot(GameState &state, float offsetX, float offsetY)
 	else {
 		outX = outY = rotX = rotY = 0;
 	}
-	Projectile* bullet = new RegularBullet(sf::Vector2f(m_pos.x + outX + rotX, m_pos.y + outY + rotY), m_dir, m_faction);
-	state.projectiles.push_back(bullet);
-}
-
-void Fighter::shootTowards(GameState &state, sf::Vector2f &dest, float offsetX, float offsetY)
-{
-	float dist, normX, normY, dir, rotX, rotY, outX, outY;
-
-	dist = util::getDist(m_pos, dest);
-	normX = (dest.x - m_pos.x) / dist;
-	normY = (dest.y - m_pos.y) / dist;
-	dir = atan(normY / normX) * 57.29578f;
-	if (normX < 0) dir += 180;
-	if (offsetY > 0) {
-		rotX = sin(m_dir / 57.29578f) * -1 * offsetY;
-		rotY = cos(m_dir / 57.29578f) * offsetY;
-	}
-	else {
-		rotX = rotY = 0;
-	}
-	outX = normX * offsetX;
-	outY = normY * offsetX;
 	Projectile* bullet = new RegularBullet(sf::Vector2f(m_pos.x + outX + rotX, m_pos.y + outY + rotY), dir, m_faction);
 	state.projectiles.push_back(bullet);
 }

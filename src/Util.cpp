@@ -1,8 +1,14 @@
 #include "Util.hpp"
 #include <math.h>
+#include <algorithm>
 
 namespace util
 {
+	float toDir(float vx, float vy)
+	{
+		return std::atan(vy / vx) + (vx < 0 ? PI : 0);
+	}
+
 	float toRad(float deg)
 	{
 		return deg / 180.f * util::PI;
@@ -11,6 +17,22 @@ namespace util
 	float toDeg(float rad)
 	{
 		return rad * 180.f / util::PI;
+	}
+
+	float rotateRad(float rad, float amt)
+	{
+		rad += amt;
+		while (rad < 0) rad += 2*PI;
+		while (rad > 2*PI) rad -= 2*PI;
+		return rad;
+	}
+
+	float rotateDeg(float deg, float amt)
+	{
+		deg += amt;
+		while (deg < 0) deg += 360;
+		while (deg > 360) deg -= 360;
+		return deg;
 	}
 
 	float dot(sf::Vector2f v1, sf::Vector2f v2)

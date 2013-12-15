@@ -5,3 +5,4 @@
 148 19 27 22    # Sprinkler
 7 136 17 6      # Regular bullet
 33 131 34 15    # Splitting bullet
+86 50 112 66    # Alien

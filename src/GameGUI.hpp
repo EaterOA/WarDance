@@ -31,8 +31,8 @@ private:
 
 	//GUI Graphics
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
-	void affixTexture(sf::Vertex sprite[4], float* coord);
-	void affixPos(sf::Vertex sprite[4], float* coord, float* pos);
+	void affixTexture(sf::Vertex sprite[4], float coord[]);
+	void affixPos(sf::Vertex sprite[4], float coord[], float pos[]);
     void setAlpha(sf::Vertex sprite[4], unsigned char alpha);
 	sf::Font m_regFont;
 	sf::Text m_score;

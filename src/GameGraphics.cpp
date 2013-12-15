@@ -57,17 +57,17 @@ void GameGraphics::affixTexture(sf::Vertex sprite[4], int type)
 
 void GameGraphics::rotateSprite(sf::Vertex sprite[4], float dir, sf::Vector2f center)
 {
-	sf::Transform transform;
-	transform.rotate(dir, center);
+	sf::Transform tr;
+	tr.rotate(dir, center);
 	for (unsigned i = 0; i < 4; i++)
-		sprite[i].position = transform.transformPoint(sprite[i].position);
+		sprite[i].position = tr.transformPoint(sprite[i].position);
 }
 
 void GameGraphics::transformSprite(sf::Vertex sprite[4], const Actor &actor)
 {
 	affixPos(sprite, actor.getPos(), actor.getType());
 	affixTexture(sprite, actor.getType());
-	if (actor.getDir() != 0.f) rotateSprite(sprite, util::toDeg(actor.getDir()), actor.getPos());
+	rotateSprite(sprite, util::toDeg(actor.getDir()), actor.getPos());
 }
 
 void GameGraphics::affixHealthBar(sf::Vertex bar[8], const Fighter &fighter)
@@ -85,7 +85,7 @@ void GameGraphics::addHitbox(const Fighter &f)
     util::ShapeVector size = f.getSize();
     if (size.s == util::Rectangle) {
         sf::Vector2f fpos = f.getPos();
-        sf::Vector2f hsize(size.x/2.f, size.y/2.f);
+        sf::Vector2f hsize(size.x / 2.f, size.y / 2.f);
         tr.rotate(util::toDeg(f.getDir()), fpos);
         sf::Vector2f tp[] = {tr.transformPoint(fpos - hsize),
                              tr.transformPoint(sf::Vector2f(fpos.x + hsize.x, fpos.y - hsize.y)),
@@ -107,14 +107,15 @@ void GameGraphics::updateSprites(const GameState &state)
 
 	transformSprite(&m_sprites[0], *state.player);
     if (config["hitbox_enabled"]) addHitbox(*state.player);
+
 	for (j = 0; j < state.enemies.size(); i += 3*4, j++) {
 		transformSprite(&m_sprites[i], *state.enemies[j]);
 		affixHealthBar(&m_sprites[i+4], *state.enemies[j]);
         if (config["hitbox_enabled"]) addHitbox(*state.enemies[j]);
 	}
+
 	for (j = 0; j < state.projectiles.size(); i += 4, j++) {
 		transformSprite(&m_sprites[i], *state.projectiles[j]);
-        if (config["hitbox_enabled"] == 2) addHitbox(*state.projectiles[j]);
 	}
 
 }

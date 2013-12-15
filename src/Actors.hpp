@@ -16,9 +16,7 @@ public:
 	float getDir() const;
 protected:
 	int m_type;
-	sf::Vector2f m_pos;
-	sf::Vector2f m_vel;
-	sf::Vector2f m_acc;
+	sf::Vector2f m_pos, m_vel, m_acc;
 	float m_dir;
 };
 
@@ -32,46 +30,20 @@ public:
 	util::ShapeVector getSize() const;
 	int getHP() const;
 	int getMaxHP() const;
+	int getFaction() const;
 protected:
 	virtual void attack(GameState &state) = 0;
-	virtual void cooldown();
+	void cooldown();
 	void shoot(GameState &state, float offsetX, float offsetY);
-	virtual void shootTowards(GameState &state, sf::Vector2f &dest, float offsetX, float offsetY);
+	void shoot(GameState &state, sf::Vector2f &dest, float offsetX, float offsetY);
+	void shoot(GameState &state, float dir, float offsetX, float offsetY);
+	void shoot(GameState &state, float dir, float extraDir, float offsetX, float offsetY);
+	void shoot(GameState &state, float dir, float normX, float normY, float offsetX, float offsetY);
 	int m_attack_cd;
 	int m_hp;
 	int m_maxHp;
 	int m_faction;
 	util::ShapeVector m_size;
-};
-
-class Projectile: public Fighter
-{
-public:
-	Projectile(int type, sf::Vector2f pos, util::ShapeVector size, int hp, int damage, int faction);
-	void setVel(sf::Vector2f &v);
-	void setDir(float dir);
-protected:
-	int m_damage;
-};
-
-class RegularBullet: public Projectile
-{
-public:
-	RegularBullet(sf::Vector2f pos, float dir, int faction);
-	virtual void act(GameState& state);
-	virtual bool isDead(const GameState &state);
-protected:
-	virtual void attack(GameState& state);
-};
-
-class SplittingBullet: public Projectile
-{
-public:
-	SplittingBullet(sf::Vector2f pos, float dir, int hp, int faction);
-	virtual void act(GameState& state);
-	virtual bool isDead(const GameState &state);
-protected:
-	virtual void attack(GameState& state);
 };
 
 class Player: public Fighter
@@ -81,9 +53,11 @@ public:
 	virtual void act(GameState& state);
 private:
 	virtual void attack(GameState& state);
-	float m_max_vy, m_max_vx;
-	bool m_firing;
+	sf::Vector2f m_max_v;
 };
+
+
+//@@@@@@@@@@@@@@@@@@@@@@@@ Enemies @@@@@@@@@@@@@@@@@@@@@@@@
 
 class Grunt: public Fighter
 {
@@ -93,7 +67,7 @@ public:
 	virtual void hit(int damage, GameState& state);
 protected:
 	virtual void attack(GameState& state);
-	sf::Vector2f m_max_v;
+	float m_max_v;
 	int m_decision_cd;
 };
 
@@ -105,6 +79,50 @@ public:
 	virtual void hit(int damage, GameState& state);
 protected:
 	virtual void attack(GameState& state);
+};
+
+class Alien: public Fighter
+{
+public:
+	Alien(sf::Vector2f pos);
+	virtual void act(GameState& state);
+	virtual void hit(int damage, GameState& state);
+protected:
+	virtual void attack(GameState& state);
+	float m_move_cd;
+	float m_max_v;
+	float m_gunDir1, m_gunDir2;
+};
+
+
+//@@@@@@@@@@@@@@@@@@@@@@@@ Projectiles @@@@@@@@@@@@@@@@@@@@@@@@
+
+class Projectile: public Fighter
+{
+public:
+	Projectile(int type, sf::Vector2f pos, util::ShapeVector size, int hp, int damage, int faction);
+	virtual bool isDead(GameState &state);
+protected:
+	virtual void attack(GameState& state);
+	int m_damage;
+};
+
+class RegularBullet: public Projectile
+{
+public:
+	RegularBullet(sf::Vector2f pos, float dir, int faction);
+	RegularBullet(sf::Vector2f pos, float dir, float normX, float normY, int faction);
+	virtual void act(GameState& state);
+protected:
+};
+
+class SplittingBullet: public Projectile
+{
+public:
+	SplittingBullet(sf::Vector2f pos, float dir, int faction);
+	SplittingBullet(sf::Vector2f pos, float dir, float normX, float normY, int faction);
+	virtual void act(GameState& state);
+protected:
 };
 
 #endif

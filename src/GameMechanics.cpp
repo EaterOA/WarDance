@@ -20,11 +20,12 @@ bool GameState::inMap(sf::Vector2f p) const
 	return p.x >= 0 && p.x <= map_width && p.y >= 0 && p.y <= map_height;
 }
 
-void GameMechanics::gameInit()
+bool GameMechanics::init()
 {
 	m_state.map_width = 1600;
 	m_state.map_height = 1200;
 	m_state.player = new Player(sf::Vector2f(100.f, 100.f), 50);
+	return true;
 }
 
 void GameMechanics::updateState(const sf::RenderWindow &window, const sf::Time &elapsed)
@@ -42,8 +43,10 @@ void GameMechanics::updateState(const sf::RenderWindow &window, const sf::Time &
 
 void GameMechanics::tick()
 {
+	//Placeholder enemy generator
 	if (rand() % 200 == 0) {
-		if (rand() % 2) m_state.enemies.push_back(new Grunt(sf::Vector2f(float(rand() % 1600), float(rand() % 1200))));
+		if (rand() % 5 == 0) m_state.enemies.push_back(new Alien(sf::Vector2f(float(rand() % 1600), float(rand() % 1200))));
+		else if (rand() % 2 == 0) m_state.enemies.push_back(new Grunt(sf::Vector2f(float(rand() % 1600), float(rand() % 1200))));
 		else m_state.enemies.push_back(new Sprinkler(sf::Vector2f(float(rand() % 1600), float(rand() % 1200))));
 	}
 
