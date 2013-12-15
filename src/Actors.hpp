@@ -25,7 +25,7 @@ class Fighter: public Actor
 public:
 	Fighter(int type, util::ShapeVector size, sf::Vector2f pos, int hp, int faction);
 	virtual void act(GameState &state) = 0;
-	virtual bool isDead(const GameState &state);
+	virtual bool isDead(GameState &state);
 	virtual void hit(int damage, GameState &state);
 	util::ShapeVector getSize() const;
 	int getHP() const;

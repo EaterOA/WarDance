@@ -7,7 +7,7 @@
 
 bool GameGUI::init()
 {
-	const int BUFF = 100, NUMHUD = 2, NUMP = 7, NUMS = 4;
+	const unsigned BUFF = 100, NUMHUD = 2, NUMP = 7, NUMS = 4;
 
 	if (!m_displayBarTex.loadFromFile("images/hud.png")) return 0;
 	if (!m_settingsTex.loadFromFile("images/settings.png")) return 0;
@@ -19,11 +19,11 @@ bool GameGUI::init()
 	float coord[BUFF*4], pos[BUFF*2];
     fin.open("config/guisheet.txt");
 	if (!fin) return 0;
-	for (int i = 0; i < BUFF*4 && fin >> coord[i] >> coord[i+1] >> coord[i+2] >> coord[i+3]; i += 4) fin.ignore(1000, '\n');
+	for (unsigned i = 0; i < BUFF*4 && fin >> coord[i] >> coord[i+1] >> coord[i+2] >> coord[i+3]; i += 4) fin.ignore(1000, '\n');
     fin.close();
     fin.open("config/guimap.txt");
 	if (!fin) return 0;
-	for (int i = 0; i < BUFF*2 && fin >> pos[i] >> pos[i+1]; i += 2) fin.ignore(1000, '\n');
+	for (unsigned i = 0; i < BUFF*2 && fin >> pos[i] >> pos[i+1]; i += 2) fin.ignore(1000, '\n');
     fin.close();
 
 	m_hudElements = sf::VertexArray(sf::Quads, NUMHUD*4);

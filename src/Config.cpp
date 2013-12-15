@@ -7,7 +7,7 @@ namespace conf
 {
 	bool init_config(std::string path)
 	{
-		std::fstream fin(path);
+		std::fstream fin(path.c_str());
 		if (!fin) return false;
 		std::string param;
 		int value;

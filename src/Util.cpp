@@ -6,7 +6,7 @@ namespace util
 {
 	float toDir(float vx, float vy)
 	{
-		return std::atan(vy / vx) + (vx < 0 ? PI : 0);
+		return atan(vy / vx) + (vx < 0 ? PI : 0);
 	}
 
 	float toRad(float deg)
