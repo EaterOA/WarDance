@@ -12,11 +12,10 @@ GameMechanics mAgent;
 GameGraphics gAgent;
 GameGUI guiAgent;
 sf::Clock gameClock;
-AppState prevState, appState;
+AppState prevState, appState, haltState;
 
 bool appInit()
 {
-	appState = GAME;
 	srand(unsigned(time(0)));
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 8;
@@ -27,6 +26,9 @@ bool appInit()
 	if (!mAgent.init()) return false;
 	if (!guiAgent.init()) return false;
 	if (!gAgent.init()) return false;
+
+	appState = MAIN;
+
 	return true;
 }
 
@@ -47,6 +49,13 @@ void paint()
 	window.draw(guiAgent);
 	window.setView(camera);
 	window.display();
+}
+
+void startGame()
+{
+	appState = GAME;
+	gameClock.restart();
+	mAgent.start();
 }
 
 void endGame()
@@ -86,10 +95,12 @@ std::vector<sf::Event> processEvents()
 			break;
 		}
 		else if (event.type == sf::Event::LostFocus) {
+			haltState = appState;
 			appState = NOFOCUS;
 		}
 		else if (event.type == sf::Event::GainedFocus) {
-			pauseGame();
+			if (haltState == GAME) pauseGame();
+			else appState = haltState;
 		}
 		else if (event.type == sf::Event::KeyPressed) keyEvents.push_back(event);
 	}
@@ -105,7 +116,7 @@ void appStart()
 		
 		guiAgent.updateAppState(keyEvents);
 
-		if (appState == PAUSED || appState == SETTINGS) {
+		if (appState == MAIN || appState == PAUSED || appState == SETTINGS) {
 			paint();
 		}
 		else if (appState == GAME) {

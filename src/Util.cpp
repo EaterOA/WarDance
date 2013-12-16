@@ -4,6 +4,7 @@
 
 namespace util
 {
+
 	float toDir(float vx, float vy)
 	{
 		return atan(vy / vx) + (vx < 0 ? PI : 0);
@@ -55,6 +56,11 @@ namespace util
 		return getLen(sf::Vector2f(s.x/2, s.y/2));
 	}
 
+	float getMinRad(sf::Vector2f s)
+	{
+		return MIN(s.x / 2, s.y / 2);
+	}
+
 	float getDist(sf::Vector2f p1, sf::Vector2f p2)
 	{
 		return getLen(sf::Vector2f(p2.x-p1.x, p2.y-p1.y));
@@ -84,14 +90,15 @@ namespace util
 
 	bool hasCollided(sf::Vector2f c1, float r1, sf::Vector2f c2, float r2)
 	{
-		if (r1 + r2 < getDist(c1, c2)) return false;
-		return true;
+		return (r1 + r2 > getDist(c1, c2));
 	}
 
 	bool hasCollided(sf::Vector2f c1, sf::Vector2f s1, float dir1, sf::Vector2f c2, float r2)
 	{
 		//Basic distance check
-		if (getMaxRad(s1) + r2 < getDist(c1, c2)) return false;
+		float dist = getDist(c1, c2);
+		if (getMaxRad(s1) + r2 < dist) return false;
+		if (getMinRad(s1) + r2 > dist) return true;
 
 		//Transforming vectors
 		float normX1 = cos(dir1);
@@ -110,8 +117,7 @@ namespace util
 		float si4 = crossZ(tr1[0] - tr1[3], c2 - tr1[3]);
 		if (si1 < 0 && si2 < 0 && si3 < 0 && si4 < 0) return true;
 		if (si1 > 0 && si2 > 0 && si3 > 0 && si4 > 0) return true;
-		return false;
-
+		
 		//Edge cross check
 		if (getDist(c2, tr1[0], tr1[1]) < r2) return true;
 		if (getDist(c2, tr1[1], tr1[2]) < r2) return true;
@@ -124,7 +130,9 @@ namespace util
 	bool hasCollided(sf::Vector2f c1, sf::Vector2f s1, float dir1, sf::Vector2f c2, sf::Vector2f s2, float dir2)
 	{
 		//Basic distance check
-		if (getMaxRad(s1) + getMaxRad(s2) < getDist(c1, c2)) return false;
+		float dist = getDist(c1, c2);
+		if (getMaxRad(s1) + getMaxRad(s2) < dist) return false;
+		if (getMinRad(s1) + getMinRad(s2) > dist) return true;
 		
 		//Transforming vectors
 		float normX1 = cos(dir1);

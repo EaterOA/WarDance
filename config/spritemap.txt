@@ -5,4 +5,4 @@
 0.0 0.0         # Sprinkler
 0.0 0.0         # Regular bullet
 0.0 0.0         # Splitting bullet
-0.0 0.0         # Alien
+10.0 0.0        # Alien

@@ -25,6 +25,8 @@ struct GameState {
 class GameMechanics {
 public:
 	bool init();
+	void start();
+	void reset();
 	void updateState(const sf::RenderWindow &window, const sf::Time &elapsed);
 	void tick();
 	bool cleanUp();

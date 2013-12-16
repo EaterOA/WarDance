@@ -84,18 +84,31 @@ void GameGraphics::addHitbox(const Fighter &f)
     sf::Transform tr;
     util::ShapeVector size = f.getSize();
     if (size.s == util::Rectangle) {
-        sf::Vector2f fpos = f.getPos();
+        sf::Vector2f c = f.getPos();
         sf::Vector2f hsize(size.x / 2.f, size.y / 2.f);
-        tr.rotate(util::toDeg(f.getDir()), fpos);
-        sf::Vector2f tp[] = {tr.transformPoint(fpos - hsize),
-                             tr.transformPoint(sf::Vector2f(fpos.x + hsize.x, fpos.y - hsize.y)),
-                             tr.transformPoint(fpos + hsize),
-                             tr.transformPoint(sf::Vector2f(fpos.x - hsize.x, fpos.y + hsize.y))};
+        tr.rotate(util::toDeg(f.getDir()), c);
+        sf::Vector2f tp[] = {tr.transformPoint(c - hsize),
+                             tr.transformPoint(sf::Vector2f(c.x + hsize.x, c.y - hsize.y)),
+                             tr.transformPoint(c + hsize),
+                             tr.transformPoint(sf::Vector2f(c.x - hsize.x, c.y + hsize.y))};
         for (int i = 0, j = 1; i < 4; i++, j = (j+1)%4) {
             m_hitboxes.push_back(sf::Vertex(tp[i]));
             m_hitboxes.push_back(sf::Vertex(tp[j]));
         }
     }
+	else if (size.s == util::Circle) {
+		sf::Vector2f c = f.getPos();
+		float r = size.x;
+		int numPt = (int)(sqrt(r) * 3);
+		tr.rotate(360.f / numPt, c);
+		sf::Vector2f cur(c.x + r, c.y), next;
+		for (int i = 0; i < numPt; i++) {
+			next = tr.transformPoint(cur);
+			m_hitboxes.push_back(sf::Vertex(cur));
+			m_hitboxes.push_back(sf::Vertex(next));
+			cur = next;
+		}
+	}
 }
 
 void GameGraphics::updateSprites(const GameState &state)

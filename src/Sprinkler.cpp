@@ -2,7 +2,7 @@
 #include "GameMechanics.hpp"
 
 Sprinkler::Sprinkler(sf::Vector2f pos)
-	: Fighter(4, util::ShapeVector(util::Rectangle, 50.f, 50.f), pos, 10, 1)
+	: Fighter(4, util::ShapeVector(util::Circle, 20.f), pos, 10, 1)
 {
 	m_dir = 0;
 	m_attack_cd = 0;

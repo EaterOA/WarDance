@@ -5,6 +5,9 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 
+#define MIN(a,b) (a < b ? a : b)
+#define MAX(a,b) (a > b ? a : b)
+
 namespace util
 {
 	enum Shape { Circle, Rectangle };
@@ -29,6 +32,7 @@ namespace util
 	float crossZ(sf::Vector2f v1, sf::Vector2f v2);
 	float getLen(sf::Vector2f v);
 	float getMaxRad(sf::Vector2f s);
+	float getMinRad(sf::Vector2f s);
 	float getDist(sf::Vector2f p1, sf::Vector2f p2);
 	float getDist(sf::Vector2f p, sf::Vector2f p1, sf::Vector2f p2);
 	bool hasCollided(sf::Vector2f c1, util::ShapeVector s1, float dir1, sf::Vector2f c2, util::ShapeVector s2, float dir2);

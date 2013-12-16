@@ -7,11 +7,12 @@
 
 bool GameGUI::init()
 {
-	const unsigned BUFF = 100, NUMHUD = 2, NUMP = 7, NUMS = 4;
-
-	if (!m_displayBarTex.loadFromFile("images/hud.png")) return 0;
-	if (!m_settingsTex.loadFromFile("images/settings.png")) return 0;
+	const unsigned BUFF = 100, NUMHUD = 2, NUMP = 7, NUMS = 4, NUMM = 15;
+	
 	if (!m_guisheet.loadFromFile("images/guisheet.png")) return 0;
+	if (!m_mainTex.loadFromFile("images/main.png")) return 0;
+	if (!m_settingsTex.loadFromFile("images/settings.png")) return 0;
+	if (!m_displayBarTex.loadFromFile("images/hud.png")) return 0;
 	if (!m_regFont.loadFromFile("fonts/stenc_ex.ttf")) return 0;
 	m_guisheet.setSmooth(true);
 
@@ -45,18 +46,32 @@ bool GameGUI::init()
 		affixTexture(&m_settingsMenu[i*4], coordPtr);
 		affixPos(&m_settingsMenu[i*4], coordPtr, posPtr);
 	}
+	m_mainMenu = sf::VertexArray(sf::Quads, NUMM*4);
+	for (unsigned i = 0; i < NUMM; i++, coordPtr += 4, posPtr += 2) {
+		affixTexture(&m_mainMenu[i*4], coordPtr);
+		affixPos(&m_mainMenu[i*4], coordPtr, posPtr);
+	}
+	setAlpha(&m_mainMenu[1*4], 0);
+	for (unsigned i = 2; i < NUMM; i += 2) {
+		setAlpha(&m_mainMenu[i*4], 0);
+	}
+	for (unsigned i = 11; i < NUMM; i++) {
+		setAlpha(&m_mainMenu[i*4], 0);
+	}
+	m_mainMenu_choice = 1;
+	m_mainMenu_numChoices = 5;
 	m_pauseMenu_choice = 1;
 	m_pauseMenu_numChoices = 3;
 	m_settingsMenu_choice = 1;
 	m_settingsMenu_numChoices = 1;
 	m_hpBar = &m_hudElements[4];
 	
+	m_main.setTexture(m_mainTex);
+	m_settings.setTexture(m_settingsTex);
 	m_displayBar.setTexture(m_displayBarTex);
 	m_displayBar.setPosition(0.0f, (float)APP_HEIGHT - m_displayBarTex.getSize().y);
-	m_settings.setTexture(m_settingsTex);
 	m_score.setFont(m_regFont);
 	m_score.setPosition(50, 550);
-	appState = GAME;
 
 	return 1;
 }
@@ -134,6 +149,21 @@ void GameGUI::processSettingsSwitches()
 	setAlpha(&m_settingsMenu[4], config["hitbox_enabled"] ? 255 : 0);
 }
 
+void GameGUI::selectMainChoice(unsigned choice)
+{
+	setAlpha(&m_mainMenu[m_mainMenu_choice*8-8], 0);
+	setAlpha(&m_mainMenu[m_mainMenu_choice*8-4], 255);
+	setAlpha(&m_mainMenu[choice*8-8], 255);
+	setAlpha(&m_mainMenu[choice*8-4], 0);
+	m_mainMenu_choice = choice;
+}
+
+void GameGUI::processMainChoice(unsigned choice)
+{
+	if (choice == 1) startGame();
+	else if (choice == 2) startGame();
+}
+
 void GameGUI::updateAppState(const std::vector<sf::Event> &keyEvents)
 {
 	for (unsigned i = 0; i < keyEvents.size(); i++) {
@@ -153,12 +183,20 @@ void GameGUI::updateAppState(const std::vector<sf::Event> &keyEvents)
 			if (keyEvents[i].key.code == sf::Keyboard::Return)
 				processSettingsChoice(m_settingsMenu_choice);
 		}
+		else if (appState == MAIN) {
+			if (conf::pressing(conf::DOWN, keyEvents[i].key.code))
+				selectMainChoice(m_mainMenu_choice % m_mainMenu_numChoices + 1);
+			else if (conf::pressing(conf::UP, keyEvents[i].key.code))
+				selectMainChoice(m_mainMenu_choice == 1 ? m_mainMenu_numChoices : m_mainMenu_choice - 1);
+			if (keyEvents[i].key.code == sf::Keyboard::Return)
+				processMainChoice(m_mainMenu_choice);
+		}
 		if (keyEvents[i].key.code == sf::Keyboard::Escape) {
 			if (appState == PAUSED) resumeGame();
 			else if (appState == GAME) pauseGame();
 			else if (appState == SETTINGS) {
 				if (prevState == PAUSED) pauseGame();
-				//else if (prevState == MENU)
+				//else if (prevState == MAIN)
 			}
 		}
 	}
@@ -175,7 +213,11 @@ void GameGUI::transitionState()
 
 void GameGUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	if (appState == GAME || appState == PAUSED) {
+	if (appState == MAIN) {
+		target.draw(m_main);
+		target.draw(m_mainMenu, &m_guisheet);
+	}
+	else if (appState == GAME || appState == PAUSED) {
 		target.draw(m_displayBar);
 		target.draw(m_score);
 		target.draw(m_hudElements, &m_guisheet);

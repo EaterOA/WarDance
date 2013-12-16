@@ -24,8 +24,17 @@ bool GameMechanics::init()
 {
 	m_state.map_width = 1600;
 	m_state.map_height = 1200;
-	m_state.player = new Player(sf::Vector2f(100.f, 100.f), 50);
 	return true;
+}
+
+void GameMechanics::reset()
+{
+	m_state = GameState();
+}
+
+void GameMechanics::start()
+{
+	m_state.player = new Player(sf::Vector2f(100.f, 100.f), 50);
 }
 
 void GameMechanics::updateState(const sf::RenderWindow &window, const sf::Time &elapsed)
