@@ -109,6 +109,7 @@ std::vector<sf::Event> processEvents()
 
 void appStart()
 {
+	guiAgent.transitionState();
 	gameClock.restart();
 	while (window.isOpen()) {
 

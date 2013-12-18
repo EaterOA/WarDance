@@ -7,7 +7,7 @@
 
 bool GameGUI::init()
 {
-	const unsigned BUFF = 100, NUMHUD = 2, NUMP = 7, NUMS = 4, NUMM = 15;
+	const unsigned BUFF = 100, NUMHUD = 2, NUMP = 7, NUMS = 4, NUMM = 11;
 	
 	if (!m_guisheet.loadFromFile("images/guisheet.png")) return 0;
 	if (!m_mainTex.loadFromFile("images/main.png")) return 0;
@@ -38,7 +38,7 @@ bool GameGUI::init()
 		affixTexture(&m_pauseMenu[i*4], coordPtr);
 		affixPos(&m_pauseMenu[i*4], coordPtr, posPtr);
 	}
-	for (unsigned i = 3; i < NUMP; i += 2) {
+	for (unsigned i = 1; i < NUMP; i += 2) {
 		setAlpha(&m_pauseMenu[i*4], 0);
 	}
 	m_settingsMenu = sf::VertexArray(sf::Quads, NUMS*4);
@@ -51,27 +51,25 @@ bool GameGUI::init()
 		affixTexture(&m_mainMenu[i*4], coordPtr);
 		affixPos(&m_mainMenu[i*4], coordPtr, posPtr);
 	}
-	setAlpha(&m_mainMenu[1*4], 0);
-	for (unsigned i = 2; i < NUMM; i += 2) {
+	for (unsigned i = 1; i < NUMM; i += 2) {
 		setAlpha(&m_mainMenu[i*4], 0);
 	}
-	for (unsigned i = 11; i < NUMM; i++) {
-		setAlpha(&m_mainMenu[i*4], 0);
-	}
-	m_mainMenu_choice = 1;
-	m_mainMenu_numChoices = 5;
-	m_pauseMenu_choice = 1;
-	m_pauseMenu_numChoices = 3;
-	m_settingsMenu_choice = 1;
-	m_settingsMenu_numChoices = 1;
-	m_hpBar = &m_hudElements[4];
 	
+	m_main_numChoices = 5;
+	m_pause_numChoices = 3;
+	m_settings_numChoices = 1;
+
+	m_main_blink = 0;
+	m_main_blinkChg = 5;
+	m_main_blinkLoc = m_mainMenu[0].position;
+	m_main_blinkSize = m_mainMenu[2].position - m_main_blinkLoc;
 	m_main.setTexture(m_mainTex);
 	m_settings.setTexture(m_settingsTex);
 	m_displayBar.setTexture(m_displayBarTex);
 	m_displayBar.setPosition(0.0f, (float)APP_HEIGHT - m_displayBarTex.getSize().y);
 	m_score.setFont(m_regFont);
 	m_score.setPosition(50, 550);
+	m_hpBar = &m_hudElements[4];
 
 	return 1;
 }
@@ -90,6 +88,14 @@ void GameGUI::affixPos(sf::Vertex sprite[4], float coord[], float pos[])
 	sprite[1].position = sf::Vector2f(pos[0] + coord[2] / 2.f, pos[1] - coord[3] / 2.f);
 	sprite[2].position = sf::Vector2f(pos[0] + coord[2] / 2.f, pos[1] + coord[3] / 2.f);
 	sprite[3].position = sf::Vector2f(pos[0] - coord[2] / 2.f, pos[1] + coord[3] / 2.f);
+}
+
+void GameGUI::affixPos(sf::Vertex sprite[4], sf::Vector2f topLeft, sf::Vector2f size)
+{
+	sprite[0].position = topLeft;
+	sprite[1].position = topLeft + sf::Vector2f(size.x, 0);
+	sprite[2].position = topLeft + size;
+	sprite[3].position = topLeft + sf::Vector2f(0, size.y);
 }
 
 void GameGUI::setAlpha(sf::Vertex sprite[4], unsigned char alpha)
@@ -112,11 +118,13 @@ void GameGUI::updateGameState(const GameState& state)
 
 void GameGUI::selectPauseChoice(unsigned choice)
 {
-	setAlpha(&m_pauseMenu[m_pauseMenu_choice*8-4], 0);
-	setAlpha(&m_pauseMenu[m_pauseMenu_choice*8], 255);
+	if (m_pause_choice >= 1 && m_pause_choice <= m_pause_numChoices) {
+		setAlpha(&m_pauseMenu[m_pause_choice*8-4], 0);
+		setAlpha(&m_pauseMenu[m_pause_choice*8], 255);
+	}
 	setAlpha(&m_pauseMenu[choice*8-4], 255);
 	setAlpha(&m_pauseMenu[choice*8], 0);
-	m_pauseMenu_choice = choice;
+	m_pause_choice = choice;
 }
 
 void GameGUI::processPauseChoice(unsigned choice)
@@ -128,11 +136,13 @@ void GameGUI::processPauseChoice(unsigned choice)
 
 void GameGUI::selectSettingsChoice(unsigned choice)
 {
-	setAlpha(&m_settingsMenu[m_settingsMenu_choice*16-8], 0);
-	setAlpha(&m_settingsMenu[m_settingsMenu_choice*16-4], 255);
+	if (m_settings_choice >= 1 && m_settings_choice <= m_settings_numChoices) {
+		setAlpha(&m_settingsMenu[m_settings_choice*16-8], 0);
+		setAlpha(&m_settingsMenu[m_settings_choice*16-4], 255);
+	}
 	setAlpha(&m_settingsMenu[choice*16-8], 255);
 	setAlpha(&m_settingsMenu[choice*16-4], 0);
-	m_settingsMenu_choice = choice;
+	m_settings_choice = choice;
 }
 
 void GameGUI::processSettingsChoice(unsigned choice)
@@ -151,11 +161,14 @@ void GameGUI::processSettingsSwitches()
 
 void GameGUI::selectMainChoice(unsigned choice)
 {
-	setAlpha(&m_mainMenu[m_mainMenu_choice*8-8], 0);
-	setAlpha(&m_mainMenu[m_mainMenu_choice*8-4], 255);
-	setAlpha(&m_mainMenu[choice*8-8], 255);
-	setAlpha(&m_mainMenu[choice*8-4], 0);
-	m_mainMenu_choice = choice;
+	if (m_main_choice >= 1 && m_main_choice <= m_main_numChoices) {
+		setAlpha(&m_mainMenu[m_main_choice*8-4], 0);
+		setAlpha(&m_mainMenu[m_main_choice*8], 255);
+	}
+	setAlpha(&m_mainMenu[choice*8-4], 255);
+	setAlpha(&m_mainMenu[choice*8], 0);
+	affixPos(&m_mainMenu[0], m_main_blinkLoc + sf::Vector2f(0, (choice-1) * 50.f), m_main_blinkSize);
+	m_main_choice = choice;
 }
 
 void GameGUI::processMainChoice(unsigned choice)
@@ -164,32 +177,41 @@ void GameGUI::processMainChoice(unsigned choice)
 	else if (choice == 2) startGame();
 }
 
+void GameGUI::mainBlink()
+{
+	if (m_main_blink + m_main_blinkChg < 0 ||
+		m_main_blink + m_main_blinkChg > 255) m_main_blinkChg *= -1;
+	m_main_blink += m_main_blinkChg;
+	setAlpha(&m_mainMenu[0], m_main_blink);
+}
+
 void GameGUI::updateAppState(const std::vector<sf::Event> &keyEvents)
 {
+	if (appState == MAIN) mainBlink();
 	for (unsigned i = 0; i < keyEvents.size(); i++) {
 		if (appState == PAUSED) {
 			if (conf::pressing(conf::DOWN, keyEvents[i].key.code))
-				selectPauseChoice(m_pauseMenu_choice % m_pauseMenu_numChoices + 1);
+				selectPauseChoice(m_pause_choice % m_pause_numChoices + 1);
 			else if (conf::pressing(conf::UP, keyEvents[i].key.code))
-				selectPauseChoice(m_pauseMenu_choice == 1 ? m_pauseMenu_numChoices : m_pauseMenu_choice - 1);
+				selectPauseChoice(m_pause_choice == 1 ? m_pause_numChoices : m_pause_choice - 1);
 			if (keyEvents[i].key.code == sf::Keyboard::Return)
-				processPauseChoice(m_pauseMenu_choice);
+				processPauseChoice(m_pause_choice);
 		}
 		else if (appState == SETTINGS) {
 			if (conf::pressing(conf::DOWN, keyEvents[i].key.code))
-				selectSettingsChoice(m_settingsMenu_choice % m_settingsMenu_numChoices + 1);
+				selectSettingsChoice(m_settings_choice % m_settings_numChoices + 1);
 			else if (conf::pressing(conf::UP, keyEvents[i].key.code))
-				selectSettingsChoice(m_settingsMenu_choice == 1 ? m_settingsMenu_numChoices : m_settingsMenu_choice - 1);
+				selectSettingsChoice(m_settings_choice == 1 ? m_settings_numChoices : m_settings_choice - 1);
 			if (keyEvents[i].key.code == sf::Keyboard::Return)
-				processSettingsChoice(m_settingsMenu_choice);
+				processSettingsChoice(m_settings_choice);
 		}
 		else if (appState == MAIN) {
 			if (conf::pressing(conf::DOWN, keyEvents[i].key.code))
-				selectMainChoice(m_mainMenu_choice % m_mainMenu_numChoices + 1);
+				selectMainChoice(m_main_choice % m_main_numChoices + 1);
 			else if (conf::pressing(conf::UP, keyEvents[i].key.code))
-				selectMainChoice(m_mainMenu_choice == 1 ? m_mainMenu_numChoices : m_mainMenu_choice - 1);
+				selectMainChoice(m_main_choice == 1 ? m_main_numChoices : m_main_choice - 1);
 			if (keyEvents[i].key.code == sf::Keyboard::Return)
-				processMainChoice(m_mainMenu_choice);
+				processMainChoice(m_main_choice);
 		}
 		if (keyEvents[i].key.code == sf::Keyboard::Escape) {
 			if (appState == PAUSED) resumeGame();
@@ -204,10 +226,15 @@ void GameGUI::updateAppState(const std::vector<sf::Event> &keyEvents)
 
 void GameGUI::transitionState()
 {
-	if (appState == PAUSED) selectPauseChoice(1);
+	if (appState == PAUSED) {
+		selectPauseChoice(1);
+	}
 	if (appState == SETTINGS) {
 		selectSettingsChoice(1);
 		processSettingsSwitches();
+	}
+	if (appState == MAIN) {
+		selectMainChoice(1);
 	}
 }
 
