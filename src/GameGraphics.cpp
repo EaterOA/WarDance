@@ -1,3 +1,4 @@
+#include "Util.hpp"
 #include "Config.hpp"
 #include "GameGraphics.hpp"
 #include "GameMechanics.hpp"
