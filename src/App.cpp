@@ -28,6 +28,8 @@ bool appInit()
 	if (!gAgent.init()) return false;
 
 	appState = MAIN;
+    prevState = NONE;
+    haltState = NONE;
 
 	return true;
 }
@@ -99,8 +101,10 @@ std::vector<sf::Event> processEvents()
 			appState = NOFOCUS;
 		}
 		else if (event.type == sf::Event::GainedFocus) {
+            if (haltState == NONE) continue;
 			if (haltState == GAME) pauseGame();
 			else appState = haltState;
+            haltState = NONE;
 		}
 		else if (event.type == sf::Event::KeyPressed) keyEvents.push_back(event);
 	}
