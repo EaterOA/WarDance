@@ -6,6 +6,8 @@
 
 struct GameState {
 	GameState();
+	void cleanAll();
+	void cleanActors();
 	~GameState();
 	bool inMap(sf::Vector2f p) const;
 
@@ -26,7 +28,8 @@ class GameMechanics {
 public:
 	bool init();
 	void start();
-	void reset();
+	void resetAll();
+	void resetActors();
 	void updateState(const sf::RenderWindow &window, const sf::Time &elapsed);
 	void tick();
 	bool cleanUp();

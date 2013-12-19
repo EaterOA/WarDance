@@ -7,17 +7,17 @@
 
 bool GameGUI::init()
 {
-	const unsigned BUFF = 100, NUMHUD = 2, NUMP = 7, NUMS = 4, NUMM = 11;
+	const unsigned BUFF = 100;
 	
 	if (!m_guisheet.loadFromFile("images/guisheet.png")) return 0;
 	if (!m_mainTex.loadFromFile("images/main.png")) return 0;
 	if (!m_settingsTex.loadFromFile("images/settings.png")) return 0;
 	if (!m_displayBarTex.loadFromFile("images/hud.png")) return 0;
 	if (!m_regFont.loadFromFile("fonts/stenc_ex.ttf")) return 0;
-	m_guisheet.setSmooth(true);
 
 	std::ifstream fin;
 	float coord[BUFF*4], pos[BUFF*2];
+	float *coordPtr = coord, *posPtr = pos;
     fin.open("config/guisheet.txt");
 	if (!fin) return 0;
 	for (unsigned i = 0; i < BUFF*4 && fin >> coord[i] >> coord[i+1] >> coord[i+2] >> coord[i+3]; i += 4) fin.ignore(1000, '\n');
@@ -27,37 +27,40 @@ bool GameGUI::init()
 	for (unsigned i = 0; i < BUFF*2 && fin >> pos[i] >> pos[i+1]; i += 2) fin.ignore(1000, '\n');
     fin.close();
 
-	m_hudElements = sf::VertexArray(sf::Quads, NUMHUD*4);
-	float *coordPtr = coord, *posPtr = pos;
-	for (unsigned i = 0; i < NUMHUD; i++, coordPtr += 4, posPtr += 2) {
+	m_pause_numChoices = 3;
+	m_settings_numChoices = 1;
+	m_main_numChoices = 6;
+	unsigned num_hud = 2,
+		     num_p = m_pause_numChoices*2 + 1,
+			 num_s = m_settings_numChoices*4,
+			 num_m = m_main_numChoices*2 + 1;
+
+	m_hudElements = sf::VertexArray(sf::Quads, num_hud*4);
+	for (unsigned i = 0; i < num_hud; i++, coordPtr += 4, posPtr += 2) {
 		affixTexture(&m_hudElements[i*4], coordPtr);
 		affixPos(&m_hudElements[i*4], coordPtr, posPtr);
 	}
-	m_pauseMenu = sf::VertexArray(sf::Quads, NUMP*4);
-	for (unsigned i = 0; i < NUMP; i++, coordPtr += 4, posPtr += 2) {
+	m_pauseMenu = sf::VertexArray(sf::Quads, num_p*4);
+	for (unsigned i = 0; i < num_p; i++, coordPtr += 4, posPtr += 2) {
 		affixTexture(&m_pauseMenu[i*4], coordPtr);
 		affixPos(&m_pauseMenu[i*4], coordPtr, posPtr);
 	}
-	for (unsigned i = 1; i < NUMP; i += 2) {
+	for (unsigned i = 1; i < num_p; i += 2) {
 		setAlpha(&m_pauseMenu[i*4], 0);
 	}
-	m_settingsMenu = sf::VertexArray(sf::Quads, NUMS*4);
-	for (unsigned i = 0; i < NUMS; i++, coordPtr += 4, posPtr += 2) {
+	m_settingsMenu = sf::VertexArray(sf::Quads, num_s*4);
+	for (unsigned i = 0; i < num_s; i++, coordPtr += 4, posPtr += 2) {
 		affixTexture(&m_settingsMenu[i*4], coordPtr);
 		affixPos(&m_settingsMenu[i*4], coordPtr, posPtr);
 	}
-	m_mainMenu = sf::VertexArray(sf::Quads, NUMM*4);
-	for (unsigned i = 0; i < NUMM; i++, coordPtr += 4, posPtr += 2) {
+	m_mainMenu = sf::VertexArray(sf::Quads, num_m*4);
+	for (unsigned i = 0; i < num_m; i++, coordPtr += 4, posPtr += 2) {
 		affixTexture(&m_mainMenu[i*4], coordPtr);
 		affixPos(&m_mainMenu[i*4], coordPtr, posPtr);
 	}
-	for (unsigned i = 1; i < NUMM; i += 2) {
+	for (unsigned i = 1; i < num_m; i += 2) {
 		setAlpha(&m_mainMenu[i*4], 0);
 	}
-	
-	m_main_numChoices = 5;
-	m_pause_numChoices = 3;
-	m_settings_numChoices = 1;
 
 	m_main_blink = 0;
 	m_main_blinkChg = 5;
@@ -175,6 +178,7 @@ void GameGUI::processMainChoice(unsigned choice)
 {
 	if (choice == 1) startGame();
 	else if (choice == 2) startGame();
+	else if (choice == 6) endGame();
 }
 
 void GameGUI::mainBlink()

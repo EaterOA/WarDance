@@ -44,7 +44,7 @@ void updateView(sf::Vector2f pos)
 void paint()
 {
 	window.setView(camera);
-	if (appState != SETTINGS) window.draw(gAgent);
+	if (appState == PAUSED || appState == GAME) window.draw(gAgent);
 	window.setView(hud);
 	window.draw(guiAgent);
 	window.setView(camera);
@@ -129,8 +129,8 @@ void appStart()
 			updateView(mAgent.getState().player->getPos());
 			paint();
 			if (playerDead) {
-				window.close();
-				return;
+				appState = MAIN;
+				mAgent.resetAll();
 			}
 		}
 	}

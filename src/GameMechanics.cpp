@@ -5,14 +5,29 @@ GameState::GameState()
 {
 	player = 0;
 	score = 0;
-	level = 0;
+	level = 1;
+}
+
+void GameState::cleanAll()
+{
+	cleanActors();
+	score = 0;
+	level = 1;
+}
+
+void GameState::cleanActors()
+{
+	delete player;
+	for (unsigned i = 0; i < enemies.size(); i++) delete enemies[i];
+	for (unsigned i = 0; i < projectiles.size(); i++) delete projectiles[i];
+	player = 0;
+	enemies = std::vector<Fighter*>();
+	projectiles = std::vector<Projectile*>();
 }
 
 GameState::~GameState()
 {
-	for (unsigned i = 0; i < enemies.size(); i++) delete enemies[i];
-	for (unsigned i = 0; i < projectiles.size(); i++) delete projectiles[i];
-	delete player;
+	cleanActors();
 }
 
 bool GameState::inMap(sf::Vector2f p) const
@@ -27,9 +42,14 @@ bool GameMechanics::init()
 	return true;
 }
 
-void GameMechanics::reset()
+void GameMechanics::resetAll()
 {
-	m_state = GameState();
+	m_state.cleanAll();
+}
+
+void GameMechanics::resetActors()
+{
+	m_state.cleanActors();
 }
 
 void GameMechanics::start()
