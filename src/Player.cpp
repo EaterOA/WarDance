@@ -18,12 +18,12 @@ void Player::act(GameState &state)
 	Actor::act(state);
 	m_dir = util::toDir(state.mouse.x - m_pos.x, state.mouse.y - m_pos.y);
 
-	cooldown();
+	cooldown(state);
 	if (state.mouseLeft && m_attack_cd <= 0) attack(state);
 }
 
 void Player::attack(GameState& state)
 {
-	m_attack_cd = 10;
+	m_attack_cd = 150;
 	shoot(state, 40.f, 10.f);
 }

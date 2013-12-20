@@ -17,7 +17,7 @@ void Sprinkler::hit(int damage, GameState& state)
 
 void Sprinkler::attack(GameState& state)
 {
-	m_attack_cd = 10;
+	m_attack_cd = 150;
 	m_dir = util::rotateRad(m_dir, util::toRad(10.f));
 	shoot(state, 20.f, 0);
 }
@@ -25,6 +25,6 @@ void Sprinkler::attack(GameState& state)
 void Sprinkler::act(GameState& state)
 {
 	Actor::act(state);
-	cooldown();
+	cooldown(state);
 	if (m_attack_cd <= 0) attack(state);
 }

@@ -33,7 +33,7 @@ public:
 	int getFaction() const;
 protected:
 	virtual void attack(GameState &state) = 0;
-	void cooldown();
+	virtual void cooldown(GameState &state);
 	void shoot(GameState &state, float offsetX, float offsetY);
 	void shoot(GameState &state, sf::Vector2f &dest, float offsetX, float offsetY);
 	void shoot(GameState &state, float dir, float offsetX, float offsetY);
@@ -67,8 +67,9 @@ public:
 	virtual void hit(int damage, GameState& state);
 protected:
 	virtual void attack(GameState& state);
+    virtual void cooldown(GameState& state);
 	float m_max_v;
-	int m_decision_cd;
+	int m_move_cd;
 };
 
 class Sprinkler: public Fighter
@@ -89,7 +90,8 @@ public:
 	virtual void hit(int damage, GameState& state);
 protected:
 	virtual void attack(GameState& state);
-	float m_move_cd;
+    virtual void cooldown(GameState& state);
+	int m_move_cd;
 	float m_max_v;
 	float m_gunDir1, m_gunDir2;
 };

@@ -97,6 +97,7 @@ std::vector<sf::Event> processEvents()
 			break;
 		}
 		else if (event.type == sf::Event::LostFocus) {
+            if (haltState != NONE) continue;
 			haltState = appState;
 			appState = NOFOCUS;
 		}
@@ -118,25 +119,21 @@ void appStart()
 	while (window.isOpen()) {
 
 		std::vector<sf::Event> keyEvents = processEvents();
-		
 		guiAgent.updateAppState(keyEvents);
 
-		if (appState == MAIN || appState == PAUSED || appState == SETTINGS) {
-			paint();
-		}
-		else if (appState == GAME) {
+		if (appState == GAME) {
 			mAgent.updateState(window, gameClock.restart());
 			mAgent.tick();
 			bool playerDead = mAgent.cleanUp();
 			gAgent.updateSprites(mAgent.getState());
 			guiAgent.updateGameState(mAgent.getState());
 			updateView(mAgent.getState().player->getPos());
-			paint();
 			if (playerDead) {
 				appState = MAIN;
 				mAgent.resetAll();
 			}
 		}
+        if (appState != NOFOCUS) paint();
 	}
 }
 
