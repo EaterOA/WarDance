@@ -53,6 +53,12 @@ void paint()
 	window.display();
 }
 
+void goToMainMenu()
+{
+    appState = MAIN;
+    guiAgent.transitionState();
+}
+
 void startGame()
 {
 	appState = GAME;

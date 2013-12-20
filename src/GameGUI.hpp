@@ -1,9 +1,7 @@
 #ifndef GAME_GUI_HPP
 #define GAME_GUI_HPP
 
-#include "Util.hpp"
 #include <SFML/Graphics.hpp>
-#include "App.hpp"
 
 struct GameState;
 

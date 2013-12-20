@@ -2,9 +2,7 @@
 #include "Config.hpp"
 #include "GameGraphics.hpp"
 #include "GameMechanics.hpp"
-#include "Actors.hpp"
 #include <fstream>
-#include <vector>
 
 bool GameGraphics::init()
 {

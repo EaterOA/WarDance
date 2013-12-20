@@ -178,6 +178,7 @@ void GameGUI::processMainChoice(unsigned choice)
 {
 	if (choice == 1) startGame();
 	else if (choice == 2) startGame();
+    else if (choice == 4) goToSettings();
 	else if (choice == 6) endGame();
 }
 
@@ -222,7 +223,7 @@ void GameGUI::updateAppState(const std::vector<sf::Event> &keyEvents)
 			else if (appState == GAME) pauseGame();
 			else if (appState == SETTINGS) {
 				if (prevState == PAUSED) pauseGame();
-				//else if (prevState == MAIN)
+				else if (prevState == MAIN) goToMainMenu();
 			}
 		}
 	}

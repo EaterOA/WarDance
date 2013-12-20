@@ -1,7 +1,6 @@
 #ifndef GAME_GRAPHICS_HPP
 #define GAME_GRAPHICS_HPP
 
-#include "Util.hpp"
 #include <SFML/Graphics.hpp>
 #include <vector>
 

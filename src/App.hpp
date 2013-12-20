@@ -1,8 +1,6 @@
 #ifndef APP_HPP
 #define APP_HPP
 
-#include "Util.hpp"
-
 enum AppState {
 	SPLASH, MAIN, SETTINGS, GAME, PAUSED, DEAD, NOFOCUS, CLOSED, NONE
 };
@@ -13,6 +11,7 @@ extern AppState appState;
 extern AppState prevState;
 extern AppState haltState;
 
+void goToMainMenu();
 void startGame();
 void pauseGame();
 void resumeGame();
