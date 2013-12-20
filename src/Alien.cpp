@@ -38,7 +38,7 @@ void Alien::act(GameState& state)
 	Actor::act(state);
 	cooldown(state);
 	if (m_move_cd <= 0) {
-		m_move_cd = 100;
+		m_move_cd = util::rand(200, 600);
         sf::Vector2f vec = state.player->getPos() - m_pos;
         float vr = util::getLen(vec);
         float normX = vec.x / vr;

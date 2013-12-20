@@ -4,6 +4,12 @@
 
 namespace util
 {
+    
+    int rand(int min, int max)
+    {
+        int range = max - min + 1;
+        return std::rand() % range + min;
+    }
 
 	float toDir(float vx, float vy)
 	{

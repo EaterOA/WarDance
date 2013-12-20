@@ -24,6 +24,7 @@ namespace util
 
 	const float PI = 3.14159265f;
 
+    int rand(int min, int max);
 	float toDir(float vx, float vy);
 	float toRad(float deg);
 	float toDeg(float rad);
