@@ -1,8 +1,0 @@
-0.0 -30.0       # HP Case
-0.0 -30.0       # HP Bar
-10.0 0.0        # Player
-0.0 0.0         # Grunt
-0.0 0.0         # Sprinkler
-0.0 0.0         # Regular bullet
-0.0 0.0         # Splitting bullet
-10.0 0.0        # Alien

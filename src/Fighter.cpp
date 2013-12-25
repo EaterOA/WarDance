@@ -2,8 +2,8 @@
 #include "GameMechanics.hpp"
 #include <math.h>
 
-Fighter::Fighter(int type, util::ShapeVector size, sf::Vector2f pos, int hp, int faction)
-	: Actor(type, pos)
+Fighter::Fighter(std::string frame, util::ShapeVector size, sf::Vector2f pos, int hp, int faction)
+	: Actor(frame, pos)
 {
 	m_attack_cd = 0;
 	m_size = size;

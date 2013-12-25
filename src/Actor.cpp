@@ -1,9 +1,9 @@
 #include "Actors.hpp"
 #include "GameMechanics.hpp"
 
-Actor::Actor(int type, sf::Vector2f pos)
+Actor::Actor(std::string frame, sf::Vector2f pos)
 {
-	m_type = type;
+	m_frame = frame;
 	m_pos = pos;
 }
 
@@ -13,9 +13,9 @@ void Actor::act(GameState& state)
 	m_pos += m_vel * state.elapsed.asSeconds();
 }
 
-int Actor::getType() const
+const std::string& Actor::getFrame() const
 {
-	return m_type;
+	return m_frame;
 }
 
 sf::Vector2f Actor::getPos() const

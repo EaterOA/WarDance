@@ -1,6 +1,4 @@
 #include "Util.hpp"
-#include <math.h>
-#include <algorithm>
 
 namespace util
 {
@@ -181,5 +179,12 @@ namespace util
 		}
 
 		return true;
+	}
+
+	bool readf(std::istream &in, unsigned amt, float arr[], bool endline)
+	{
+		for (unsigned i = 0; i < amt && in >> arr[i]; i++);
+		if (endline) in.ignore(1000, '\n');
+		return !in.fail();
 	}
 }

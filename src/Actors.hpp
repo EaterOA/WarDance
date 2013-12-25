@@ -9,13 +9,13 @@ struct GameState;
 class Actor
 {
 public:
-	Actor(int type, sf::Vector2f pos);
+	Actor(std::string frame, sf::Vector2f pos);
 	virtual void act(GameState&);
 	sf::Vector2f getPos() const;
-	int getType() const;
+	const std::string& getFrame() const;
 	float getDir() const;
 protected:
-	int m_type;
+	std::string m_frame;
 	sf::Vector2f m_pos, m_vel, m_acc;
 	float m_dir;
 };
@@ -23,7 +23,7 @@ protected:
 class Fighter: public Actor
 {
 public:
-	Fighter(int type, util::ShapeVector size, sf::Vector2f pos, int hp, int faction);
+	Fighter(std::string frame, util::ShapeVector size, sf::Vector2f pos, int hp, int faction);
 	virtual void act(GameState &state) = 0;
 	virtual bool isDead(GameState &state);
 	virtual void hit(int damage, GameState &state);
@@ -102,7 +102,7 @@ protected:
 class Projectile: public Fighter
 {
 public:
-	Projectile(int type, sf::Vector2f pos, util::ShapeVector size, int hp, int damage, int faction);
+	Projectile(std::string frame, sf::Vector2f pos, util::ShapeVector size, int hp, int damage, int faction);
 	virtual bool isDead(GameState &state);
 protected:
 	virtual void attack(GameState& state);

@@ -2,9 +2,13 @@
 #define UTIL_HPP
 
 #include <iostream>
+#include <fstream>
 #include <vector>
-#include <SFML/Graphics.hpp>
 #include <math.h>
+#include <string>
+#include <sstream>
+#include <algorithm>
+#include <SFML/Graphics.hpp>
 
 #define MIN(a,b) (a < b ? a : b)
 #define MAX(a,b) (a > b ? a : b)
@@ -23,7 +27,7 @@ namespace util
 	};
 
 	const float PI = 3.14159265f;
-
+	
     int rand(int min, int max);
 	float toDir(float vx, float vy);
 	float toRad(float deg);
@@ -41,6 +45,8 @@ namespace util
 	bool hasCollided(sf::Vector2f c1, float r1, sf::Vector2f c2, float r2);
 	bool hasCollided(sf::Vector2f c1, sf::Vector2f s1, float dir1, sf::Vector2f c2, float r2);
 	bool hasCollided(sf::Vector2f c1, sf::Vector2f s1, float dir1, sf::Vector2f c2, sf::Vector2f s2, float dir2);
+	
+	bool readf(std::istream &in, unsigned amt, float arr[], bool endline);
 }
 
 #endif

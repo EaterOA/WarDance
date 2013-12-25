@@ -20,11 +20,11 @@ private:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 	//Main Menu
-	void selectMainChoice(unsigned choice);
-	void processMainChoice(unsigned choice);
+	void selectMainChoice(int choice);
+	void processMainChoice();
 	void mainBlink();
-	unsigned m_main_numChoices;
-	unsigned m_main_choice;
+	int m_main_numChoices;
+	int m_main_choice;
 	int m_main_blink, m_main_blinkChg;
 	sf::Vector2f m_main_blinkLoc, m_main_blinkSize;
 	sf::Sprite m_main;
@@ -32,18 +32,18 @@ private:
 	sf::VertexArray m_mainMenu;
 	
 	//Pause Menu
-	void selectPauseChoice(unsigned choice);
-	void processPauseChoice(unsigned choice);
-	unsigned m_pause_numChoices;
-	unsigned m_pause_choice;
+	void selectPauseChoice(int choice);
+	void processPauseChoice();
+	int m_pause_numChoices;
+	int m_pause_choice;
 	sf::VertexArray m_pauseMenu;
 
 	//Settings Menu
-	void selectSettingsChoice(unsigned choice);
-	void processSettingsChoice(unsigned choice);
+	void selectSettingsChoice(int choice);
+	void processSettingsChoice();
 	void processSettingsSwitches();
-	unsigned m_settings_numChoices;
-	unsigned m_settings_choice;
+	int m_settings_numChoices;
+	int m_settings_choice;
 	sf::Sprite m_settings;
 	sf::Texture m_settingsTex;
 	sf::VertexArray m_settingsMenu;
@@ -54,7 +54,7 @@ private:
 	sf::Sprite m_displayBar;
 	sf::Texture m_displayBarTex;
 	sf::Vertex* m_hpBar;
-	sf::VertexArray m_hudElements;
+	sf::VertexArray m_hud;
 	sf::Texture m_guisheet;
 };
 

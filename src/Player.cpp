@@ -1,9 +1,8 @@
 #include "Actors.hpp"
 #include "GameMechanics.hpp"
-#include <math.h>
 
 Player::Player(sf::Vector2f pos, int hp)
-	: Fighter(2, util::ShapeVector(util::Rectangle, 25.f, 30.f), pos, hp, 0)
+	: Fighter("player", util::ShapeVector(util::Rectangle, 25.f, 30.f), pos, hp, 0)
 {
 	m_max_v = sf::Vector2f(150.f, 150.f);
 }

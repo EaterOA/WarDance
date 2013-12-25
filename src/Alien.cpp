@@ -2,7 +2,7 @@
 #include "GameMechanics.hpp"
 
 Alien::Alien(sf::Vector2f pos)
-	: Fighter(7, util::ShapeVector(util::Rectangle, 60.f, 45.f), pos, 250, 1)
+	: Fighter("alien", util::ShapeVector(util::Rectangle, 60.f, 45.f), pos, 250, 1)
 {
 	m_dir = 0;
     m_move_cd = 0;

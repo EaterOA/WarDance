@@ -15,20 +15,25 @@ public:
 	void updateSprites(const GameState&);
 private:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
-	void affixPos(sf::Vertex sprite[4], sf::Vector2f center, int type, float offsetLX, float offsetRX, float offsetLY, float offsetRY);
-	void affixPos(sf::Vertex sprite[4], sf::Vector2f center, int type);
-	void affixTexture(sf::Vertex sprite[4], int type);
+	void affixPos(sf::Vertex sprite[4], sf::Vector2f center, const std::string& frame, float offsetLX, float offsetRX, float offsetLY, float offsetRY);
+	void affixPos(sf::Vertex sprite[4], sf::Vector2f center, const std::string& frame);
+	void affixTexture(sf::Vertex sprite[4], const std::string& frame);
 	void rotateSprite(sf::Vertex sprite[4], float dir, sf::Vector2f center);
 	void affixHealthBar(sf::Vertex bar[8], const Fighter &fighter);
 	void transformSprite(sf::Vertex sprite[4], const Actor &actor);
     void addHitbox(const Fighter &fighter);
-	float m_texCoords[400];
-	float m_sprCoords[200];
+
+	float m_texCoords[4*1000];
+	float m_sprCoords[2*1000];
+	std::vector<std::map<std::string, int> > m_lvlFrameMap;
+	std::vector<sf::Texture> m_lvlBackgroundTex;
+	sf::Sprite m_background;
+	std::vector<sf::Texture> m_lvlSpritesheet;
 	sf::VertexArray m_sprites;
     std::vector<sf::Vertex> m_hitboxes;
-	sf::Sprite m_map;
-	sf::Texture m_spritesheet;
-	sf::Texture m_map_tex[5];
+
+	int m_hitbox_enabled;
+	int m_level;
 };
 
 #endif

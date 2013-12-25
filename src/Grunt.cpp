@@ -1,9 +1,8 @@
 #include "Actors.hpp"
 #include "GameMechanics.hpp"
-#include <math.h>
 
 Grunt::Grunt(sf::Vector2f pos)
-	: Fighter(3, util::ShapeVector(util::Rectangle, 50.f, 50.f), pos, 20, 1)
+	: Fighter("grunt", util::ShapeVector(util::Rectangle, 50.f, 50.f), pos, 20, 1)
 {
 	m_max_v = 50.f;
 	m_move_cd = 0;

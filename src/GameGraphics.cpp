@@ -2,52 +2,90 @@
 #include "Config.hpp"
 #include "GameGraphics.hpp"
 #include "GameMechanics.hpp"
-#include <fstream>
 
 bool GameGraphics::init()
 {
-	std::ifstream fin;	
-    fin.open("config/spritesheet.txt");
-	if (!fin) return 0;
-	for (int i = 0; i < 100*4 && fin >> m_texCoords[i] >> m_texCoords[i+1] >> m_texCoords[i+2] >> m_texCoords[i+3]; i += 4) fin.ignore(1000, '\n');
-    fin.close();
-	fin.open("config/spritemap.txt");
-	if (!fin) return 0;
-	for (int i = 0; i < 100*2 && fin >> m_sprCoords[i] >> m_sprCoords[i+1]; i += 2) fin.ignore(1000, '\n');
-	fin.close();
+	std::ifstream fin;
+	
+	//Initializing texture and map lists
+	unsigned numLevels = unsigned(config["num_levels"]);
+	m_lvlBackgroundTex = std::vector<sf::Texture>(numLevels);
+	m_lvlSpritesheet = std::vector<sf::Texture>(numLevels);
+	m_lvlFrameMap = std::vector<std::map<std::string, int> >(numLevels);
 
-	if (!m_map_tex[0].loadFromFile("images/map0.png")) return 0;
-	if (!m_spritesheet.loadFromFile("images/spritesheet.png")) return 0;
-	m_map_tex[0].setSmooth(true);
-	m_map_tex[0].setRepeated(true);
-	m_map.setTexture(m_map_tex[0]);
-	m_map.setTextureRect(sf::IntRect(0, 0, 1600, 1200));
-	m_spritesheet.setSmooth(true);
+	//Loading level background textures
+	for (unsigned i = 0; i < numLevels; i++) {
+		std::stringstream ss;
+		ss << "images/map" << i << ".png";
+		if (!m_lvlBackgroundTex[i].loadFromFile(ss.str())) return 0;
+		m_lvlBackgroundTex[i].setRepeated(true);
+	}
+
+	//Loading level spritesheets
+	for (unsigned i = 0; i < numLevels; i++) {
+		std::stringstream ss;
+		ss << "images/spritesheet" << i << ".png";
+		m_lvlSpritesheet[i].loadFromFile(ss.str());
+		m_lvlSpritesheet[i].setSmooth(true);
+	}
+
+	//Reading sprite data
+	//Data format: frame name, 4 texture coordinates, 2 position offsets
+    fin.open("config/spritedata.txt");
+	if (!fin) return 0;
+	for (int i = 0, j = 0; i < 1000; i++) {
+		std::string frame;
+		if (!(fin >> frame)) break;
+		if (frame[0] == '-') {
+			j++;
+			i--;
+		}
+		else {
+			m_lvlFrameMap[j][frame] = i;
+			util::readf(fin, 4, m_texCoords + i*4, false);
+			util::readf(fin, 2, m_sprCoords + i*2, false);
+		}
+		fin.ignore(1000, '\n');
+	}
+    fin.close();
+
+	//Initializing some sprites and settings
+	m_background.setTexture(m_lvlBackgroundTex[0]);
+	m_background.setTextureRect(sf::IntRect(0, 0, 1600, 1200));
+	m_hitbox_enabled = config["hitbox_enabled"];
+	m_level = config["level"];
+
 	return 1;
 }
 
-void GameGraphics::affixPos(sf::Vertex sprite[4], sf::Vector2f center, int type, float offsetLX, float offsetRX, float offsetLY, float offsetRY)
+void GameGraphics::affixPos(sf::Vertex sprite[4], sf::Vector2f center, const std::string& frame, float offsetLX, float offsetRX, float offsetLY, float offsetRY)
 {
-	center += sf::Vector2f(m_sprCoords[type*2], m_sprCoords[type*2+1]);
+	float* coord = m_sprCoords + m_lvlFrameMap[(unsigned)m_level][frame] * 2;
+
+	center += sf::Vector2f(coord[0], coord[1]);
 	sprite[0].position = center + sf::Vector2f(offsetLX, offsetLY);
 	sprite[1].position = center + sf::Vector2f(offsetRX, offsetLY);
 	sprite[2].position = center + sf::Vector2f(offsetRX, offsetRY);
 	sprite[3].position = center + sf::Vector2f(offsetLX, offsetRY);
 }
 
-void GameGraphics::affixPos(sf::Vertex sprite[4], sf::Vector2f center, int type)
+void GameGraphics::affixPos(sf::Vertex sprite[4], sf::Vector2f center, const std::string& frame)
 {
-	float hwidth = m_texCoords[type*4+2] / 2.f;
-	float hheight = m_texCoords[type*4+3] / 2.f;
-	affixPos(sprite, center, type, -hwidth, hwidth, -hheight, hheight);
+	float* coord = m_texCoords + m_lvlFrameMap[(unsigned)m_level][frame] * 4;
+
+	float hwidth = coord[2] / 2.f;
+	float hheight = coord[3] / 2.f;
+	affixPos(sprite, center, frame, -hwidth, hwidth, -hheight, hheight);
 }
 
-void GameGraphics::affixTexture(sf::Vertex sprite[4], int type)
+void GameGraphics::affixTexture(sf::Vertex sprite[4], const std::string& frame)
 {
-	float x = m_texCoords[type*4+0];
-	float y = m_texCoords[type*4+1];
-	float w = m_texCoords[type*4+2];
-	float h = m_texCoords[type*4+3];
+	float* coord = m_texCoords + m_lvlFrameMap[(unsigned)m_level][frame] * 4;
+
+	float x = coord[0];
+	float y = coord[1];
+	float w = coord[2];
+	float h = coord[3];
 	sprite[0].texCoords = sf::Vector2f(x, y);
 	sprite[1].texCoords = sf::Vector2f(x+w, y);
 	sprite[2].texCoords = sf::Vector2f(x+w, y+h);
@@ -64,18 +102,18 @@ void GameGraphics::rotateSprite(sf::Vertex sprite[4], float dir, sf::Vector2f ce
 
 void GameGraphics::transformSprite(sf::Vertex sprite[4], const Actor &actor)
 {
-	affixPos(sprite, actor.getPos(), actor.getType());
-	affixTexture(sprite, actor.getType());
+	affixPos(sprite, actor.getPos(), actor.getFrame());
+	affixTexture(sprite, actor.getFrame());
 	rotateSprite(sprite, util::toDeg(actor.getDir()), actor.getPos());
 }
 
 void GameGraphics::affixHealthBar(sf::Vertex bar[8], const Fighter &fighter)
 {
 	float hpOffset = 40.f * fighter.getHP() / fighter.getMaxHP();
-	affixPos(bar, fighter.getPos(), 0, -20.f, 20.f, -4.5f, 4.5f);
-	affixPos(bar+4, fighter.getPos(), 1, -20.f, -20.f + hpOffset, -4.5f, 4.5f);
-	affixTexture(bar, 0);
-	affixTexture(bar+4, 1);
+	affixPos(bar, fighter.getPos(), "reg_hpcase", -20.f, 20.f, -4.5f, 4.5f);
+	affixPos(bar+4, fighter.getPos(), "reg_hpbar", -20.f, -20.f + hpOffset, -4.5f, 4.5f);
+	affixTexture(bar, "reg_hpcase");
+	affixTexture(bar+4, "reg_hpbar");
 }
 
 void GameGraphics::addHitbox(const Fighter &f)
@@ -112,18 +150,24 @@ void GameGraphics::addHitbox(const Fighter &f)
 
 void GameGraphics::updateSprites(const GameState &state)
 {
+	//Updating settings
+	m_hitbox_enabled = config["hitbox_enabled"];
+	m_level = config["level"];
+
+	//Recalculating sprite appearance
 	unsigned i = 4, j;
 	unsigned numSprites = 1 + 3*state.enemies.size() + state.projectiles.size();
 	m_sprites = sf::VertexArray(sf::Quads, 4*numSprites);
-    m_hitboxes = std::vector<sf::Vertex>();
+	if (m_hitbox_enabled)
+		m_hitboxes = std::vector<sf::Vertex>();
 
 	transformSprite(&m_sprites[0], *state.player);
-    if (config["hitbox_enabled"]) addHitbox(*state.player);
+    if (m_hitbox_enabled) addHitbox(*state.player);
 
 	for (j = 0; j < state.enemies.size(); i += 3*4, j++) {
 		transformSprite(&m_sprites[i], *state.enemies[j]);
 		affixHealthBar(&m_sprites[i+4], *state.enemies[j]);
-        if (config["hitbox_enabled"]) addHitbox(*state.enemies[j]);
+        if (m_hitbox_enabled) addHitbox(*state.enemies[j]);
 	}
 
 	for (j = 0; j < state.projectiles.size(); i += 4, j++) {
@@ -134,7 +178,7 @@ void GameGraphics::updateSprites(const GameState &state)
 
 void GameGraphics::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	target.draw(m_map);
-	target.draw(m_sprites, &m_spritesheet);
-    if (config["hitbox_enabled"]) target.draw(&m_hitboxes[0], m_hitboxes.size(), sf::Lines);
+	target.draw(m_background);
+	target.draw(m_sprites, &m_lvlSpritesheet[0]);
+    if (m_hitbox_enabled) target.draw(&m_hitboxes[0], m_hitboxes.size(), sf::Lines);
 }

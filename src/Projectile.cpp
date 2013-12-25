@@ -1,8 +1,8 @@
 #include "Actors.hpp"
 #include "GameMechanics.hpp"
 
-Projectile::Projectile(int type, sf::Vector2f pos, util::ShapeVector size, int hp, int damage, int faction)
-	: Fighter(type, size, pos, hp, faction)
+Projectile::Projectile(std::string frame, sf::Vector2f pos, util::ShapeVector size, int hp, int damage, int faction)
+	: Fighter(frame, size, pos, hp, faction)
 {
 	m_damage = damage;
 	m_faction = faction;
