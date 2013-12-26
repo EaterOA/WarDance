@@ -10,7 +10,12 @@ Projectile::Projectile(std::string frame, sf::Vector2f pos, util::ShapeVector si
 
 bool Projectile::isDead(GameState &state)
 {
-	return m_hp <= 0 || !state.inMap(m_pos);
+	//No hp or out of map
+	return m_hp <= 0 ||
+		   m_pos.x + m_size.x < 0 ||
+		   m_pos.x - m_size.x > state.map_width ||
+		   m_pos.y + m_size.y < 0 ||
+		   m_pos.y - m_size.y > state.map_height;
 }
 
 void Projectile::attack(GameState &state)

@@ -16,8 +16,8 @@ bool GameGraphics::init()
 	//Loading level background textures
 	for (unsigned i = 0; i < numLevels; i++) {
 		std::stringstream ss;
-		ss << "images/map" << i << ".png";
-		if (!m_lvlBackgroundTex[i].loadFromFile(ss.str())) return 0;
+		ss << "images/bg" << i << ".png";
+		if (!m_lvlBackgroundTex[i].loadFromFile(ss.str())) return false;
 		m_lvlBackgroundTex[i].setRepeated(true);
 	}
 
@@ -25,7 +25,7 @@ bool GameGraphics::init()
 	for (unsigned i = 0; i < numLevels; i++) {
 		std::stringstream ss;
 		ss << "images/spritesheet" << i << ".png";
-		m_lvlSpritesheet[i].loadFromFile(ss.str());
+		if (!m_lvlSpritesheet[i].loadFromFile(ss.str())) return false;
 		m_lvlSpritesheet[i].setSmooth(true);
 	}
 
@@ -33,7 +33,7 @@ bool GameGraphics::init()
 	//Data format: frame name, 4 texture coordinates, 2 position offsets
     fin.open("config/spritedata.txt");
 	if (!fin) return 0;
-	for (unsigned i = 0, j = 0; i < 1000; i++) {
+	for (unsigned i = 0, j = 0; i < 1000;) {
 		std::string frame;
 		if (!(fin >> frame)) break;
 		if (frame[0] == '-') {
@@ -41,8 +41,8 @@ bool GameGraphics::init()
 		}
 		else {
 			m_lvlFrameMap[j][frame] = (int)i;
-			util::readf(fin, 4, m_texCoords + i*4, false);
-			util::readf(fin, 2, m_sprCoords + i*2, false);
+			if (!util::readf(fin, 4, m_texCoords + i*4, false)) return false;
+			if (!util::readf(fin, 2, m_sprCoords + i*2, false)) return false;
             i++;
 		}
 		fin.ignore(1000, '\n');
@@ -55,7 +55,7 @@ bool GameGraphics::init()
 	m_hitbox_enabled = config["hitbox_enabled"];
 	m_level = config["level"];
 
-	return 1;
+	return true;
 }
 
 void GameGraphics::affixPos(sf::Vertex sprite[4], sf::Vector2f center, const std::string& frame, float offsetLX, float offsetRX, float offsetLY, float offsetRY)
@@ -153,6 +153,7 @@ void GameGraphics::updateSprites(const GameState &state)
 	//Updating settings
 	m_hitbox_enabled = config["hitbox_enabled"];
 	m_level = config["level"];
+	m_background.setTexture(m_lvlBackgroundTex[m_level]);
 
 	//Recalculating sprite appearance
 	unsigned i = 4, j;
@@ -179,6 +180,6 @@ void GameGraphics::updateSprites(const GameState &state)
 void GameGraphics::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	target.draw(m_background);
-	target.draw(m_sprites, &m_lvlSpritesheet[0]);
+	target.draw(m_sprites, &m_lvlSpritesheet[m_level]);
     if (m_hitbox_enabled) target.draw(&m_hitboxes[0], m_hitboxes.size(), sf::Lines);
 }

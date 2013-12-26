@@ -135,7 +135,6 @@ void appStart()
 			updateView(mAgent.getState().player->getPos());
 			if (playerDead) {
 				appState = MAIN;
-				mAgent.resetAll();
 			}
 		}
         if (appState != NOFOCUS) paint();

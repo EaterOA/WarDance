@@ -9,12 +9,19 @@ Player::Player(sf::Vector2f pos, int hp)
 
 void Player::act(GameState &state)
 {
+	//Compute velocity based on player activity
 	m_vel.x = m_vel.y = 0;
 	if (state.W && !state.S) m_vel.y = -m_max_v.y;
 	else if (!state.W && state.S) m_vel.y = m_max_v.y;
 	if (state.A && !state.D) m_vel.x = -m_max_v.x;
 	else if (!state.A && state.D) m_vel.x = m_max_v.x;
-	Actor::act(state);
+	m_pos += m_vel * state.elapsed.asSeconds();
+
+	//Bound by map
+	if (m_pos.x < 0) m_pos.x = 0;
+	else if (m_pos.x > (float)state.map_width) m_pos.x = (float)state.map_width;
+	if (m_pos.y < 0) m_pos.y = 0;
+	else if (m_pos.y > (float)state.map_height) m_pos.y = (float)state.map_height;
 	m_dir = util::toDir(state.mouse.x - m_pos.x, state.mouse.y - m_pos.y);
 
 	cooldown(state);

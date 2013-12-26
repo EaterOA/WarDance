@@ -5,18 +5,16 @@
 
 struct GameState {
 	GameState();
-	void cleanAll();
-	void cleanActors();
 	~GameState();
-	bool inMap(sf::Vector2f p) const;
+	void clean();
 
 	int map_width, map_height;
+	int score;
 	std::vector<Fighter*> enemies;
 	std::vector<Projectile*> projectiles;
 	Player* player;
-	int score;
-	int level;
 
+	sf::Time totalElapsed;
 	sf::Time elapsed;
 	sf::Vector2f mouse;
 	bool mouseLeft;
@@ -27,13 +25,16 @@ class GameMechanics {
 public:
 	bool init();
 	void start();
-	void resetAll();
-	void resetActors();
-	void updateState(const sf::RenderWindow &window, const sf::Time &elapsed);
+	void reset();
 	void tick();
 	bool cleanUp();
 	GameState& getState();
+	void updateState(const sf::RenderWindow &window, const sf::Time &elapsed);
+	void spawnEnemy(std::string name);
 private:
+	sf::Vector2f inMapEntrance();
+	sf::Vector2f offMapEntrance(float offsetX, float offsetY);
+
 	GameState m_state;
 };
 

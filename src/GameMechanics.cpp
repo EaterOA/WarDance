@@ -5,34 +5,22 @@ GameState::GameState()
 {
 	player = 0;
 	score = 0;
-	level = 1;
 }
 
-void GameState::cleanAll()
+GameState::~GameState()
 {
-	cleanActors();
+	clean();
+}
+
+void GameState::clean()
+{
 	score = 0;
-	level = 1;
-}
-
-void GameState::cleanActors()
-{
 	delete player;
 	for (unsigned i = 0; i < enemies.size(); i++) delete enemies[i];
 	for (unsigned i = 0; i < projectiles.size(); i++) delete projectiles[i];
 	player = 0;
 	enemies = std::vector<Fighter*>();
 	projectiles = std::vector<Projectile*>();
-}
-
-GameState::~GameState()
-{
-	cleanActors();
-}
-
-bool GameState::inMap(sf::Vector2f p) const
-{
-	return p.x >= 0 && p.x <= map_width && p.y >= 0 && p.y <= map_height;
 }
 
 bool GameMechanics::init()
@@ -42,41 +30,19 @@ bool GameMechanics::init()
 	return true;
 }
 
-void GameMechanics::resetAll()
-{
-	m_state.cleanAll();
-}
-
-void GameMechanics::resetActors()
-{
-	m_state.cleanActors();
-}
-
 void GameMechanics::start()
 {
+	m_state.clean();
 	m_state.player = new Player(sf::Vector2f(100.f, 100.f), 50);
-}
-
-void GameMechanics::updateState(const sf::RenderWindow &window, const sf::Time &elapsed)
-{
-	m_state.elapsed = elapsed;
-	m_state.mouse = sf::Vector2f(sf::Mouse::getPosition(window));
-	m_state.mouse.y += window.getView().getCenter().y - window.getView().getSize().y / 2;
-	m_state.mouse.x += window.getView().getCenter().x - window.getView().getSize().x / 2;
-	m_state.mouseLeft = sf::Mouse::isButtonPressed(sf::Mouse::Left);
-	m_state.W = conf::pressing(conf::UP);
-	m_state.A = conf::pressing(conf::LEFT);
-	m_state.S = conf::pressing(conf::DOWN);
-	m_state.D = conf::pressing(conf::RIGHT);
 }
 
 void GameMechanics::tick()
 {
 	//Placeholder enemy generator
 	if (rand() % 200 == 0) {
-		if (rand() % 50 == 0) m_state.enemies.push_back(new Alien(sf::Vector2f(float(rand() % 1600), float(rand() % 1200))));
-		else if (rand() % 2 == 0) m_state.enemies.push_back(new Grunt(sf::Vector2f(float(rand() % 1600), float(rand() % 1200))));
-		else m_state.enemies.push_back(new Sprinkler(sf::Vector2f(float(rand() % 1600), float(rand() % 1200))));
+		if (rand() % 50 == 0) spawnEnemy("alien");
+		else if (rand() % 2 == 0) spawnEnemy("grunt");
+		else spawnEnemy("sprinkler");
 	}
 
 	m_state.player->act(m_state);
@@ -114,4 +80,53 @@ bool GameMechanics::cleanUp()
 GameState& GameMechanics::getState()
 {
 	return m_state;
+}
+
+void GameMechanics::updateState(const sf::RenderWindow &window, const sf::Time &elapsed)
+{
+	m_state.elapsed = elapsed;
+	m_state.totalElapsed += elapsed;
+	m_state.mouse = sf::Vector2f(sf::Mouse::getPosition(window));
+	m_state.mouse.y += window.getView().getCenter().y - window.getView().getSize().y / 2;
+	m_state.mouse.x += window.getView().getCenter().x - window.getView().getSize().x / 2;
+	m_state.mouseLeft = sf::Mouse::isButtonPressed(sf::Mouse::Left);
+	m_state.W = conf::pressing(conf::UP);
+	m_state.A = conf::pressing(conf::LEFT);
+	m_state.S = conf::pressing(conf::DOWN);
+	m_state.D = conf::pressing(conf::RIGHT);
+}
+
+void GameMechanics::spawnEnemy(std::string name)
+{
+	if (name == "grunt") {
+		sf::Vector2f pos = offMapEntrance(25, 25);
+		m_state.enemies.push_back(new Grunt(pos));
+	}
+	else if (name == "alien") {
+		sf::Vector2f pos = offMapEntrance(60, 60);
+		m_state.enemies.push_back(new Alien(pos));
+	}
+	else if (name == "sprinkler") {
+		sf::Vector2f pos = inMapEntrance();
+		m_state.enemies.push_back(new Sprinkler(pos));
+	}
+}
+
+sf::Vector2f GameMechanics::inMapEntrance()
+{
+	float x = (float)util::rand(0, m_state.map_width);
+	float y = (float)util::rand(0, m_state.map_height);
+	return sf::Vector2f(x, y);
+}
+
+sf::Vector2f GameMechanics::offMapEntrance(float offsetX, float offsetY)
+{
+	int side = util::rand(1, 4);
+	float x = (float)util::rand(0, m_state.map_width);
+	float y = (float)util::rand(0, m_state.map_height);
+	if (side == 1) x = (float)m_state.map_width + offsetX;
+	else if (side == 2) y = (float)m_state.map_height + offsetY;
+	else if (side == 3) x = -offsetX;
+	else if (side == 4) y = -offsetY;
+	return sf::Vector2f(x, y);
 }

@@ -7,17 +7,17 @@
 bool GameGUI::init()
 {
 	//Loading textures and fonts
-	if (!m_guisheet.loadFromFile("images/guisheet.png")) return 0;
-	if (!m_mainTex.loadFromFile("images/main.png")) return 0;
-	if (!m_settingsTex.loadFromFile("images/settings.png")) return 0;
-	if (!m_displayBarTex.loadFromFile("images/hud.png")) return 0;
-	if (!m_stencil.loadFromFile("fonts/stenc_ex.ttf")) return 0;
-	if (!m_liberation.loadFromFile("fonts/LiberationSerif-Regular.ttf")) return 0;
+	if (!m_guisheet.loadFromFile("images/guisheet.png")) return false;
+	if (!m_mainTex.loadFromFile("images/main.png")) return false;
+	if (!m_settingsTex.loadFromFile("images/settings.png")) return false;
+	if (!m_displayBarTex.loadFromFile("images/hud.png")) return false;
+	if (!m_stencil.loadFromFile("fonts/stenc_ex.ttf")) return false;
+	if (!m_liberation.loadFromFile("fonts/LiberationSerif-Regular.ttf")) return false;
 
 	//Initializing object counts
 	m_pause_numChoices = 3;
 	m_settings_numChoices = 1;
-	m_main_numChoices = 6;
+	m_main_numChoices = 5;
 	unsigned num_hud = 2,
 		     num_p = m_pause_numChoices*2 + 1,
 			 num_s = m_settings_numChoices*4,
@@ -135,8 +135,8 @@ void GameGUI::selectPauseChoice(unsigned choice)
 	else if (choice > m_pause_numChoices) choice -= m_pause_numChoices;
 	setAlpha(&m_pauseMenu[m_pause_choice*8-4], 0);
 	setAlpha(&m_pauseMenu[m_pause_choice*8], 255);
-	setAlpha(&m_pauseMenu[choice*8U-4], 255);
-	setAlpha(&m_pauseMenu[choice*8U], 0);
+	setAlpha(&m_pauseMenu[choice*8-4], 255);
+	setAlpha(&m_pauseMenu[choice*8], 0);
 	m_pause_choice = choice;
 }
 
@@ -187,9 +187,8 @@ void GameGUI::selectMainChoice(unsigned choice)
 void GameGUI::processMainChoice()
 {
 	if (m_main_choice == 1) startGame();
-	else if (m_main_choice == 2) startGame();
-    else if (m_main_choice == 4) goToSettings();
-	else if (m_main_choice == 6) endGame();
+    else if (m_main_choice == 3) goToSettings();
+	else if (m_main_choice == 5) endGame();
 }
 
 void GameGUI::mainBlink()

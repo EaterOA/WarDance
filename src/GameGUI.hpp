@@ -24,7 +24,7 @@ private:
 	void processMainChoice();
 	void mainBlink();
 	unsigned m_main_numChoices;
-    unsigned  m_main_choice;
+	unsigned m_main_choice;
 	int m_main_blink, m_main_blinkChg;
 	sf::Vector2f m_main_blinkLoc, m_main_blinkSize;
 	sf::Sprite m_main;

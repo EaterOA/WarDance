@@ -20,7 +20,7 @@ namespace util
 	struct ShapeVector
 	{
 		ShapeVector() {};
-		ShapeVector(Shape ss, float r): s(ss), x(r), y(0) {};
+		ShapeVector(Shape ss, float r): s(ss), x(r), y(r) {};
 		ShapeVector(Shape ss, float xx, float yy): s(ss), x(xx), y(yy) {};
 		Shape s;
 		float x, y;
