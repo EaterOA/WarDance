@@ -30,6 +30,7 @@ private:
 	sf::Sprite m_main;
 	sf::Texture m_mainTex;
 	sf::VertexArray m_mainMenu;
+	sf::Text m_mainInfo;
 	
 	//Pause Menu
 	void selectPauseChoice(int choice);
@@ -49,7 +50,8 @@ private:
 	sf::VertexArray m_settingsMenu;
 
 	//HUD
-	sf::Font m_regFont;
+	sf::Font m_stencil;
+	sf::Font m_liberation;
 	sf::Text m_score;
 	sf::Sprite m_displayBar;
 	sf::Texture m_displayBarTex;

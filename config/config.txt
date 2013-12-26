@@ -1,4 +1,2 @@
 hitbox_enabled 0
-score 0
-level 0
 num_levels 1

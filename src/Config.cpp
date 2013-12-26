@@ -13,6 +13,9 @@ namespace conf
 		int value;
 		while (fin >> param >> value) config[param] = value;
 		fin.close();
+
+		config["level"] = 0;
+		config["highscore"] = 0;
 		return true;
 	}
 	

@@ -6,12 +6,13 @@
 
 bool GameGUI::init()
 {
-	//Loading textures
+	//Loading textures and fonts
 	if (!m_guisheet.loadFromFile("images/guisheet.png")) return 0;
 	if (!m_mainTex.loadFromFile("images/main.png")) return 0;
 	if (!m_settingsTex.loadFromFile("images/settings.png")) return 0;
 	if (!m_displayBarTex.loadFromFile("images/hud.png")) return 0;
-	if (!m_regFont.loadFromFile("fonts/stenc_ex.ttf")) return 0;
+	if (!m_stencil.loadFromFile("fonts/stenc_ex.ttf")) return 0;
+	if (!m_liberation.loadFromFile("fonts/LiberationSerif-Regular.ttf")) return 0;
 
 	//Initializing object counts
 	m_pause_numChoices = 3;
@@ -72,10 +73,14 @@ bool GameGUI::init()
 	m_main_blinkLoc = m_mainMenu[0].position;
 	m_main_blinkSize = m_mainMenu[2].position - m_main_blinkLoc;
 	m_main.setTexture(m_mainTex);
+	m_mainInfo.setFont(m_liberation);
+	m_mainInfo.setPosition(25, 525);
+	m_mainInfo.setCharacterSize(25);
+	m_mainInfo.setColor(sf::Color(30, 16, 8));
 	m_settings.setTexture(m_settingsTex);
 	m_displayBar.setTexture(m_displayBarTex);
 	m_displayBar.setPosition(0.0f, (float)APP_HEIGHT - m_displayBarTex.getSize().y);
-	m_score.setFont(m_regFont);
+	m_score.setFont(m_stencil);
 	m_score.setPosition(50, 550);
 	m_hpBar = &m_hud[4];
 
@@ -197,7 +202,13 @@ void GameGUI::mainBlink()
 
 void GameGUI::updateAppState(const std::vector<sf::Event> &keyEvents)
 {
-	if (appState == MAIN) mainBlink();
+	if (appState == MAIN) {
+		mainBlink();
+		std::wstringstream wss;
+		wss << "Level " << (config["level"]+1) << "\nHighscore " << config["highscore"];
+		m_mainInfo.setString(wss.str());
+	}
+
 	for (unsigned i = 0; i < keyEvents.size(); i++) {
 		if (appState == PAUSED) {
 			if (conf::pressing(conf::DOWN, keyEvents[i].key.code))
@@ -251,9 +262,9 @@ void GameGUI::transitionState()
 void GameGUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	if (appState == MAIN) {
-		target.draw(m_score);
 		target.draw(m_main);
 		target.draw(m_mainMenu, &m_guisheet);
+		target.draw(m_mainInfo);
 	}
 	else if (appState == GAME || appState == PAUSED) {
 		target.draw(m_displayBar);

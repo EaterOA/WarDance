@@ -84,6 +84,9 @@ void GameMechanics::tick()
 		m_state.projectiles[i]->act(m_state);
 	for (unsigned i = 0; i < m_state.enemies.size(); i++)
 		m_state.enemies[i]->act(m_state);
+
+	//Placeholder highscore updater
+	if (m_state.score > config["highscore"]) config["highscore"] = m_state.score;
 }
 
 bool GameMechanics::cleanUp()
