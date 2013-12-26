@@ -20,11 +20,11 @@ private:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 	//Main Menu
-	void selectMainChoice(int choice);
+	void selectMainChoice(unsigned choice);
 	void processMainChoice();
 	void mainBlink();
-	int m_main_numChoices;
-	int m_main_choice;
+	unsigned m_main_numChoices;
+    unsigned  m_main_choice;
 	int m_main_blink, m_main_blinkChg;
 	sf::Vector2f m_main_blinkLoc, m_main_blinkSize;
 	sf::Sprite m_main;
@@ -33,18 +33,18 @@ private:
 	sf::Text m_mainInfo;
 	
 	//Pause Menu
-	void selectPauseChoice(int choice);
+	void selectPauseChoice(unsigned choice);
 	void processPauseChoice();
-	int m_pause_numChoices;
-	int m_pause_choice;
+	unsigned m_pause_numChoices;
+	unsigned m_pause_choice;
 	sf::VertexArray m_pauseMenu;
 
 	//Settings Menu
-	void selectSettingsChoice(int choice);
+	void selectSettingsChoice(unsigned choice);
 	void processSettingsChoice();
 	void processSettingsSwitches();
-	int m_settings_numChoices;
-	int m_settings_choice;
+	unsigned m_settings_numChoices;
+	unsigned m_settings_choice;
 	sf::Sprite m_settings;
 	sf::Texture m_settingsTex;
 	sf::VertexArray m_settingsMenu;

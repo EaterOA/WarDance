@@ -61,9 +61,9 @@ bool GameGUI::init()
 	fin.close();
 
 	//Initializing appearance and configuration of objects
-	m_main_choice = 0;
-	m_settings_choice = 0;
-	m_pause_choice = 0;
+	m_main_choice = 1;
+	m_settings_choice = 1;
+	m_pause_choice = 1;
 	for (unsigned i = 1; i < num_p; i += 2)
 		setAlpha(&m_pauseMenu[i*4], 0);
 	for (unsigned i = 1; i < num_m; i += 2)
@@ -129,38 +129,38 @@ void GameGUI::updateGameState(const GameState& state)
 	m_score.setString(wss.str());
 }
 
-void GameGUI::selectPauseChoice(int choice)
+void GameGUI::selectPauseChoice(unsigned choice)
 {
-	if (choice < 0) choice += m_pause_numChoices;
-	else if (choice >= m_pause_numChoices) choice -= m_pause_numChoices;
-	setAlpha(&m_pauseMenu[m_pause_choice*8+4], 0);
-	setAlpha(&m_pauseMenu[m_pause_choice*8+8], 255);
-	setAlpha(&m_pauseMenu[choice*8+4], 255);
-	setAlpha(&m_pauseMenu[choice*8+8], 0);
+	if (choice == 0) choice += m_pause_numChoices;
+	else if (choice > m_pause_numChoices) choice -= m_pause_numChoices;
+	setAlpha(&m_pauseMenu[m_pause_choice*8-4], 0);
+	setAlpha(&m_pauseMenu[m_pause_choice*8], 255);
+	setAlpha(&m_pauseMenu[choice*8U-4], 255);
+	setAlpha(&m_pauseMenu[choice*8U], 0);
 	m_pause_choice = choice;
 }
 
 void GameGUI::processPauseChoice()
 {
-	if (m_pause_choice == 0) resumeGame();
-	else if (m_pause_choice == 1) goToSettings();
-	else if (m_pause_choice == 2) endGame();
+	if (m_pause_choice == 1) resumeGame();
+	else if (m_pause_choice == 2) goToSettings();
+	else if (m_pause_choice == 3) endGame();
 }
 
-void GameGUI::selectSettingsChoice(int choice)
+void GameGUI::selectSettingsChoice(unsigned choice)
 {
-	if (choice < 0) choice += m_settings_numChoices;
-	else if (choice >= m_settings_numChoices) choice -= m_settings_numChoices;
-	setAlpha(&m_settingsMenu[m_settings_choice*16+8], 0);
-	setAlpha(&m_settingsMenu[m_settings_choice*16+12], 255);
-	setAlpha(&m_settingsMenu[choice*16+8], 255);
-	setAlpha(&m_settingsMenu[choice*16+12], 0);
+	if (choice == 0) choice += m_settings_numChoices;
+	else if (choice > m_settings_numChoices) choice -= m_settings_numChoices;
+	setAlpha(&m_settingsMenu[m_settings_choice*16-8], 0);
+	setAlpha(&m_settingsMenu[m_settings_choice*16-4], 255);
+	setAlpha(&m_settingsMenu[choice*16-8], 255);
+	setAlpha(&m_settingsMenu[choice*16-4], 0);
 	m_settings_choice = choice;
 }
 
 void GameGUI::processSettingsChoice()
 {
-	if (m_settings_choice == 0) {
+	if (m_settings_choice == 1) {
 		config["hitbox_enabled"] = !config["hitbox_enabled"];
 	}
 	processSettingsSwitches();
@@ -172,24 +172,24 @@ void GameGUI::processSettingsSwitches()
 	setAlpha(&m_settingsMenu[4], config["hitbox_enabled"] ? 255 : 0);
 }
 
-void GameGUI::selectMainChoice(int choice)
+void GameGUI::selectMainChoice(unsigned choice)
 {
-	if (choice < 0) choice += m_main_numChoices;
-	else if (choice >= m_main_numChoices) choice -= m_main_numChoices;
-	setAlpha(&m_mainMenu[m_main_choice*8+4], 0);
-	setAlpha(&m_mainMenu[m_main_choice*8+8], 255);
-	setAlpha(&m_mainMenu[choice*8+4], 255);
-	setAlpha(&m_mainMenu[choice*8+8], 0);
-	affixPos(&m_mainMenu[0], m_main_blinkLoc + sf::Vector2f(0, choice * 50.f), m_main_blinkSize);
+	if (choice == 0) choice += m_main_numChoices;
+	else if (choice > m_main_numChoices) choice -= m_main_numChoices;
+	setAlpha(&m_mainMenu[m_main_choice*8-4], 0);
+	setAlpha(&m_mainMenu[m_main_choice*8], 255);
+	setAlpha(&m_mainMenu[choice*8-4], 255);
+	setAlpha(&m_mainMenu[choice*8], 0);
+	affixPos(&m_mainMenu[0], m_main_blinkLoc + sf::Vector2f(0, (choice-1) * 50.f), m_main_blinkSize);
 	m_main_choice = choice;
 }
 
 void GameGUI::processMainChoice()
 {
-	if (m_main_choice == 0) startGame();
-	else if (m_main_choice == 1) startGame();
-    else if (m_main_choice == 3) goToSettings();
-	else if (m_main_choice == 5) endGame();
+	if (m_main_choice == 1) startGame();
+	else if (m_main_choice == 2) startGame();
+    else if (m_main_choice == 4) goToSettings();
+	else if (m_main_choice == 6) endGame();
 }
 
 void GameGUI::mainBlink()
@@ -248,14 +248,14 @@ void GameGUI::updateAppState(const std::vector<sf::Event> &keyEvents)
 void GameGUI::transitionState()
 {
 	if (appState == PAUSED) {
-		selectPauseChoice(0);
+		selectPauseChoice(1);
 	}
 	if (appState == SETTINGS) {
-		selectSettingsChoice(0);
+		selectSettingsChoice(1);
 		processSettingsSwitches();
 	}
 	if (appState == MAIN) {
-		selectMainChoice(0);
+		selectMainChoice(1);
 	}
 }
 

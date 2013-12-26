@@ -33,17 +33,17 @@ bool GameGraphics::init()
 	//Data format: frame name, 4 texture coordinates, 2 position offsets
     fin.open("config/spritedata.txt");
 	if (!fin) return 0;
-	for (int i = 0, j = 0; i < 1000; i++) {
+	for (unsigned i = 0, j = 0; i < 1000; i++) {
 		std::string frame;
 		if (!(fin >> frame)) break;
 		if (frame[0] == '-') {
 			j++;
-			i--;
 		}
 		else {
-			m_lvlFrameMap[j][frame] = i;
+			m_lvlFrameMap[j][frame] = (int)i;
 			util::readf(fin, 4, m_texCoords + i*4, false);
 			util::readf(fin, 2, m_sprCoords + i*2, false);
+            i++;
 		}
 		fin.ignore(1000, '\n');
 	}

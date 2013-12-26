@@ -42,6 +42,6 @@ First of all, if you're using a Debian system, *do not* apt-get install libsfml-
 What you want to do is to download the SDK in the page linked above. After untarring it, you have two options:
 
 1. Copy the include and lib files to /usr/local
-2. Move the files somewhere, and edit the Makefile in WarDance to have gcc include/link to that location. You can add something like -I/home/you/SFML-2.1/include to INCFLAGS and -L/home/you/SFML-2.1/lib to LNKFLAGS, and it should work.
+2. Move the files somewhere, and edit the Makefile in WarDance to have gcc include/link to that location. You can add something like -I/home/you/SFML-2.1/include to INCFLAGS and -L/home/you/SFML-2.1/lib and -Wl,-rpath=/home/you/SFML-2.1/lib to LNKFLAGS, and it should work.
 
 After this, simply enter "make" inside WarDance's src directory. If you're really lucky, it will compile and link sucessfully. Most likely, gcc will complain that you're missing some libraries that SFML needs, and you'd have to look at the errors to discern exactly what. Fortunately, all of those additional libraries can be installed through apt-get.

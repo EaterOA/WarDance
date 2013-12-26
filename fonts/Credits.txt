@@ -1,1 +1,2 @@
 Stencil Export font by Allen R. Walden
+Liberation Serif font by Red Hat
