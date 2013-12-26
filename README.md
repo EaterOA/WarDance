@@ -10,18 +10,20 @@ You dance.
 
 # Development #
 
+A 32-bit Windows executable version of WarDance (built on 12/26/13) is available in this root git directory. To run it, simply make sure config, fonts, and images are all present.
+
 War Dance is not really built on top off any proper game engine. Rather, it's used as a project for me to gain experience with game development in C++ and with the Simple and Fast Media Library (SFML). It is still very much a work in progress, and even most of the sprites are temporary and will eventually be replaced. Sounds may be added in the future, although music will be another beast of its own in regards to licensing, etc.
 
 What it currently has:
-- Simple in-game GUI with perfunctory HUD
-- Simple pause menu and settings menu
+- Simple in-game HUD
+- Simple main, settings, and pause menus
 - Functional and reasonably efficient collision detection
 - Three enemy types: grunt, sprinkler, and alien
 - Relatively smooth control and response of player movement and shooting
 
 What it will have:
-- Complete GUI including main menu and HUD
-- Multiple levels that involve special stage effects
+- Complete GUI including splash screen, transitions, and a pretty HUD
+- Multiple levels
 - More complex enemy types with the addition of bosses
 - Player abilities and power-ups
 - Sounds!
@@ -30,11 +32,11 @@ What it will have:
 
 If you want to build the project and try it out, you must have SFML 2.1 headers and libaries somewhere. Visit http://www.sfml-dev.org/download/sfml/2.1/ for those files.
 
-### Visual C++ ###
+### Visual Studio ###
 
-To build on VC++, simply make a new project and import all the source and header files into it. Then, follow the instructions at http://www.sfml-dev.org/tutorials/2.1/start-vc.php to configure SFML for your project. In summary, be sure you've specified: the include location, the link location, and the linked libararies. Also, make sure to copy the corresponding dlls to where your executable will be.
+To build on Visual Studio, simply make a new project and import all the source and header files into it. Then, follow the instructions at http://www.sfml-dev.org/tutorials/2.1/start-vc.php to configure SFML for your project. In summary, be sure you've specified: the include location, the link location, and the linked libararies. Also, make sure to copy the corresponding dlls to where your executable will be.
 
-### GCC ###
+### g++ ###
 
 Building on Linux is more complicated. The actual compilation and linking steps for WarDance are all automated in the Makefile that's included in the src folder, but the problem lies in how to get SFML to work in the first place.
 
