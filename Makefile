@@ -9,3 +9,7 @@ debug:
 release:
 	$(MAKE) release -C src
 
+clean:
+	$(MAKE) clean -C src
+
+

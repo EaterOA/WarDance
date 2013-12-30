@@ -19,7 +19,7 @@ void Sprinkler::attack(GameState& state)
 {
 	m_attack_cd = 150;
 	m_dir = util::rotateRad(m_dir, util::toRad(10.f));
-	shoot(state, 20.f, 0);
+	shoot(state, REGULAR, 20.f, 0);
 }
 
 void Sprinkler::act(GameState& state)

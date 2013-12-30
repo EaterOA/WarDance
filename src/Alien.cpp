@@ -29,8 +29,8 @@ void Alien::attack(GameState& state)
 	m_attack_cd = 100;
 	m_gunDir1 = util::rotateRad(m_gunDir1, util::toRad(17.f));
 	m_gunDir2 = util::rotateRad(m_gunDir2, util::toRad(11.f));
-	shoot(state, m_dir, m_gunDir1, 18, 25);
-	shoot(state, m_dir, m_gunDir2, 18, -25);
+	shoot(state, REGULAR, m_dir, m_gunDir1, 18, 25);
+	shoot(state, REGULAR, m_dir, m_gunDir2, 18, -25);
 }
 
 void Alien::act(GameState& state)

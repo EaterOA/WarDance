@@ -1,8 +1,8 @@
 #include "Actors.hpp"
 #include "GameMechanics.hpp"
 
-Player::Player(sf::Vector2f pos, int hp)
-	: Fighter("player", util::ShapeVector(util::Rectangle, 25.f, 30.f), pos, hp, 0)
+Player::Player(sf::Vector2f pos)
+	: Fighter("player", util::ShapeVector(util::Rectangle, 25.f, 30.f), pos, 50, 0)
 {
 	m_max_v = sf::Vector2f(150.f, 150.f);
 }
@@ -31,5 +31,11 @@ void Player::act(GameState &state)
 void Player::attack(GameState& state)
 {
 	m_attack_cd = 150;
-	shoot(state, 40.f, 10.f);
+	shoot(state, REGULAR, 40.f, 10.f);
+}
+
+void Player::restoreHP(int amt)
+{
+    m_hp += amt;
+    if (m_hp > m_maxHp) m_hp = m_maxHp;
 }

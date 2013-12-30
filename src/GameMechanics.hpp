@@ -12,6 +12,7 @@ struct GameState {
 	int score;
 	std::vector<Fighter*> enemies;
 	std::vector<Projectile*> projectiles;
+    std::vector<Item*> items;
 	Player* player;
 
 	sf::Time totalElapsed;

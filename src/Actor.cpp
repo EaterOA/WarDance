@@ -1,10 +1,11 @@
 #include "Actors.hpp"
 #include "GameMechanics.hpp"
 
-Actor::Actor(std::string frame, sf::Vector2f pos)
+Actor::Actor(std::string frame, sf::Vector2f pos, util::ShapeVector size)
 {
 	m_frame = frame;
 	m_pos = pos;
+    m_size = size;
 }
 
 void Actor::act(GameState& state)
@@ -26,4 +27,9 @@ sf::Vector2f Actor::getPos() const
 float Actor::getDir() const
 {
 	return m_dir;
+}
+
+util::ShapeVector Actor::getSize() const
+{
+    return m_size;
 }

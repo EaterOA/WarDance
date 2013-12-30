@@ -9,15 +9,17 @@ struct GameState;
 class Actor
 {
 public:
-	Actor(std::string frame, sf::Vector2f pos);
-	virtual void act(GameState&);
+	Actor(std::string frame, sf::Vector2f pos, util::ShapeVector size);
+	virtual void act(GameState& state);
 	sf::Vector2f getPos() const;
 	const std::string& getFrame() const;
 	float getDir() const;
+    util::ShapeVector getSize() const;
 protected:
 	std::string m_frame;
 	sf::Vector2f m_pos, m_vel, m_acc;
 	float m_dir;
+    util::ShapeVector m_size;
 };
 
 class Fighter: public Actor
@@ -27,30 +29,30 @@ public:
 	virtual void act(GameState &state) = 0;
 	virtual bool isDead(GameState &state);
 	virtual void hit(int damage, GameState &state);
-	util::ShapeVector getSize() const;
 	int getHP() const;
 	int getMaxHP() const;
 	int getFaction() const;
 protected:
+    enum Bullet { REGULAR, SPLITTING };
 	virtual void attack(GameState &state) = 0;
 	virtual void cooldown(GameState &state);
-	void shoot(GameState &state, float offsetX, float offsetY);
-	void shoot(GameState &state, sf::Vector2f &dest, float offsetX, float offsetY);
-	void shoot(GameState &state, float dir, float offsetX, float offsetY);
-	void shoot(GameState &state, float dir, float extraDir, float offsetX, float offsetY);
-	void shoot(GameState &state, float dir, float normX, float normY, float offsetX, float offsetY);
+	void shoot(GameState &state, Bullet b, float offsetX, float offsetY);
+	void shoot(GameState &state, Bullet b, sf::Vector2f &dest, float offsetX, float offsetY);
+	void shoot(GameState &state, Bullet b, float dir, float offsetX, float offsetY);
+	void shoot(GameState &state, Bullet b, float dir, float extraDir, float offsetX, float offsetY);
+	void shoot(GameState &state, Bullet b, float dir, float normX, float normY, float offsetX, float offsetY);
 	int m_attack_cd;
 	int m_hp;
 	int m_maxHp;
 	int m_faction;
-	util::ShapeVector m_size;
 };
 
 class Player: public Fighter
 {
 public:
-	Player(sf::Vector2f pos, int hp);
+	Player(sf::Vector2f pos);
 	virtual void act(GameState& state);
+    virtual void restoreHP(int amt);
 private:
 	virtual void attack(GameState& state);
 	sf::Vector2f m_max_v;
@@ -125,6 +127,28 @@ public:
 	SplittingBullet(sf::Vector2f pos, float dir, float normX, float normY, int faction);
 	virtual void act(GameState& state);
 protected:
+};
+
+
+//@@@@@@@@@@@@@@@@@@@@@@@@ Items @@@@@@@@@@@@@@@@@@@@@@@@
+
+class Item: public Actor
+{
+public:
+    Item(std::string frame, sf::Vector2f pos, util::ShapeVector size, float dur);
+    float getDuration() const;
+    bool isDead(GameState &state) const;
+protected:
+    float m_duration;
+};
+
+class Medkit: public Item
+{
+public:
+    Medkit(sf::Vector2f pos, float dur);
+    virtual void act(GameState& state);
+protected:
+    int m_hpRestore;
 };
 
 #endif

@@ -19,7 +19,7 @@ void Grunt::cooldown(GameState& state)
 void Grunt::attack(GameState& state)
 {
     m_attack_cd = util::rand(500, 1500);
-	shoot(state, 40.f, 7.f);
+	shoot(state, REGULAR, 40.f, 7.f);
 }
 
 void Grunt::hit(int damage, GameState &state)

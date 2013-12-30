@@ -3,10 +3,9 @@
 #include <math.h>
 
 Fighter::Fighter(std::string frame, util::ShapeVector size, sf::Vector2f pos, int hp, int faction)
-	: Actor(frame, pos)
+	: Actor(frame, pos, size)
 {
 	m_attack_cd = 0;
-	m_size = size;
 	m_hp = hp;
 	m_maxHp = hp;
 	m_faction = faction;
@@ -27,11 +26,6 @@ int Fighter::getFaction() const
 	return m_faction;
 }
 
-util::ShapeVector Fighter::getSize() const
-{
-	return m_size;
-}
-
 void Fighter::hit(int damage, GameState &state)
 {
 	m_hp -= damage;
@@ -48,35 +42,35 @@ bool Fighter::isDead(GameState &state)
 	return m_hp <= 0;
 }
 
-void Fighter::shoot(GameState &state, float offsetX, float offsetY)
+void Fighter::shoot(GameState &state, Bullet b, float offsetX, float offsetY)
 {
-	shoot(state, m_dir, offsetX, offsetY);
+	shoot(state, b, m_dir, offsetX, offsetY);
 }
 
-void Fighter::shoot(GameState &state, sf::Vector2f &dest, float offsetX, float offsetY)
+void Fighter::shoot(GameState &state, Bullet b, sf::Vector2f &dest, float offsetX, float offsetY)
 {
 	float dist = util::getDist(m_pos, dest);
 	float normX = (dest.x - m_pos.x) / dist;
 	float normY = (dest.y - m_pos.y) / dist;
 	float dir = util::toDir(normX, normY);
-	shoot(state, dir, normX, normY, offsetX, offsetY);
+	shoot(state, b, dir, normX, normY, offsetX, offsetY);
 }
 
-void Fighter::shoot(GameState &state, float dir, float offsetX, float offsetY)
+void Fighter::shoot(GameState &state, Bullet b, float dir, float offsetX, float offsetY)
 {
 	float normX = cos(dir);
 	float normY = sin(dir);
-	shoot(state, dir, normX, normY, offsetX, offsetY);
+	shoot(state, b, dir, normX, normY, offsetX, offsetY);
 }
 
-void Fighter::shoot(GameState &state, float dir, float extraDir, float offsetX, float offsetY)
+void Fighter::shoot(GameState &state, Bullet b, float dir, float extraDir, float offsetX, float offsetY)
 {
 	float normX = cos(dir);
 	float normY = sin(dir);
-	shoot(state, dir + extraDir, normX, normY, offsetX, offsetY);
+	shoot(state, b, dir + extraDir, normX, normY, offsetX, offsetY);
 }
 
-void Fighter::shoot(GameState &state, float dir, float normX, float normY, float offsetX, float offsetY)
+void Fighter::shoot(GameState &state, Bullet b, float dir, float normX, float normY, float offsetX, float offsetY)
 {
 	float rotX, rotY, outX, outY;
 
@@ -89,6 +83,10 @@ void Fighter::shoot(GameState &state, float dir, float normX, float normY, float
 	else {
 		outX = outY = rotX = rotY = 0;
 	}
-	Projectile* bullet = new RegularBullet(sf::Vector2f(m_pos.x + outX + rotX, m_pos.y + outY + rotY), dir, m_faction);
+    Projectile* bullet;
+    if (b == SPLITTING) 
+	    bullet = new SplittingBullet(sf::Vector2f(m_pos.x + outX + rotX, m_pos.y + outY + rotY), dir, m_faction);
+    else
+	    bullet = new RegularBullet(sf::Vector2f(m_pos.x + outX + rotX, m_pos.y + outY + rotY), dir, m_faction);
 	state.projectiles.push_back(bullet);
 }

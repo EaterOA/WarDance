@@ -53,7 +53,7 @@ bool GameGraphics::init()
 	m_background.setTexture(m_lvlBackgroundTex[0]);
 	m_background.setTextureRect(sf::IntRect(0, 0, 1600, 1200));
 	m_hitbox_enabled = config["hitbox_enabled"];
-	m_level = config["level"];
+	m_level = (unsigned)config["level"];
 
 	return true;
 }
@@ -152,12 +152,12 @@ void GameGraphics::updateSprites(const GameState &state)
 {
 	//Updating settings
 	m_hitbox_enabled = config["hitbox_enabled"];
-	m_level = config["level"];
+	m_level = (unsigned)config["level"];
 	m_background.setTexture(m_lvlBackgroundTex[m_level]);
 
 	//Recalculating sprite appearance
 	unsigned i = 4, j;
-	unsigned numSprites = 1 + 3*state.enemies.size() + state.projectiles.size();
+	unsigned numSprites = 1 + 3*state.enemies.size() + state.projectiles.size() + state.items.size();
 	m_sprites = sf::VertexArray(sf::Quads, 4*numSprites);
 	if (m_hitbox_enabled)
 		m_hitboxes = std::vector<sf::Vertex>();
@@ -174,6 +174,9 @@ void GameGraphics::updateSprites(const GameState &state)
 	for (j = 0; j < state.projectiles.size(); i += 4, j++) {
 		transformSprite(&m_sprites[i], *state.projectiles[j]);
 	}
+    for (j = 0; j < state.items.size(); i += 4, j++) {
+        transformSprite(&m_sprites[i], *state.items[j]);
+    }
 
 }
 

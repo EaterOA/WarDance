@@ -18,9 +18,11 @@ void GameState::clean()
 	delete player;
 	for (unsigned i = 0; i < enemies.size(); i++) delete enemies[i];
 	for (unsigned i = 0; i < projectiles.size(); i++) delete projectiles[i];
+    for (unsigned i = 0; i < items.size(); i++) delete items[i];
 	player = 0;
 	enemies = std::vector<Fighter*>();
 	projectiles = std::vector<Projectile*>();
+    items = std::vector<Item*>();
 }
 
 bool GameMechanics::init()
@@ -33,7 +35,7 @@ bool GameMechanics::init()
 void GameMechanics::start()
 {
 	m_state.clean();
-	m_state.player = new Player(sf::Vector2f(100.f, 100.f), 50);
+	m_state.player = new Player(sf::Vector2f(100.f, 100.f));
 }
 
 void GameMechanics::tick()
@@ -45,11 +47,18 @@ void GameMechanics::tick()
 		else spawnEnemy("sprinkler");
 	}
 
+    //Placeholder item generator
+    //if (rand() % 500 == 0) {
+    //    m_state.items.push_back(new Medkit(sf::Vector2f(200, 200), 20.f));
+    //}
+
 	m_state.player->act(m_state);
 	for (unsigned i = 0; i < m_state.projectiles.size(); i++)
 		m_state.projectiles[i]->act(m_state);
 	for (unsigned i = 0; i < m_state.enemies.size(); i++)
 		m_state.enemies[i]->act(m_state);
+    for (unsigned i = 0; i < m_state.items.size(); i++)
+        m_state.items[i]->act(m_state);
 
 	//Placeholder highscore updater
 	if (m_state.score > config["highscore"]) config["highscore"] = m_state.score;
@@ -71,6 +80,14 @@ bool GameMechanics::cleanUp()
 			delete m_state.enemies[i];
 			std::swap(m_state.enemies[i], m_state.enemies.back());
 			m_state.enemies.pop_back();
+			i--;
+		}
+	}
+	for (unsigned i = 0; i < m_state.items.size(); i++) {
+		if (m_state.items[i]->isDead(m_state)) {
+			delete m_state.items[i];
+			std::swap(m_state.items[i], m_state.items.back());
+			m_state.items.pop_back();
 			i--;
 		}
 	}

@@ -33,7 +33,7 @@ private:
     std::vector<sf::Vertex> m_hitboxes;
 
 	int m_hitbox_enabled;
-	int m_level;
+	unsigned m_level;
 };
 
 #endif
