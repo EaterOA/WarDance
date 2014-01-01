@@ -47,11 +47,6 @@ void GameMechanics::tick()
 		else spawnEnemy("sprinkler");
 	}
 
-    //Placeholder item generator
-    //if (rand() % 500 == 0) {
-    //    m_state.items.push_back(new Medkit(sf::Vector2f(200, 200), 20.f));
-    //}
-
 	m_state.player->act(m_state);
 	for (unsigned i = 0; i < m_state.projectiles.size(); i++)
 		m_state.projectiles[i]->act(m_state);

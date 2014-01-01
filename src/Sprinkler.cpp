@@ -4,7 +4,6 @@
 Sprinkler::Sprinkler(sf::Vector2f pos)
 	: Fighter("sprinkler", util::ShapeVector(util::Circle, 20.f), pos, 10, 1)
 {
-	m_dir = 0;
 	m_attack_cd = 0;
 }
 

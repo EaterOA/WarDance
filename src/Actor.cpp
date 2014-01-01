@@ -6,6 +6,7 @@ Actor::Actor(std::string frame, sf::Vector2f pos, util::ShapeVector size)
 	m_frame = frame;
 	m_pos = pos;
     m_size = size;
+	m_dir = 0;
 }
 
 void Actor::act(GameState& state)

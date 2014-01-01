@@ -26,7 +26,10 @@ void Grunt::hit(int damage, GameState &state)
 {
 	if (isDead(state)) return;
 	m_hp -= damage;
-	if (isDead(state)) state.score += 500;
+	if (isDead(state)) {
+		state.score += 500;
+		if (rand() % 15 == 0) state.items.push_back(new Medkit(m_pos, 10));
+	}
 }
 
 void Grunt::act(GameState& state)

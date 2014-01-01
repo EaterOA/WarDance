@@ -50,12 +50,26 @@ protected:
 class Player: public Fighter
 {
 public:
+	//Status structures
+	enum StatusT { SHIELD, HASTE, SLOW, CONFUSE };
+	struct StatusD
+	{
+		float dur;
+		union
+		{
+			int shield;
+		} data;
+	};
+
 	Player(sf::Vector2f pos);
 	virtual void act(GameState& state);
     virtual void restoreHP(int amt);
+	virtual void applyStatus(StatusT s, float dur);
+	virtual bool isStatus(StatusT s) const;
 private:
 	virtual void attack(GameState& state);
-	sf::Vector2f m_max_v;
+	float m_base_v;
+	std::map<StatusT, StatusD> m_status;
 };
 
 
