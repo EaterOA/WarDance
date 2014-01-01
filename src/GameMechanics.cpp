@@ -1,5 +1,6 @@
 #include "Config.hpp"
 #include "GameMechanics.hpp"
+#include "GameScript.hpp"
 
 GameState::GameState()
 {
@@ -29,6 +30,17 @@ bool GameMechanics::init()
 {
 	m_state.map_width = 1600;
 	m_state.map_height = 1200;
+
+	m_readFromScript = true; //set to false if you don't want to read from script and use old random generation method
+
+	//Can use the following once you have a file set up:
+	//std::ifstream t("file.txt");
+	//std::stringstream buffer;
+	//buffer << t.rdbuf();
+	//m_script = new GameScript(buffer.str(), this);
+
+	m_script = new GameScript("2.0 grunt 1", this);
+
 	return true;
 }
 
@@ -40,11 +52,17 @@ void GameMechanics::start()
 
 void GameMechanics::tick()
 {
-	//Placeholder enemy generator
-	if (rand() % 200 == 0) {
-		if (rand() % 50 == 0) spawnEnemy("alien");
-		else if (rand() % 2 == 0) spawnEnemy("grunt");
-		else spawnEnemy("sprinkler");
+	if (m_readFromScript)
+	{
+		m_script->tick(m_state.totalElapsed.asSeconds());
+	}
+	else //Placeholder enemy generator
+	{
+		if (rand() % 200 == 0) {
+			if (rand() % 50 == 0) spawnEnemy("alien");
+			else if (rand() % 2 == 0) spawnEnemy("grunt");
+			else spawnEnemy("sprinkler");
+		}
 	}
 
 	m_state.player->act(m_state);
@@ -120,6 +138,19 @@ void GameMechanics::spawnEnemy(std::string name)
 	}
 	else if (name == "sprinkler") {
 		sf::Vector2f pos = inMapEntrance();
+		m_state.enemies.push_back(new Sprinkler(pos));
+	}
+}
+
+void GameMechanics::spawnEnemy(std::string name, sf::Vector2f pos)
+{
+	if (name == "grunt") {
+		m_state.enemies.push_back(new Grunt(pos));
+	}
+	else if (name == "alien") {
+		m_state.enemies.push_back(new Alien(pos));
+	}
+	else if (name == "sprinkler") {
 		m_state.enemies.push_back(new Sprinkler(pos));
 	}
 }
