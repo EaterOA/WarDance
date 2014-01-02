@@ -19,8 +19,8 @@ private:
 	void affixPos(sf::Vertex sprite[4], sf::Vector2f center, const std::string& frame);
 	void affixTexture(sf::Vertex sprite[4], const std::string& frame);
 	void rotateSprite(sf::Vertex sprite[4], float dir, sf::Vector2f center);
-	void affixHealthBar(sf::Vertex bar[8], const Fighter &fighter);
-	void transformSprite(sf::Vertex sprite[4], const Actor &actor);
+	void addHealthBar(const Fighter &fighter);
+	void addSprite(const Actor &actor);
     void addHitbox(const Fighter &fighter);
 
 	float m_texCoords[4*1000];
@@ -29,7 +29,7 @@ private:
 	std::vector<sf::Texture> m_lvlBackgroundTex;
 	sf::Sprite m_background;
 	std::vector<sf::Texture> m_lvlSpritesheet;
-	sf::VertexArray m_sprites;
+	std::vector<sf::Vertex> m_sprites;
     std::vector<sf::Vertex> m_hitboxes;
 
 	int m_hitbox_enabled;

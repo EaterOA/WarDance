@@ -26,7 +26,7 @@ int Fighter::getFaction() const
 	return m_faction;
 }
 
-void Fighter::hit(int damage, GameState &state)
+void Fighter::hit(GameState &state, int damage)
 {
 	m_hp -= damage;
 }

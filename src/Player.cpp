@@ -21,14 +21,19 @@ void Player::act(GameState &state)
 	}
 
 	//Compute velocity based on player activity
+	bool confuse = isStatus(CONFUSE);
+	bool up = conf::pressing(conf::K_UP) ^ confuse,
+		 left = conf::pressing(conf::K_LEFT) ^ confuse,
+		 down = conf::pressing(conf::K_DOWN) ^ confuse,
+		 right = conf::pressing(conf::K_RIGHT) ^ confuse;
 	float final_v = m_base_v
 					+ (isStatus(HASTE) ? 75.f : 0.f)
 				    - (isStatus(SLOW) ? 60.f : 0.f);
 	m_vel.x = m_vel.y = 0;
-	if (state.W && !state.S) m_vel.y = -final_v;
-	else if (!state.W && state.S) m_vel.y = final_v;
-	if (state.A && !state.D) m_vel.x = -final_v;
-	else if (!state.A && state.D) m_vel.x = final_v;
+	if (up && !down) m_vel.y = -final_v;
+	else if (!up && down) m_vel.y = final_v;
+	if (left && !right) m_vel.x = -final_v;
+	else if (!left && right) m_vel.x = final_v;
 	m_pos += m_vel * state.elapsed.asSeconds();
 
 	//Bound by map
@@ -36,14 +41,31 @@ void Player::act(GameState &state)
 	else if (m_pos.x > (float)state.map_width) m_pos.x = (float)state.map_width;
 	if (m_pos.y < 0) m_pos.y = 0;
 	else if (m_pos.y > (float)state.map_height) m_pos.y = (float)state.map_height;
-	m_dir = util::toDir(state.mouse.x - m_pos.x, state.mouse.y - m_pos.y);
+	m_dir = util::toDir(state.cursor.x - m_pos.x, state.cursor.y - m_pos.y);
 
 	//Trigger attack
 	cooldown(state);
-	if (state.mouseLeft && m_attack_cd <= 0) attack(state);
+	if (conf::clicking(conf::B_LEFT) && m_attack_cd <= 0) attack(state);
 }
 
-void Player::attack(GameState& state)
+void Player::hit(GameState &state, int damage)
+{
+	int final = damage;
+	if (isStatus(SHIELD)) {
+		int remaining = m_status[SHIELD].data.shield;
+		if (remaining > damage) {
+			final = 0;
+			m_status[SHIELD].data.shield -= damage;
+		}
+		else {
+			final = damage - remaining;
+			m_status.erase(SHIELD);
+		}
+	}
+	m_hp -= final;
+}
+
+void Player::attack(GameState &state)
 {
 	m_attack_cd = 150;
 	shoot(state, REGULAR, 40.f, 10.f);

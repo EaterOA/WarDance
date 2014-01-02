@@ -22,7 +22,7 @@ void Grunt::attack(GameState& state)
 	shoot(state, REGULAR, 40.f, 7.f);
 }
 
-void Grunt::hit(int damage, GameState &state)
+void Grunt::hit(GameState &state, int damage)
 {
 	if (isDead(state)) return;
 	m_hp -= damage;

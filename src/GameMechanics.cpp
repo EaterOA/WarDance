@@ -5,7 +5,6 @@
 GameState::GameState()
 {
 	player = 0;
-	score = 0;
 }
 
 GameState::~GameState()
@@ -16,6 +15,8 @@ GameState::~GameState()
 void GameState::clean()
 {
 	score = 0;
+	totalElapsed = sf::Time();
+	elapsed = sf::Time();
 	delete player;
 	for (unsigned i = 0; i < enemies.size(); i++) delete enemies[i];
 	for (unsigned i = 0; i < projectiles.size(); i++) delete projectiles[i];
@@ -30,16 +31,7 @@ bool GameMechanics::init()
 {
 	m_state.map_width = 1600;
 	m_state.map_height = 1200;
-
-	m_readFromScript = true; //set to false if you don't want to read from script and use old random generation method
-
-	//Can use the following once you have a file set up:
-	//std::ifstream t("file.txt");
-	//std::stringstream buffer;
-	//buffer << t.rdbuf();
-	//m_script = new GameScript(buffer.str(), this);
-
-	m_script = new GameScript("2.0 grunt 1", this);
+	m_script = new GameScript(this);
 
 	return true;
 }
@@ -48,23 +40,17 @@ void GameMechanics::start()
 {
 	m_state.clean();
 	m_state.player = new Player(sf::Vector2f(100.f, 100.f));
+
+	//wds - WarDance script
+	std::stringstream scriptName;
+	scriptName << "config/lvl" << (config["level"]+1) << ".wds";
+	m_script->parseFile(scriptName.str());
 }
 
 void GameMechanics::tick()
 {
-	if (m_readFromScript)
-	{
-		m_script->tick(m_state.totalElapsed.asSeconds());
-	}
-	else //Placeholder enemy generator
-	{
-		if (rand() % 200 == 0) {
-			if (rand() % 50 == 0) spawnEnemy("alien");
-			else if (rand() % 2 == 0) spawnEnemy("grunt");
-			else spawnEnemy("sprinkler");
-		}
-	}
 
+	m_script->tick(m_state.totalElapsed.asSeconds());
 	m_state.player->act(m_state);
 	for (unsigned i = 0; i < m_state.projectiles.size(); i++)
 		m_state.projectiles[i]->act(m_state);
@@ -116,14 +102,9 @@ void GameMechanics::updateState(const sf::RenderWindow &window, const sf::Time &
 {
 	m_state.elapsed = elapsed;
 	m_state.totalElapsed += elapsed;
-	m_state.mouse = sf::Vector2f(sf::Mouse::getPosition(window));
-	m_state.mouse.y += window.getView().getCenter().y - window.getView().getSize().y / 2;
-	m_state.mouse.x += window.getView().getCenter().x - window.getView().getSize().x / 2;
-	m_state.mouseLeft = sf::Mouse::isButtonPressed(sf::Mouse::Left);
-	m_state.W = conf::pressing(conf::UP);
-	m_state.A = conf::pressing(conf::LEFT);
-	m_state.S = conf::pressing(conf::DOWN);
-	m_state.D = conf::pressing(conf::RIGHT);
+	m_state.cursor = sf::Vector2f(sf::Mouse::getPosition(window));
+	m_state.cursor.y += window.getView().getCenter().y - window.getView().getSize().y / 2;
+	m_state.cursor.x += window.getView().getCenter().x - window.getView().getSize().x / 2;
 }
 
 void GameMechanics::spawnEnemy(std::string name)

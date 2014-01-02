@@ -100,20 +100,24 @@ void GameGraphics::rotateSprite(sf::Vertex sprite[4], float dir, sf::Vector2f ce
 		sprite[i].position = tr.transformPoint(sprite[i].position);
 }
 
-void GameGraphics::transformSprite(sf::Vertex sprite[4], const Actor &actor)
+void GameGraphics::addSprite(const Actor &actor)
 {
+	sf::Vertex sprite[4];
 	affixPos(sprite, actor.getPos(), actor.getFrame());
 	affixTexture(sprite, actor.getFrame());
 	rotateSprite(sprite, util::toDeg(actor.getDir()), actor.getPos());
+	m_sprites.insert(m_sprites.end(), sprite, sprite+4);
 }
 
-void GameGraphics::affixHealthBar(sf::Vertex bar[8], const Fighter &fighter)
+void GameGraphics::addHealthBar(const Fighter &fighter)
 {
+	sf::Vertex bar[8];
 	float hpOffset = 40.f * fighter.getHP() / fighter.getMaxHP();
 	affixPos(bar, fighter.getPos(), "reg_hpcase", -20.f, 20.f, -4.5f, 4.5f);
 	affixPos(bar+4, fighter.getPos(), "reg_hpbar", -20.f, -20.f + hpOffset, -4.5f, 4.5f);
 	affixTexture(bar, "reg_hpcase");
 	affixTexture(bar+4, "reg_hpbar");
+	m_sprites.insert(m_sprites.end(), bar, bar+8);
 }
 
 void GameGraphics::addHitbox(const Fighter &f)
@@ -156,33 +160,33 @@ void GameGraphics::updateSprites(const GameState &state)
 	m_background.setTexture(m_lvlBackgroundTex[m_level]);
 
 	//Recalculating sprite appearance
-	unsigned i = 4, j;
-	unsigned numSprites = 1 + 3*state.enemies.size() + state.projectiles.size() + state.items.size();
-	m_sprites = sf::VertexArray(sf::Quads, 4*numSprites);
+	m_sprites = std::vector<sf::Vertex>();
 	if (m_hitbox_enabled)
 		m_hitboxes = std::vector<sf::Vertex>();
 
-	transformSprite(&m_sprites[0], *state.player);
-    if (m_hitbox_enabled) addHitbox(*state.player);
-
-	for (j = 0; j < state.enemies.size(); i += 3*4, j++) {
-		transformSprite(&m_sprites[i], *state.enemies[j]);
-		affixHealthBar(&m_sprites[i+4], *state.enemies[j]);
-        if (m_hitbox_enabled) addHitbox(*state.enemies[j]);
+	//Adding sprites. Order matters except hitboxes
+	if (m_hitbox_enabled) {
+		addHitbox(*state.player);
+		for (unsigned i = 0; i < state.enemies.size(); i++)
+			if (m_hitbox_enabled) addHitbox(*state.enemies[i]);
 	}
-
-	for (j = 0; j < state.projectiles.size(); i += 4, j++) {
-		transformSprite(&m_sprites[i], *state.projectiles[j]);
+    for (unsigned i = 0; i < state.items.size(); i++)
+        addSprite(*state.items[i]);
+	addSprite(*state.player);
+    for (unsigned i = 0; i < state.enemies.size(); i++)
+		addSprite(*state.enemies[i]);
+    for (unsigned i = 0; i < state.projectiles.size(); i++)
+		addSprite(*state.projectiles[i]);
+    for (unsigned i = 0; i < state.enemies.size(); i++) {
+		addHealthBar(*state.enemies[i]);
 	}
-    for (j = 0; j < state.items.size(); i += 4, j++) {
-        transformSprite(&m_sprites[i], *state.items[j]);
-    }
 
 }
 
 void GameGraphics::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	target.draw(m_background);
-	target.draw(m_sprites, &m_lvlSpritesheet[m_level]);
+	sf::RenderStates spriteState(&m_lvlSpritesheet[m_level]);
+	target.draw(&m_sprites[0], m_sprites.size(), sf::Quads, spriteState);
     if (m_hitbox_enabled) target.draw(&m_hitboxes[0], m_hitboxes.size(), sf::Lines);
 }

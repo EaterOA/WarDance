@@ -24,11 +24,11 @@ struct Event
 class GameScript
 {
 public:
-	GameScript(std::string script, GameMechanics* origin);
+	GameScript(GameMechanics* origin);
 	~GameScript();
-
+	bool parseFile(const std::string &path);
+	bool parse(const std::string &script);
 	void tick(float t);
-	
 private:
 	GameMechanics* m_origin;
 	std::list<Event> m_events;

@@ -18,9 +18,7 @@ struct GameState {
 
 	sf::Time totalElapsed;
 	sf::Time elapsed;
-	sf::Vector2f mouse;
-	bool mouseLeft;
-	bool W,A,S,D;
+	sf::Vector2f cursor;
 };
 
 class GameMechanics {

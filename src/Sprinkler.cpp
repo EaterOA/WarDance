@@ -7,7 +7,7 @@ Sprinkler::Sprinkler(sf::Vector2f pos)
 	m_attack_cd = 0;
 }
 
-void Sprinkler::hit(int damage, GameState& state)
+void Sprinkler::hit(GameState &state, int damage)
 {
 	if (isDead(state)) return;
 	m_hp -= damage;

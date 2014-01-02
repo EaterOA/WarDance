@@ -10,7 +10,7 @@ Alien::Alien(sf::Vector2f pos)
 	m_max_v = 30.f;
 }
 
-void Alien::hit(int damage, GameState& state)
+void Alien::hit(GameState& state, int damage)
 {
 	if (isDead(state)) return;
 	m_hp -= damage;

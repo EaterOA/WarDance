@@ -28,7 +28,7 @@ public:
 	Fighter(std::string frame, util::ShapeVector size, sf::Vector2f pos, int hp, int faction);
 	virtual void act(GameState &state) = 0;
 	virtual bool isDead(GameState &state);
-	virtual void hit(int damage, GameState &state);
+	virtual void hit(GameState &state, int damage);
 	int getHP() const;
 	int getMaxHP() const;
 	int getFaction() const;
@@ -63,6 +63,7 @@ public:
 
 	Player(sf::Vector2f pos);
 	virtual void act(GameState& state);
+	virtual void hit(GameState& state, int damage);
     virtual void restoreHP(int amt);
 	virtual void applyStatus(StatusT s, float dur);
 	virtual bool isStatus(StatusT s) const;
@@ -80,7 +81,7 @@ class Grunt: public Fighter
 public:
 	Grunt(sf::Vector2f pos);
 	virtual void act(GameState& state);
-	virtual void hit(int damage, GameState& state);
+	virtual void hit(GameState& state, int damage);
 protected:
 	virtual void attack(GameState& state);
     virtual void cooldown(GameState& state);
@@ -93,7 +94,7 @@ class Sprinkler: public Fighter
 public:
 	Sprinkler(sf::Vector2f pos);
 	virtual void act(GameState& state);
-	virtual void hit(int damage, GameState& state);
+	virtual void hit(GameState& state, int damage);
 protected:
 	virtual void attack(GameState& state);
 };
@@ -103,7 +104,7 @@ class Alien: public Fighter
 public:
 	Alien(sf::Vector2f pos);
 	virtual void act(GameState& state);
-	virtual void hit(int damage, GameState& state);
+	virtual void hit(GameState& state, int damage);
 protected:
 	virtual void attack(GameState& state);
     virtual void cooldown(GameState& state);

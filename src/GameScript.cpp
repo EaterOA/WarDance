@@ -21,9 +21,22 @@ Event::Event(float t, std::string n)
 	random = true;
 }
 
-GameScript::GameScript(std::string script, GameMechanics* origin)
+GameScript::GameScript(GameMechanics* origin)
 {
 	m_origin = origin;
+}
+
+bool GameScript::parseFile(const std::string &path)
+{
+	std::ifstream t(path);
+	if (!t) return false;
+	std::stringstream buffer;
+	buffer << t.rdbuf();
+	return parse(buffer.str());
+}
+
+bool GameScript::parse(const std::string &script)
+{
 	m_script = script;
 	std::istringstream iss(script);
 
@@ -39,9 +52,9 @@ GameScript::GameScript(std::string script, GameMechanics* origin)
 		{
 			break; //error
 		}
-		t = std::atof(fields[0].c_str());
+		t = (float)std::atof(fields[0].c_str());
 
-		for (int i = 1; i < fields.size(); i = i + 2)
+		for (unsigned i = 1; i < fields.size(); i = i + 2)
 		{
 			std::string word = fields[i];
 			if (word == "grunt")
@@ -73,6 +86,8 @@ GameScript::GameScript(std::string script, GameMechanics* origin)
 			}
 		}
 	}
+
+	return true;
 }
 
 void GameScript::tick(float t)

@@ -210,25 +210,25 @@ void GameGUI::updateAppState(const std::vector<sf::Event> &keyEvents)
 
 	for (unsigned i = 0; i < keyEvents.size(); i++) {
 		if (appState == PAUSED) {
-			if (conf::pressing(conf::DOWN, keyEvents[i].key.code))
+			if (conf::pressing(conf::K_DOWN, keyEvents[i].key.code))
 				selectPauseChoice(m_pause_choice + 1);
-			else if (conf::pressing(conf::UP, keyEvents[i].key.code))
+			else if (conf::pressing(conf::K_UP, keyEvents[i].key.code))
 				selectPauseChoice(m_pause_choice - 1);
 			if (keyEvents[i].key.code == sf::Keyboard::Return)
 				processPauseChoice();
 		}
 		else if (appState == SETTINGS) {
-			if (conf::pressing(conf::DOWN, keyEvents[i].key.code))
+			if (conf::pressing(conf::K_DOWN, keyEvents[i].key.code))
 				selectSettingsChoice(m_settings_choice + 1);
-			else if (conf::pressing(conf::UP, keyEvents[i].key.code))
+			else if (conf::pressing(conf::K_UP, keyEvents[i].key.code))
 				selectSettingsChoice(m_settings_choice - 1);
 			if (keyEvents[i].key.code == sf::Keyboard::Return)
 				processSettingsChoice();
 		}
 		else if (appState == MAIN) {
-			if (conf::pressing(conf::DOWN, keyEvents[i].key.code))
+			if (conf::pressing(conf::K_DOWN, keyEvents[i].key.code))
 				selectMainChoice(m_main_choice + 1);
-			else if (conf::pressing(conf::UP, keyEvents[i].key.code))
+			else if (conf::pressing(conf::K_UP, keyEvents[i].key.code))
 				selectMainChoice(m_main_choice - 1);
 			if (keyEvents[i].key.code == sf::Keyboard::Return)
 				processMainChoice();
