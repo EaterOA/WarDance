@@ -48,7 +48,7 @@ void GameMechanics::startNextLevel()
 	//wds - WarDance script
 	std::stringstream scriptName;
 
-	scriptName << "config/lvl" << (config["level"]+1) << ".wds";
+	scriptName << "config/lvl" << config["level"] << ".wds";
 
 	m_script->parseFile(scriptName.str(), m_state.totalElapsed.asSeconds());
 }
@@ -71,9 +71,9 @@ void GameMechanics::tick()
 	if (m_script->isDone() && m_state.enemies.size() == 0)
 	{
 		//maybe have something pop up to say that the level is over
-		std::cout << "Level " << config["level"]+1 << " complete!\n";
+		std::cout << "Level " << config["level"] << " complete!\n";
 
-		if (config["level"] < config["num_levels"] - 1)
+		if (config["level"] < config["num_levels"])
 			config["level"]++;
 
 		startNextLevel();

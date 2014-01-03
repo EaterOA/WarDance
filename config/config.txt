@@ -1,2 +1,3 @@
 hitbox_enabled 0
 num_levels 3
+num_sheets 1

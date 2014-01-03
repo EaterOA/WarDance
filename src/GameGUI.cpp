@@ -204,7 +204,7 @@ void GameGUI::updateAppState(const std::vector<sf::Event> &keyEvents)
 	if (appState == MAIN) {
 		mainBlink();
 		std::wstringstream wss;
-		wss << "Level " << (config["level"]+1) << "\nHighscore " << config["highscore"];
+		wss << "Level " << config["level"] << "\nHighscore " << config["highscore"];
 		m_mainInfo.setString(wss.str());
 	}
 

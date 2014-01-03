@@ -22,18 +22,19 @@ private:
 	void addHealthBar(const Fighter &fighter);
 	void addSprite(const Actor &actor);
     void addHitbox(const Fighter &fighter);
-
+	
+	unsigned m_sheetNum[1*1000];
 	float m_texCoords[4*1000];
 	float m_sprCoords[2*1000];
-	std::vector<std::map<std::string, int> > m_lvlFrameMap;
+	std::map<std::string, int> m_frameMap;
 	std::vector<sf::Texture> m_lvlBackgroundTex;
 	sf::Sprite m_background;
-	std::vector<sf::Texture> m_lvlSpritesheet;
-	std::vector<sf::Vertex> m_sprites;
+	std::vector<sf::Texture> m_spritesheet;
+	std::vector<std::vector<sf::Vertex> > m_sprites;
     std::vector<sf::Vertex> m_hitboxes;
 
 	int m_hitbox_enabled;
-	unsigned m_level;
+	unsigned m_numSheets;
 };
 
 #endif
