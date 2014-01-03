@@ -68,8 +68,12 @@ public:
 	virtual void applyStatus(StatusT s, float dur);
 	virtual bool isStatus(StatusT s) const;
 private:
+	virtual void cooldown(GameState& state);
 	virtual void attack(GameState& state);
+	virtual void throwGrenade(GameState& state);
 	float m_base_v;
+	int m_numGrenades;
+	float m_grenade_cd;
 	std::map<StatusT, StatusD> m_status;
 };
 
@@ -124,6 +128,16 @@ public:
 protected:
 	virtual void attack(GameState& state);
 	int m_damage;
+};
+
+class RegularGrenade: public Projectile
+{
+public:
+	RegularGrenade(sf::Vector2f pos, sf::Vector2f dest);
+	virtual void act(GameState& state);
+protected:
+	virtual void attack(GameState& state);
+	float m_time;
 };
 
 class RegularBullet: public Projectile

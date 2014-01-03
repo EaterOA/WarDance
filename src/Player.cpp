@@ -5,6 +5,8 @@ Player::Player(sf::Vector2f pos)
 	: Fighter("player", util::ShapeVector(util::Rectangle, 25.f, 30.f), pos, 50, 0)
 {
 	m_base_v = 150.f;
+	m_numGrenades = 3;
+	m_grenade_cd = 0.f;
 }
 
 void Player::act(GameState &state)
@@ -46,6 +48,7 @@ void Player::act(GameState &state)
 	//Trigger attack
 	cooldown(state);
 	if (conf::clicking(conf::B_LEFT) && m_attack_cd <= 0) attack(state);
+	else if (conf::clicking(conf::B_RIGHT) && m_grenade_cd <= 0 && m_numGrenades > 0) throwGrenade(state);
 }
 
 void Player::hit(GameState &state, int damage)
@@ -65,10 +68,24 @@ void Player::hit(GameState &state, int damage)
 	m_hp -= final;
 }
 
+void Player::cooldown(GameState &state)
+{
+	Fighter::cooldown(state);
+	m_grenade_cd -= state.elapsed.asMilliseconds();
+	if (m_grenade_cd < -5000) m_grenade_cd = 0;
+}
+
 void Player::attack(GameState &state)
 {
 	m_attack_cd = 150;
 	shoot(state, REGULAR, 40.f, 10.f);
+}
+
+void Player::throwGrenade(GameState &state)
+{
+	m_numGrenades--;
+	m_grenade_cd = 300;
+	state.projectiles.push_back(new RegularGrenade(m_pos, state.cursor));
 }
 
 void Player::restoreHP(int amt)
