@@ -26,16 +26,16 @@ GameScript::GameScript(GameMechanics* origin)
 	m_origin = origin;
 }
 
-bool GameScript::parseFile(const std::string &path)
+bool GameScript::parseFile(const std::string &path, float elapsed)
 {
 	std::ifstream t(path);
 	if (!t) return false;
 	std::stringstream buffer;
 	buffer << t.rdbuf();
-	return parse(buffer.str());
+	return parse(buffer.str(), elapsed);
 }
 
-bool GameScript::parse(const std::string &script)
+bool GameScript::parse(const std::string &script, float elapsed)
 {
 	m_script = script;
 	std::istringstream iss(script);
@@ -52,7 +52,7 @@ bool GameScript::parse(const std::string &script)
 		{
 			break; //error
 		}
-		t = (float)std::atof(fields[0].c_str());
+		t = (float)std::atof(fields[0].c_str()) + elapsed;
 
 		for (unsigned i = 1; i < fields.size(); i = i + 2)
 		{
@@ -118,6 +118,11 @@ void GameScript::tick(float t)
 			break; //assuming in order
 		}
 	}
+}
+
+bool GameScript::isDone()
+{
+	return m_events.empty(); //we're done if there are no more events to process
 }
 
 GameScript::~GameScript()

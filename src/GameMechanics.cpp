@@ -20,11 +20,11 @@ void GameState::clean()
 	delete player;
 	for (unsigned i = 0; i < enemies.size(); i++) delete enemies[i];
 	for (unsigned i = 0; i < projectiles.size(); i++) delete projectiles[i];
-    for (unsigned i = 0; i < items.size(); i++) delete items[i];
+	for (unsigned i = 0; i < items.size(); i++) delete items[i];
 	player = 0;
 	enemies = std::vector<Fighter*>();
 	projectiles = std::vector<Projectile*>();
-    items = std::vector<Item*>();
+	items = std::vector<Item*>();
 }
 
 bool GameMechanics::init()
@@ -40,11 +40,17 @@ void GameMechanics::start()
 {
 	m_state.clean();
 	m_state.player = new Player(sf::Vector2f(100.f, 100.f));
+	startNextLevel();
+}
 
+void GameMechanics::startNextLevel()
+{
 	//wds - WarDance script
 	std::stringstream scriptName;
+
 	scriptName << "config/lvl" << (config["level"]+1) << ".wds";
-	m_script->parseFile(scriptName.str());
+
+	m_script->parseFile(scriptName.str(), m_state.totalElapsed.asSeconds());
 }
 
 void GameMechanics::tick()
@@ -56,11 +62,22 @@ void GameMechanics::tick()
 		m_state.projectiles[i]->act(m_state);
 	for (unsigned i = 0; i < m_state.enemies.size(); i++)
 		m_state.enemies[i]->act(m_state);
-    for (unsigned i = 0; i < m_state.items.size(); i++)
-        m_state.items[i]->act(m_state);
+	for (unsigned i = 0; i < m_state.items.size(); i++)
+		m_state.items[i]->act(m_state);
 
 	//Placeholder highscore updater
 	if (m_state.score > config["highscore"]) config["highscore"] = m_state.score;
+
+	if (m_script->isDone() && m_state.enemies.size() == 0)
+	{
+		//maybe have something pop up to say that the level is over
+		std::cout << "Level " << config["level"]+1 << " complete!\n";
+
+		if (config["level"] < config["num_levels"] - 1)
+			config["level"]++;
+
+		startNextLevel();
+	}
 }
 
 bool GameMechanics::cleanUp()

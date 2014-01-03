@@ -26,9 +26,10 @@ class GameScript
 public:
 	GameScript(GameMechanics* origin);
 	~GameScript();
-	bool parseFile(const std::string &path);
-	bool parse(const std::string &script);
+	bool parseFile(const std::string &path, float elapsed);
+	bool parse(const std::string &script, float elapsed);
 	void tick(float t);
+	bool isDone();
 private:
 	GameMechanics* m_origin;
 	std::list<Event> m_events;

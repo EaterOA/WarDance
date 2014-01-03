@@ -25,6 +25,7 @@ class GameMechanics {
 public:
 	bool init();
 	void start();
+	void startNextLevel();
 	void reset();
 	void tick();
 	bool cleanUp();

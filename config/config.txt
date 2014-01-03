@@ -1,2 +1,2 @@
 hitbox_enabled 0
-num_levels 1
+num_levels 3
