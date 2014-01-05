@@ -144,7 +144,7 @@ void GameGUI::processPauseChoice()
 {
 	if (m_pause_choice == 1) resumeGame();
 	else if (m_pause_choice == 2) goToSettings();
-	else if (m_pause_choice == 3) endGame();
+	else if (m_pause_choice == 3) goToMain();
 }
 
 void GameGUI::selectSettingsChoice(unsigned choice)
@@ -238,7 +238,7 @@ void GameGUI::updateAppState(const std::vector<sf::Event> &keyEvents)
 			else if (appState == GAME) pauseGame();
 			else if (appState == SETTINGS) {
 				if (prevState == PAUSED) pauseGame();
-				else if (prevState == MAIN) goToMainMenu();
+				else if (prevState == MAIN) goToMain();
 			}
 		}
 	}

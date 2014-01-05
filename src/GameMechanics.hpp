@@ -7,7 +7,8 @@
 struct GameState {
 	GameState();
 	~GameState();
-	void clean();
+	void cleanAll();
+	void cleanStage();
 
 	int map_width, map_height;
 	int score;
@@ -25,8 +26,8 @@ class GameMechanics {
 public:
 	bool init();
 	void start();
+	void end();
 	void startNextLevel();
-	void reset();
 	void tick();
 	bool cleanUp();
 	GameState& getState();

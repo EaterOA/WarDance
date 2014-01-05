@@ -52,8 +52,12 @@ void paint()
 	window.display();
 }
 
-void goToMainMenu()
+void goToMain()
 {
+	prevState = appState;
+	if (prevState == PAUSED || prevState == GAME) {
+		mAgent.end();
+	}
     appState = MAIN;
     guiAgent.transitionState();
 }
@@ -117,15 +121,32 @@ std::vector<sf::Event> processEvents()
 	return keyEvents;
 }
 
+#include <windows.h>
+
+class Time
+{
+  public:
+    Time()
+    {
+        QueryPerformanceCounter(&m_time);
+    }
+    double operator-(Time start) const
+    {
+        LARGE_INTEGER ticksPerSecond;
+        QueryPerformanceFrequency(&ticksPerSecond);
+        return (1000.0 * (m_time.QuadPart - start.m_time.QuadPart)) / ticksPerSecond.QuadPart;
+    }
+  private:
+    LARGE_INTEGER m_time;
+};
+
 void appStart()
 {
 	guiAgent.transitionState();
 	gameClock.restart();
 	while (window.isOpen()) {
-
 		std::vector<sf::Event> keyEvents = processEvents();
 		guiAgent.updateAppState(keyEvents);
-
 		if (appState == GAME) {
 			mAgent.updateState(window, gameClock.restart());
 			mAgent.tick();
@@ -134,7 +155,7 @@ void appStart()
 			guiAgent.updateGameState(mAgent.getState());
 			updateView(mAgent.getState().player->getPos());
 			if (playerDead) {
-				appState = MAIN;
+				goToMain();
 			}
 		}
         if (appState != NOFOCUS) paint();

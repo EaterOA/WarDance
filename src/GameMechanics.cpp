@@ -9,22 +9,27 @@ GameState::GameState()
 
 GameState::~GameState()
 {
-	clean();
+	cleanAll();
 }
 
-void GameState::clean()
+void GameState::cleanStage()
 {
-	score = 0;
 	totalElapsed = sf::Time();
 	elapsed = sf::Time();
-	delete player;
 	for (unsigned i = 0; i < enemies.size(); i++) delete enemies[i];
 	for (unsigned i = 0; i < projectiles.size(); i++) delete projectiles[i];
 	for (unsigned i = 0; i < items.size(); i++) delete items[i];
-	player = 0;
 	enemies = std::vector<Fighter*>();
 	projectiles = std::vector<Projectile*>();
 	items = std::vector<Item*>();
+}
+
+void GameState::cleanAll()
+{
+	cleanStage();
+	delete player;
+	player = 0;
+	score = 0;
 }
 
 bool GameMechanics::init()
@@ -38,24 +43,26 @@ bool GameMechanics::init()
 
 void GameMechanics::start()
 {
-	m_state.clean();
+	m_state.cleanAll();
 	m_state.player = new Player(sf::Vector2f(100.f, 100.f));
 	startNextLevel();
 }
 
+void GameMechanics::end()
+{
+	m_state.cleanAll();
+}
+
 void GameMechanics::startNextLevel()
 {
-	//wds - WarDance script
+	m_state.cleanStage();
 	std::stringstream scriptName;
-
 	scriptName << "config/lvl" << config["level"] << ".wds";
-
 	m_script->parseFile(scriptName.str(), m_state.totalElapsed.asSeconds());
 }
 
 void GameMechanics::tick()
 {
-
 	m_script->tick(m_state.totalElapsed.asSeconds());
 	m_state.player->act(m_state);
 	for (unsigned i = 0; i < m_state.projectiles.size(); i++)
