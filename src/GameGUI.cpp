@@ -8,9 +8,9 @@ bool GameGUI::init()
 {
 	//Loading textures and fonts
 	if (!m_guisheet.loadFromFile("images/guisheet.png")) return false;
+	m_guisheet.setSmooth(true);
 	if (!m_mainTex.loadFromFile("images/main.png")) return false;
 	if (!m_settingsTex.loadFromFile("images/settings.png")) return false;
-	if (!m_displayBarTex.loadFromFile("images/hud.png")) return false;
 	if (!m_stencil.loadFromFile("fonts/stenc_ex.ttf")) return false;
 	if (!m_liberation.loadFromFile("fonts/LiberationSerif-Regular.ttf")) return false;
 
@@ -18,7 +18,7 @@ bool GameGUI::init()
 	m_pause_numChoices = 3;
 	m_settings_numChoices = 1;
 	m_main_numChoices = 5;
-	unsigned num_hud = 2,
+	unsigned num_level_icons = 10,
 		     num_p = m_pause_numChoices*2 + 1,
 			 num_s = m_settings_numChoices*4,
 			 num_m = m_main_numChoices*2 + 1;
@@ -28,14 +28,31 @@ bool GameGUI::init()
 	float buf[6];
 	std::ifstream fin;
 	fin.open("config/guidata.txt");
-	if (!fin) return 0;
+	if (!fin) return false;
 
 	//Reading HUD objects
-	m_hud = sf::VertexArray(sf::Quads, num_hud*4);
-	for (unsigned i = 0; i < num_hud && util::readf(fin, 6, buf, true); i++) {
+	//- Grenades
+	if (!util::readf(fin, 6, buf, true)) return false;
+	affixTexture(m_grenade, buf);
+	affixPos(m_grenade, buf, buf+4);
+	//- Bars
+	m_hud = sf::VertexArray(sf::Quads, 5*4);
+	for (unsigned i = 0; i < 4 && util::readf(fin, 6, buf, true); i++) {
 		affixTexture(&m_hud[i*4], buf);
 		affixPos(&m_hud[i*4], buf, buf+4);
 	}
+	//- Level icons
+	m_levelIcons = std::vector<std::vector<sf::Vertex> >(num_level_icons, std::vector<sf::Vertex>(4));
+	for (unsigned i = 0; i < num_level_icons && util::readf(fin, 6, buf, true); i++) {
+		affixTexture(&m_levelIcons[i][0], buf);
+		affixPos(&m_levelIcons[i][0], buf, buf+4);
+	}
+	m_hpBar = &m_hud[1*4];
+	m_shieldBar = &m_hud[2*4];
+	m_levelDisplay = &m_hud[4*4];
+	m_score.setFont(m_stencil);
+	m_score.setPosition(22, 560);
+	m_score.setCharacterSize(24);
 
 	//Reading pause menu objects, initializing appearance
 	m_pauseMenu = sf::VertexArray(sf::Quads, num_p*4);
@@ -78,13 +95,14 @@ bool GameGUI::init()
 	m_mainInfo.setCharacterSize(25);
 	m_mainInfo.setColor(sf::Color(30, 16, 8));
 	m_settings.setTexture(m_settingsTex);
-	m_displayBar.setTexture(m_displayBarTex);
-	m_displayBar.setPosition(0.0f, (float)APP_HEIGHT - m_displayBarTex.getSize().y);
-	m_score.setFont(m_stencil);
-	m_score.setPosition(50, 550);
-	m_hpBar = &m_hud[4];
 
-	return 1;
+	return true;
+}
+
+void GameGUI::copySprite(sf::Vertex src[4], sf::Vertex dest[4])
+{
+	for (unsigned i = 0; i < 4; i++)
+		dest[i] = src[i];
 }
 
 void GameGUI::affixTexture(sf::Vertex sprite[4], float coord[])
@@ -122,11 +140,22 @@ void GameGUI::setAlpha(sf::Vertex sprite[4], unsigned char alpha)
 void GameGUI::updateGameState(const GameState& state)
 {
 	float hpPerc = float(state.player->getHP()) / state.player->getMaxHP();
-	m_hpBar[1].position.x = m_hpBar[0].position.x + hpPerc * 350;
-	m_hpBar[2].position.x = m_hpBar[0].position.x + hpPerc * 350;
+	m_hpBar[1].position.x = m_hpBar[0].position.x + hpPerc * 241.4f;
+	m_hpBar[2].position.x = m_hpBar[0].position.x + hpPerc * 241.4f;
+	float shieldPerc = float(state.player->getShield()) / state.player->getMaxShield();
+	m_shieldBar[1].position.x = m_shieldBar[0].position.x + shieldPerc * 132.5f;
+	m_shieldBar[2].position.x = m_shieldBar[0].position.x + shieldPerc * 132.5f;
 	std::wstringstream wss;
-	wss << "Score: " << state.score;
+	wss << state.score;
 	m_score.setString(wss.str());
+	copySprite(&m_levelIcons[config["level"]-1][0], m_levelDisplay);
+	m_grenadeDisplay = std::vector<sf::Vertex>();
+	for (int i = 0; i < state.player->getNumGrenades(); i++) {
+		sf::Vertex grenadeSprite[4];
+		copySprite(m_grenade, grenadeSprite);
+		for (unsigned j = 0; j < 4; j++) grenadeSprite[j].position += sf::Vector2f(-25.f*i, 0);
+		m_grenadeDisplay.insert(m_grenadeDisplay.end(), grenadeSprite, grenadeSprite+4);
+	}
 }
 
 void GameGUI::selectPauseChoice(unsigned choice)
@@ -266,9 +295,10 @@ void GameGUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
 		target.draw(m_mainInfo);
 	}
 	else if (appState == GAME || appState == PAUSED) {
-		target.draw(m_displayBar);
+		sf::RenderStates s(&m_guisheet);
 		target.draw(m_score);
-		target.draw(m_hud, &m_guisheet);
+		target.draw(m_hud, s);
+		if (!m_grenadeDisplay.empty()) target.draw(&m_grenadeDisplay[0], m_grenadeDisplay.size(), sf::Quads, s);
 		if (appState == PAUSED) {
 			sf::RectangleShape fade;
 			fade.setFillColor(sf::Color(0, 0, 0, 100));

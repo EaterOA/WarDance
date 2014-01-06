@@ -67,6 +67,9 @@ public:
     virtual void restoreHP(int amt);
 	virtual void applyStatus(StatusT s, float dur);
 	virtual bool isStatus(StatusT s) const;
+	int getNumGrenades() const;
+	int getShield() const;
+	int getMaxShield() const;
 private:
 	virtual void cooldown(GameState& state);
 	virtual void attack(GameState& state);

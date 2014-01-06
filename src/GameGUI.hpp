@@ -13,6 +13,7 @@ public:
 	void updateGameState(const GameState& state);
 	void updateAppState(const std::vector<sf::Event> &keyEvents);
 private:
+	void copySprite(sf::Vertex src[4], sf::Vertex dest[4]);
 	void affixTexture(sf::Vertex sprite[4], float coord[]);
 	void affixPos(sf::Vertex sprite[4], float coord[], float pos[]);
 	void affixPos(sf::Vertex sprite[4], sf::Vector2f topLeft, sf::Vector2f size);
@@ -53,9 +54,10 @@ private:
 	sf::Font m_stencil;
 	sf::Font m_liberation;
 	sf::Text m_score;
-	sf::Sprite m_displayBar;
-	sf::Texture m_displayBarTex;
-	sf::Vertex* m_hpBar;
+	sf::Vertex *m_hpBar, *m_shieldBar, *m_levelDisplay;
+	std::vector<std::vector<sf::Vertex> > m_levelIcons;
+	sf::Vertex m_grenade[4];
+	std::vector<sf::Vertex> m_grenadeDisplay;
 	sf::VertexArray m_hud;
 	sf::Texture m_guisheet;
 };

@@ -68,6 +68,22 @@ void Player::hit(GameState &state, int damage)
 	m_hp -= final;
 }
 
+int Player::getNumGrenades() const
+{
+	return m_numGrenades;
+}
+
+int Player::getShield() const
+{
+	if (isStatus(SHIELD)) return m_status.find(SHIELD)->second.data.shield;
+	return 0;
+}
+
+int Player::getMaxShield() const
+{
+	return 50;
+}
+
 void Player::cooldown(GameState &state)
 {
 	Fighter::cooldown(state);
