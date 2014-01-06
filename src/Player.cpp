@@ -15,7 +15,7 @@ void Player::act(GameState &state)
 	for (std::map<StatusT, StatusD>::iterator iter = m_status.begin(); iter != m_status.end();) {
 		iter->second.dur -= state.elapsed.asSeconds();
 		if (iter->second.dur <= 0) {
-			iter = m_status.erase(iter);
+			m_status.erase(iter++);
 		}
 		else {
 			iter++;

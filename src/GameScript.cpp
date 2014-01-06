@@ -1,7 +1,6 @@
 #include "GameScript.hpp"
 #include "GameMechanics.hpp"
 #include "Util.hpp"
-#include "SFML\System\Time.hpp"
 #include <string>
 #include <sstream>
 #include <list>
@@ -28,7 +27,8 @@ GameScript::GameScript(GameMechanics* origin)
 
 bool GameScript::parseFile(const std::string &path, float elapsed)
 {
-	std::ifstream t(path);
+	std::ifstream t;
+    t.open(path.c_str());
 	if (!t) return false;
 	std::stringstream buffer;
 	buffer << t.rdbuf();

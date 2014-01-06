@@ -121,25 +121,6 @@ std::vector<sf::Event> processEvents()
 	return keyEvents;
 }
 
-#include <windows.h>
-
-class Time
-{
-  public:
-    Time()
-    {
-        QueryPerformanceCounter(&m_time);
-    }
-    double operator-(Time start) const
-    {
-        LARGE_INTEGER ticksPerSecond;
-        QueryPerformanceFrequency(&ticksPerSecond);
-        return (1000.0 * (m_time.QuadPart - start.m_time.QuadPart)) / ticksPerSecond.QuadPart;
-    }
-  private:
-    LARGE_INTEGER m_time;
-};
-
 void appStart()
 {
 	guiAgent.transitionState();

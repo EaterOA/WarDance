@@ -1,7 +1,7 @@
 ROOTDIR = $(shell readlink -f '..')
 NAME = WarDance
-SRC = Actor.cpp App.cpp Fighter.cpp GameGraphics.cpp GameGUI.cpp GameMechanics.cpp Grunt.cpp Player.cpp Projectile.cpp RegularBullet.cpp SplittingBullet.cpp Sprinkler.cpp Util.cpp Config.cpp Alien.cpp Item.cpp Medkit.cpp
-DEPS = Actors.hpp App.hpp GameGraphics.hpp GameGUI.hpp GameMechanics.hpp Util.hpp Config.hpp
+SRC = Actor.cpp App.cpp Fighter.cpp GameGraphics.cpp GameGUI.cpp GameMechanics.cpp Grunt.cpp Player.cpp Projectile.cpp RegularBullet.cpp SplittingBullet.cpp Sprinkler.cpp Util.cpp Config.cpp Alien.cpp Item.cpp Medkit.cpp GameScript.cpp RegularGrenade.cpp
+DEPS = Actors.hpp App.hpp GameGraphics.hpp GameGUI.hpp GameMechanics.hpp Util.hpp Config.hpp GameScript.hpp
 OBJ = ${SRC:.cpp=.o}
 CFLAGS = -pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-include-dirs -Wnoexcept -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Werror -Wno-unused -Wno-long-long
 LDFLAGS = -lm -lsfml-graphics -lsfml-system -lsfml-window
