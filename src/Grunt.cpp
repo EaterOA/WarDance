@@ -7,6 +7,8 @@ Grunt::Grunt(sf::Vector2f pos)
 	m_max_v = 50.f;
 	m_move_cd = 0;
 	m_attack_cd = 0;
+	m_radius_close = 20.f;
+	m_radius_far = 70.f;
 }
 
 void Grunt::cooldown(GameState& state)
@@ -34,8 +36,8 @@ void Grunt::hit(GameState &state, int damage)
 
 void Grunt::act(GameState& state)
 {
-	Actor::act(state);
 	cooldown(state);
+
 	if (m_move_cd <= 0) {
         m_move_cd = util::rand(200, 600);
 		sf::Vector2f vec = state.player->getPos() - m_pos;
@@ -43,8 +45,14 @@ void Grunt::act(GameState& state)
 		float normX = vec.x / vr;
 		float normY = vec.y / vr;
 		m_dir = util::toDir(normX, normY);
-		m_vel = sf::Vector2f(normX * m_max_v, normY * m_max_v);
+		if (vr > m_radius_far)
+			m_vel = sf::Vector2f(normX * m_max_v, normY * m_max_v);
+		else if (vr < m_radius_close)
+			m_vel = sf::Vector2f(-normX * m_max_v, -normY * m_max_v);
+		else
+			m_vel = sf::Vector2f(0, 0);
 	}
+	m_pos += m_vel * state.elapsed.asSeconds();
 	
 	if (m_attack_cd <= 0) {
         attack(state);

@@ -139,21 +139,21 @@ void GameGUI::setAlpha(sf::Vertex sprite[4], unsigned char alpha)
 
 void GameGUI::updateGameState(const GameState& state)
 {
-    //Scaling bars
+	//Scaling bars
 	float hpPerc = float(state.player->getHP()) / state.player->getMaxHP();
 	m_hpBar[1].position.x = m_hpBar[0].position.x + hpPerc * 241.4f;
 	m_hpBar[2].position.x = m_hpBar[0].position.x + hpPerc * 241.4f;
 	float shieldPerc = float(state.player->getShield()) / state.player->getMaxShield();
 	m_shieldBar[1].position.x = m_shieldBar[0].position.x + shieldPerc * 132.5f;
 	m_shieldBar[2].position.x = m_shieldBar[0].position.x + shieldPerc * 132.5f;
-    //Updating score
+	//Updating score
 	std::wstringstream wss;
 	wss << state.score;
 	m_score.setString(wss.str());
-    //Updating level icon
-    unsigned idx = (unsigned)config["level"]-1;
+	//Updating level icon
+	unsigned idx = (unsigned)(config["level"]-1);
 	copySprite(&m_levelIcons[idx][0], m_levelDisplay);
-    //Updating grenade display
+	//Updating grenade display
 	m_grenadeDisplay = std::vector<sf::Vertex>();
 	for (int i = 0; i < state.player->getNumGrenades(); i++) {
 		sf::Vertex grenadeSprite[4];

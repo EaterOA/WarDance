@@ -8,6 +8,15 @@ class Actor;
 class Fighter;
 struct GameState;
 
+struct FrameData
+{
+	unsigned sheetNum;
+	float texCoord[4];
+	float posOffset[2];
+	bool rotatable;
+	unsigned rgba;
+};
+
 class GameGraphics : public sf::Drawable, public sf::Transformable
 {
 public:
@@ -15,18 +24,16 @@ public:
 	void updateSprites(const GameState&);
 private:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
-	void affixPos(sf::Vertex sprite[4], sf::Vector2f center, const std::string& frame, float offsetLX, float offsetRX, float offsetLY, float offsetRY);
-	void affixPos(sf::Vertex sprite[4], sf::Vector2f center, const std::string& frame);
-	void affixTexture(sf::Vertex sprite[4], const std::string& frame);
-	void rotateSprite(sf::Vertex sprite[4], float dir, sf::Vector2f center);
+	void affixPos(sf::Vertex sprite[4], sf::Vector2f center, const FrameData &d, float offsetLX, float offsetRX, float offsetLY, float offsetRY);
+	void affixPos(sf::Vertex sprite[4], sf::Vector2f center, const FrameData &d);
+	void affixTexture(sf::Vertex sprite[4], const FrameData &d);
+	void rotateSprite(sf::Vertex sprite[4], float dir, sf::Vector2f center, const FrameData &d);
+	void applyColor(sf::Vertex sprite[4], const FrameData &d);
 	void addHealthBar(const Fighter &fighter);
 	void addSprite(const Actor &actor);
     void addHitbox(const Fighter &fighter);
 	
-	unsigned m_sheetNum[1*1000];
-	float m_texCoords[4*1000];
-	float m_sprCoords[2*1000];
-	std::map<std::string, int> m_frameMap;
+	std::map<std::string, FrameData> m_frameMap;
 	std::vector<sf::Texture> m_lvlBackgroundTex;
 	sf::Sprite m_background;
 	std::vector<sf::Texture> m_spritesheet;

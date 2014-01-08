@@ -93,6 +93,7 @@ protected:
 	virtual void attack(GameState& state);
     virtual void cooldown(GameState& state);
 	float m_max_v;
+	float m_radius_close, m_radius_far;
 	int m_move_cd;
 };
 

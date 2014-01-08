@@ -28,7 +28,7 @@ GameScript::GameScript(GameMechanics* origin)
 bool GameScript::parseFile(const std::string &path, float elapsed)
 {
 	std::ifstream t;
-    t.open(path.c_str());
+	t.open(path.c_str());
 	if (!t) return false;
 	std::stringstream buffer;
 	buffer << t.rdbuf();

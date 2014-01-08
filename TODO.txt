@@ -1,0 +1,24 @@
+GFX: graphics-related
+GUI: user interface-related
+MEC: game mechanics-related
+CODE: general code organization-related
+
+Each list is ordered by increasing estimated priority vs effort/time
+
+
+TODO anytime
+- MEC: Design more enemy and projectile types
+- MEC: Program sprinkler to forewarn its appearance
+- GFX: Find a better-looking sprite for grenade
+- GUI: Implement Select Level in main menu
+- GFX: Give each level a different background
+- GFX: Add transitions between app states
+- GUI: Add player status list to HUD
+- GFX: Add animation effects to all actors
+- GFX: Add initial splash/loading screen
+- GUI: Make menu items selectable by mouse
+
+
+TODO future
+- GFX: Replace all sprites with properly licensed ones
+- GUI: Implement Credits in main menu

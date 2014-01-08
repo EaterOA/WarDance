@@ -12,7 +12,7 @@ bool GameGraphics::init()
 	unsigned numLevels = unsigned(config["num_levels"]);
 	m_lvlBackgroundTex = std::vector<sf::Texture>(numLevels);
 	m_spritesheet = std::vector<sf::Texture>(m_numSheets);
-	m_frameMap = std::map<std::string, int>();
+	m_frameMap = std::map<std::string, FrameData>();
 
 	//Loading level background textures
 	for (unsigned i = 0; i < numLevels; i++) {
@@ -34,16 +34,16 @@ bool GameGraphics::init()
 	//Data format: frame name, sheet #, 4 texture coordinates, 2 position offsets
     fin.open("config/spritedata.txt");
 	if (!fin) return 0;
-	for (unsigned i = 0; i < 1000;) {
+	for (unsigned i = 0; i < 1000; i++) {
 		std::string frame;
 		if (!(fin >> frame)) break;
-		else {
-			m_frameMap[frame] = (int)i;
-			if (!(fin >> m_sheetNum[i])) return false;
-			if (!util::readf(fin, 4, m_texCoords + i*4, false)) return false;
-			if (!util::readf(fin, 2, m_sprCoords + i*2, false)) return false;
-            i++;
-		}
+		FrameData d;
+		if (!(fin >> d.sheetNum)) return false;
+		if (!util::readf(fin, 4, d.texCoord, false)) return false;
+		if (!util::readf(fin, 2, d.posOffset, false)) return false;
+		if (!(fin >> d.rotatable)) return false;
+		if (!(fin >> std::hex >> d.rgba)) return false;
+		m_frameMap[frame] = d;
 		fin.ignore(1000, '\n');
 	}
     fin.close();
@@ -56,9 +56,9 @@ bool GameGraphics::init()
 	return true;
 }
 
-void GameGraphics::affixPos(sf::Vertex sprite[4], sf::Vector2f center, const std::string& frame, float offsetLX, float offsetRX, float offsetLY, float offsetRY)
+void GameGraphics::affixPos(sf::Vertex sprite[4], sf::Vector2f center, const FrameData &d, float offsetLX, float offsetRX, float offsetLY, float offsetRY)
 {
-	float* coord = m_sprCoords + m_frameMap[frame] * 2;
+	const float* coord = d.posOffset;
 
 	center += sf::Vector2f(coord[0], coord[1]);
 	sprite[0].position = center + sf::Vector2f(offsetLX, offsetLY);
@@ -67,18 +67,18 @@ void GameGraphics::affixPos(sf::Vertex sprite[4], sf::Vector2f center, const std
 	sprite[3].position = center + sf::Vector2f(offsetLX, offsetRY);
 }
 
-void GameGraphics::affixPos(sf::Vertex sprite[4], sf::Vector2f center, const std::string& frame)
+void GameGraphics::affixPos(sf::Vertex sprite[4], sf::Vector2f center, const FrameData &d)
 {
-	float* coord = m_texCoords + m_frameMap[frame] * 4;
+	const float* coord = d.texCoord;
 
 	float hwidth = coord[2] / 2.f;
 	float hheight = coord[3] / 2.f;
-	affixPos(sprite, center, frame, -hwidth, hwidth, -hheight, hheight);
+	affixPos(sprite, center, d, -hwidth, hwidth, -hheight, hheight);
 }
 
-void GameGraphics::affixTexture(sf::Vertex sprite[4], const std::string& frame)
+void GameGraphics::affixTexture(sf::Vertex sprite[4], const FrameData &d)
 {
-	float* coord = m_texCoords + m_frameMap[frame] * 4;
+	const float* coord = d.texCoord;
 
 	float x = coord[0];
 	float y = coord[1];
@@ -90,35 +90,50 @@ void GameGraphics::affixTexture(sf::Vertex sprite[4], const std::string& frame)
 	sprite[3].texCoords = sf::Vector2f(x, y+h);
 }
 
-void GameGraphics::rotateSprite(sf::Vertex sprite[4], float dir, sf::Vector2f center)
+void GameGraphics::rotateSprite(sf::Vertex sprite[4], float dir, sf::Vector2f center, const FrameData &d)
 {
+	if (!d.rotatable) return;
 	sf::Transform tr;
 	tr.rotate(dir, center);
 	for (unsigned i = 0; i < 4; i++)
 		sprite[i].position = tr.transformPoint(sprite[i].position);
 }
 
+void GameGraphics::applyColor(sf::Vertex sprite[4], const FrameData &d)
+{
+	unsigned char r = (unsigned char)(d.rgba >> 24);
+	unsigned char g = (unsigned char)((d.rgba & 0xffffff) >> 16);
+	unsigned char b = (unsigned char)((d.rgba & 0xffff) >> 8);
+	unsigned char a = (unsigned char)(d.rgba & 0xff);
+	sf::Color c(r, g, b, a);
+	sprite[0].color = c;
+	sprite[1].color = c;
+	sprite[2].color = c;
+	sprite[3].color = c;
+}
+
 void GameGraphics::addSprite(const Actor &actor)
 {
-	unsigned sheetNum = m_sheetNum[m_frameMap[actor.getFrame()]];
+	const FrameData& d = m_frameMap[actor.getFrame()];
 
 	sf::Vertex sprite[4];
-	affixPos(sprite, actor.getPos(), actor.getFrame());
-	affixTexture(sprite, actor.getFrame());
-	rotateSprite(sprite, util::toDeg(actor.getDir()), actor.getPos());
-	m_sprites[sheetNum].insert(m_sprites[sheetNum].end(), sprite, sprite+4);
+	affixPos(sprite, actor.getPos(), d);
+	affixTexture(sprite, d);
+	rotateSprite(sprite, util::toDeg(actor.getDir()), actor.getPos(), d);
+	applyColor(sprite, d);
+	m_sprites[d.sheetNum].insert(m_sprites[d.sheetNum].end(), sprite, sprite+4);
 }
 
 void GameGraphics::addHealthBar(const Fighter &fighter)
 {
-	unsigned sheetNum = m_sheetNum[m_frameMap[fighter.getFrame()]];
+	unsigned sheetNum = m_frameMap[fighter.getFrame()].sheetNum;
 
 	sf::Vertex bar[8];
 	float hpOffset = 40.f * fighter.getHP() / fighter.getMaxHP();
-	affixPos(bar, fighter.getPos(), "reg_hpcase", -20.f, 20.f, -4.5f, 4.5f);
-	affixPos(bar+4, fighter.getPos(), "reg_hpbar", -20.f, -20.f + hpOffset, -4.5f, 4.5f);
-	affixTexture(bar, "reg_hpcase");
-	affixTexture(bar+4, "reg_hpbar");
+	affixPos(bar, fighter.getPos(), m_frameMap["reg_hpcase"], -20.f, 20.f, -4.5f, 4.5f);
+	affixPos(bar+4, fighter.getPos(), m_frameMap["reg_hpbar"], -20.f, -20.f + hpOffset, -4.5f, 4.5f);
+	affixTexture(bar, m_frameMap["reg_hpcase"]);
+	affixTexture(bar+4, m_frameMap["reg_hpbar"]);
 	m_sprites[sheetNum].insert(m_sprites[sheetNum].end(), bar, bar+8);
 }
 
