@@ -86,7 +86,9 @@ void Fighter::shoot(GameState &state, Bullet b, float dir, float unitX, float un
     Projectile* bullet;
     if (b == SPLITTING) 
 	    bullet = new SplittingBullet(sf::Vector2f(m_pos.x + outX + rotX, m_pos.y + outY + rotY), dir, m_faction);
-    else
+	else if(b == LASER)
+		bullet = new Laser(sf::Vector2f(m_pos.x + outX + rotX, m_pos.y + outY + rotY), dir, m_faction);
+	else
 	    bullet = new RegularBullet(sf::Vector2f(m_pos.x + outX + rotX, m_pos.y + outY + rotY), dir, m_faction);
 	state.projectiles.push_back(bullet);
 }

@@ -33,7 +33,7 @@ public:
 	int getMaxHP() const;
 	int getFaction() const;
 protected:
-    enum Bullet { REGULAR, SPLITTING };
+    enum Bullet { REGULAR, SPLITTING, LASER };
 	virtual void attack(GameState &state) = 0;
 	virtual void cooldown(GameState &state);
 	void shoot(GameState &state, Bullet b, float offsetX, float offsetY);
@@ -80,6 +80,7 @@ private:
 	float m_base_v;
 	int m_numGrenades;
 	float m_grenade_cd;
+	float m_laser_cd;
 	float m_shield, m_shield_cd, m_shield_regen, m_maxShield;
 	std::map<StatusT, StatusD> m_status;
 };
@@ -174,6 +175,18 @@ public:
 protected:
 	float m_expandSpeed;
 };
+
+class Laser: public Projectile
+{
+public:
+	Laser(sf::Vector2f pos, float dir, int faction);
+	Laser(sf::Vector2f pos, float dir, float unitX, float unitY, int faction);
+	virtual void act(GameState& state);
+protected:
+	virtual void attack(GameState& state);
+	float m_time;
+};
+
 
 
 //@@@@@@@@@@@@@@@@@@@@@@@@ Items @@@@@@@@@@@@@@@@@@@@@@@@

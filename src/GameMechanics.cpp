@@ -27,19 +27,19 @@ void GameState::resetLevel()
 	totalElapsed = sf::Time();
 	elapsed = sf::Time();
 	shot = fired = hit = 0;
-	score = 0;
 }
 
 void GameState::cleanAll()
 {
 	resetLevel();
+	score = 0;
 	cleanStage();
 	delete player;
 	player = 0;
 }
 
 bool GameMechanics::init()
-{
+{ 
 	m_state.map_width = 1600;
 	m_state.map_height = 1200;
 	m_script = new GameScript(this);
