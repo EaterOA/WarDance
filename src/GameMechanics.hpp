@@ -9,14 +9,16 @@ struct GameState {
 	~GameState();
 	void cleanAll();
 	void cleanStage();
+	void resetLevel();
 
-	int map_width, map_height;
-	int score;
 	std::vector<Fighter*> enemies;
 	std::vector<Projectile*> projectiles;
     std::vector<Item*> items;
 	Player* player;
-
+	
+	int map_width, map_height;
+	int score;
+	int fired, hit, shot;
 	sf::Time totalElapsed;
 	sf::Time elapsed;
 	sf::Vector2f cursor;

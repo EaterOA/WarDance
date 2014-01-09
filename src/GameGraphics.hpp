@@ -38,6 +38,7 @@ private:
 	sf::Sprite m_background;
 	std::vector<sf::Texture> m_spritesheet;
 	std::vector<std::vector<sf::Vertex> > m_sprites;
+	std::vector<sf::Vertex> m_specialSprites;
     std::vector<sf::Vertex> m_hitboxes;
 
 	int m_hitbox_enabled;

@@ -41,10 +41,10 @@ void Alien::act(GameState& state)
 		m_move_cd = util::rand(200, 600);
         sf::Vector2f vec = state.player->getPos() - m_pos;
         float vr = util::getLen(vec);
-        float normX = vec.x / vr;
-        float normY = vec.y / vr;
+        float unitX = vec.x / vr;
+        float unitY = vec.y / vr;
         m_dir = util::toDir(vec.x, vec.y);
-        m_vel = sf::Vector2f(normX * m_max_v, normY * m_max_v);
+        m_vel = sf::Vector2f(unitX * m_max_v, unitY * m_max_v);
 	}
 	if (m_attack_cd <= 0) {
 		attack(state);

@@ -40,12 +40,15 @@ protected:
 	void shoot(GameState &state, Bullet b, sf::Vector2f &dest, float offsetX, float offsetY);
 	void shoot(GameState &state, Bullet b, float dir, float offsetX, float offsetY);
 	void shoot(GameState &state, Bullet b, float dir, float extraDir, float offsetX, float offsetY);
-	void shoot(GameState &state, Bullet b, float dir, float normX, float normY, float offsetX, float offsetY);
+	void shoot(GameState &state, Bullet b, float dir, float unitX, float unitY, float offsetX, float offsetY);
 	int m_attack_cd;
 	int m_hp;
 	int m_maxHp;
 	int m_faction;
 };
+
+
+//@@@@@@@@@@@@@@@@@@@@@@@@ Allies @@@@@@@@@@@@@@@@@@@@@@@@
 
 class Player: public Fighter
 {
@@ -68,8 +71,8 @@ public:
 	virtual void applyStatus(StatusT s, float dur);
 	virtual bool isStatus(StatusT s) const;
 	int getNumGrenades() const;
-	int getShield() const;
-	int getMaxShield() const;
+	float getShield() const;
+	float getMaxShield() const;
 private:
 	virtual void cooldown(GameState& state);
 	virtual void attack(GameState& state);
@@ -77,6 +80,7 @@ private:
 	float m_base_v;
 	int m_numGrenades;
 	float m_grenade_cd;
+	float m_shield, m_shield_cd, m_shield_regen, m_maxShield;
 	std::map<StatusT, StatusD> m_status;
 };
 
@@ -148,7 +152,7 @@ class RegularBullet: public Projectile
 {
 public:
 	RegularBullet(sf::Vector2f pos, float dir, int faction);
-	RegularBullet(sf::Vector2f pos, float dir, float normX, float normY, int faction);
+	RegularBullet(sf::Vector2f pos, float dir, float unitX, float unitY, int faction);
 	virtual void act(GameState& state);
 protected:
 };
@@ -157,9 +161,18 @@ class SplittingBullet: public Projectile
 {
 public:
 	SplittingBullet(sf::Vector2f pos, float dir, int faction);
-	SplittingBullet(sf::Vector2f pos, float dir, float normX, float normY, int faction);
+	SplittingBullet(sf::Vector2f pos, float dir, float unitX, float unitY, int faction);
 	virtual void act(GameState& state);
 protected:
+};
+
+class Wiper: public Projectile
+{
+public:
+	Wiper(sf::Vector2f pos);
+	virtual void act(GameState& state);
+protected:
+	float m_expandSpeed;
 };
 
 

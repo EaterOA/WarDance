@@ -14,8 +14,6 @@ GameState::~GameState()
 
 void GameState::cleanStage()
 {
-	totalElapsed = sf::Time();
-	elapsed = sf::Time();
 	for (unsigned i = 0; i < enemies.size(); i++) delete enemies[i];
 	for (unsigned i = 0; i < projectiles.size(); i++) delete projectiles[i];
 	for (unsigned i = 0; i < items.size(); i++) delete items[i];
@@ -24,12 +22,20 @@ void GameState::cleanStage()
 	items = std::vector<Item*>();
 }
 
+void GameState::resetLevel()
+{
+	totalElapsed = sf::Time();
+	elapsed = sf::Time();
+	shot = fired = hit = 0;
+	score = 0;
+}
+
 void GameState::cleanAll()
 {
+	resetLevel();
 	cleanStage();
 	delete player;
 	player = 0;
-	score = 0;
 }
 
 bool GameMechanics::init()
@@ -55,7 +61,7 @@ void GameMechanics::end()
 
 void GameMechanics::startNextLevel()
 {
-	m_state.cleanStage();
+	m_state.resetLevel();
 	std::stringstream scriptName;
 	scriptName << "config/lvl" << config["level"] << ".wds";
 	m_script->parseFile(scriptName.str(), m_state.totalElapsed.asSeconds());
@@ -79,6 +85,8 @@ void GameMechanics::tick()
 	{
 		//maybe have something pop up to say that the level is over
 		std::cout << "Level " << config["level"] << " complete!\n";
+
+		m_state.projectiles.push_back(new Wiper(m_state.player->getPos()));
 
 		if (config["level"] < config["num_levels"])
 			config["level"]++;

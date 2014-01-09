@@ -50,35 +50,35 @@ void Fighter::shoot(GameState &state, Bullet b, float offsetX, float offsetY)
 void Fighter::shoot(GameState &state, Bullet b, sf::Vector2f &dest, float offsetX, float offsetY)
 {
 	float dist = util::getDist(m_pos, dest);
-	float normX = (dest.x - m_pos.x) / dist;
-	float normY = (dest.y - m_pos.y) / dist;
-	float dir = util::toDir(normX, normY);
-	shoot(state, b, dir, normX, normY, offsetX, offsetY);
+	float unitX = (dest.x - m_pos.x) / dist;
+	float unitY = (dest.y - m_pos.y) / dist;
+	float dir = util::toDir(unitX, unitY);
+	shoot(state, b, dir, unitX, unitY, offsetX, offsetY);
 }
 
 void Fighter::shoot(GameState &state, Bullet b, float dir, float offsetX, float offsetY)
 {
-	float normX = cos(dir);
-	float normY = sin(dir);
-	shoot(state, b, dir, normX, normY, offsetX, offsetY);
+	float unitX = cos(dir);
+	float unitY = sin(dir);
+	shoot(state, b, dir, unitX, unitY, offsetX, offsetY);
 }
 
 void Fighter::shoot(GameState &state, Bullet b, float dir, float extraDir, float offsetX, float offsetY)
 {
-	float normX = cos(dir);
-	float normY = sin(dir);
-	shoot(state, b, dir + extraDir, normX, normY, offsetX, offsetY);
+	float unitX = cos(dir);
+	float unitY = sin(dir);
+	shoot(state, b, dir + extraDir, unitX, unitY, offsetX, offsetY);
 }
 
-void Fighter::shoot(GameState &state, Bullet b, float dir, float normX, float normY, float offsetX, float offsetY)
+void Fighter::shoot(GameState &state, Bullet b, float dir, float unitX, float unitY, float offsetX, float offsetY)
 {
 	float rotX, rotY, outX, outY;
 
 	if (offsetX != 0 || offsetY != 0) {
-		rotX = normY * -1 * offsetY;
-		rotY = normX * offsetY;
-		outX = normX * offsetX;
-		outY = normY * offsetX;
+		rotX = unitY * -1 * offsetY;
+		rotY = unitX * offsetY;
+		outX = unitX * offsetX;
+		outY = unitY * offsetX;
 	}
 	else {
 		outX = outY = rotX = rotY = 0;

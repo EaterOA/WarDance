@@ -42,13 +42,13 @@ void Grunt::act(GameState& state)
         m_move_cd = util::rand(200, 600);
 		sf::Vector2f vec = state.player->getPos() - m_pos;
 		float vr = util::getLen(vec);
-		float normX = vec.x / vr;
-		float normY = vec.y / vr;
-		m_dir = util::toDir(normX, normY);
+		float unitX = vec.x / vr;
+		float unitY = vec.y / vr;
+		m_dir = util::toDir(unitX, unitY);
 		if (vr > m_radius_far)
-			m_vel = sf::Vector2f(normX * m_max_v, normY * m_max_v);
+			m_vel = sf::Vector2f(unitX * m_max_v, unitY * m_max_v);
 		else if (vr < m_radius_close)
-			m_vel = sf::Vector2f(-normX * m_max_v, -normY * m_max_v);
+			m_vel = sf::Vector2f(-unitX * m_max_v, -unitY * m_max_v);
 		else
 			m_vel = sf::Vector2f(0, 0);
 	}

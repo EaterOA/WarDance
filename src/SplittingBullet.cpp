@@ -9,12 +9,12 @@ SplittingBullet::SplittingBullet(sf::Vector2f pos, float dir, int faction)
 	m_vel.y = 100.f * sin(m_dir);
 }
 
-SplittingBullet::SplittingBullet(sf::Vector2f pos, float dir, float normX, float normY, int faction)
+SplittingBullet::SplittingBullet(sf::Vector2f pos, float dir, float unitX, float unitY, int faction)
 	: Projectile("split_bullet", pos, util::ShapeVector(util::Circle, 3.f), rand() % 40 + 15, 20, faction)
 {
 	m_dir = dir;
-	m_vel.x = 100.f * normX;
-	m_vel.y = 100.f * normY;
+	m_vel.x = 100.f * unitX;
+	m_vel.y = 100.f * unitY;
 }
 
 void SplittingBullet::act(GameState &state)

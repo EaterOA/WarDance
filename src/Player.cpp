@@ -7,10 +7,20 @@ Player::Player(sf::Vector2f pos)
 	m_base_v = 150.f;
 	m_numGrenades = 3;
 	m_grenade_cd = 0.f;
+	m_shield_cd = 0;
+	m_shield_regen = 1.f;
+	m_maxShield = 20.f;
+	m_shield = m_maxShield;
 }
 
 void Player::act(GameState &state)
 {
+	//Regen shield
+	if (m_shield_cd <= 0 && m_shield < m_maxShield) {
+		m_shield += m_shield_regen * state.elapsed.asSeconds();
+		if (m_shield > m_maxShield) m_shield = m_maxShield;
+	}
+
 	//Progress statuses
 	for (std::map<StatusT, StatusD>::iterator iter = m_status.begin(); iter != m_status.end();) {
 		iter->second.dur -= state.elapsed.asSeconds();
@@ -53,16 +63,18 @@ void Player::act(GameState &state)
 
 void Player::hit(GameState &state, int damage)
 {
+	state.shot++;
+	m_shield_cd = 10000;
 	int final = damage;
-	if (isStatus(SHIELD)) {
-		int remaining = m_status[SHIELD].data.shield;
-		if (remaining > damage) {
+	if (m_shield > 0) {
+		if (m_shield > damage) {
+			m_shield -= (float)damage;
 			final = 0;
-			m_status[SHIELD].data.shield -= damage;
 		}
 		else {
+			int remaining = (int)(m_shield + 0.5f);
+			m_shield = 0;
 			final = damage - remaining;
-			m_status.erase(SHIELD);
 		}
 	}
 	m_hp -= final;
@@ -73,22 +85,23 @@ int Player::getNumGrenades() const
 	return m_numGrenades;
 }
 
-int Player::getShield() const
+float Player::getShield() const
 {
-	if (isStatus(SHIELD)) return m_status.find(SHIELD)->second.data.shield;
-	return 0;
+	return m_shield;
 }
 
-int Player::getMaxShield() const
+float Player::getMaxShield() const
 {
-	return 50;
+	return m_maxShield;
 }
 
 void Player::cooldown(GameState &state)
 {
 	Fighter::cooldown(state);
 	m_grenade_cd -= state.elapsed.asMilliseconds();
+	m_shield_cd -= state.elapsed.asMilliseconds();
 	if (m_grenade_cd < -5000) m_grenade_cd = 0;
+	if (m_shield_cd < -5000) m_shield_cd = 0;
 }
 
 void Player::attack(GameState &state)
@@ -120,10 +133,6 @@ void Player::applyStatus(StatusT s, float dur)
 	}
 	else if (s == CONFUSE) {
 		m_status[s].dur = dur;
-	}
-	else if (s == SHIELD) {
-		m_status[s].dur = dur;
-		m_status[s].data.shield = 50;
 	}
 }
 

@@ -116,12 +116,37 @@ void GameGraphics::addSprite(const Actor &actor)
 {
 	const FrameData& d = m_frameMap[actor.getFrame()];
 
-	sf::Vertex sprite[4];
-	affixPos(sprite, actor.getPos(), d);
-	affixTexture(sprite, d);
-	rotateSprite(sprite, util::toDeg(actor.getDir()), actor.getPos(), d);
-	applyColor(sprite, d);
-	m_sprites[d.sheetNum].insert(m_sprites[d.sheetNum].end(), sprite, sprite+4);
+	//Some sprites have to be specially drawn. It makes for better flexibility.
+	if (actor.getFrame() == "wiper") {
+		sf::Vector2f c = actor.getPos();
+		float rOut = actor.getSize().x;
+		float rIn = (rOut > 20 ? rOut - 20 : 0);
+		int numPt = (int)(sqrt(rOut) * 3);
+		sf::Transform tr;
+		tr.rotate(360.f / numPt, c);
+		sf::Vertex curOut(sf::Vector2f(c.x + rOut, c.y)), nextOut;
+		sf::Vertex curIn(sf::Vector2f(c.x + rIn, c.y)), nextIn;
+		curOut.color = nextOut.color = sf::Color(150, 150, 255, 255);
+		curIn.color = nextIn.color = sf::Color(150, 150, 255, 0);
+		for (int i = 0; i < numPt; i++) {
+			nextOut.position = tr.transformPoint(curOut.position);
+			nextIn.position = tr.transformPoint(curIn.position);
+			m_specialSprites.push_back(curOut);
+			m_specialSprites.push_back(nextOut);
+			m_specialSprites.push_back(nextIn);
+			m_specialSprites.push_back(curIn);
+			curOut = nextOut;
+			curIn = nextIn;
+		}
+	}
+	else {
+		sf::Vertex sprite[4];
+		affixPos(sprite, actor.getPos(), d);
+		affixTexture(sprite, d);
+		rotateSprite(sprite, util::toDeg(actor.getDir()), actor.getPos(), d);
+		applyColor(sprite, d);
+		m_sprites[d.sheetNum].insert(m_sprites[d.sheetNum].end(), sprite, sprite+4);
+	}
 }
 
 void GameGraphics::addHealthBar(const Fighter &fighter)
@@ -177,6 +202,7 @@ void GameGraphics::updateSprites(const GameState &state)
 
 	//Recalculating sprite appearance
 	m_sprites = std::vector<std::vector<sf::Vertex> >(m_numSheets);
+	m_specialSprites = std::vector<sf::Vertex>();
 	if (m_hitbox_enabled)
 		m_hitboxes = std::vector<sf::Vertex>();
 
@@ -207,6 +233,9 @@ void GameGraphics::draw(sf::RenderTarget& target, sf::RenderStates states) const
 			sf::RenderStates spriteState(&m_spritesheet[i]);
 			target.draw(&m_sprites[i][0], m_sprites[i].size(), sf::Quads, spriteState);
 		}
+	}
+	if (!m_specialSprites.empty()) {
+		target.draw(&m_specialSprites[0], m_specialSprites.size(), sf::Quads);
 	}
     if (m_hitbox_enabled) target.draw(&m_hitboxes[0], m_hitboxes.size(), sf::Lines);
 }
