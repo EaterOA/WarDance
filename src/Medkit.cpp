@@ -4,7 +4,7 @@
 Medkit::Medkit(sf::Vector2f pos, float dur)
     : Item("medkit", pos, util::ShapeVector(util::Rectangle, 10, 10), dur)
 {
-    m_hpRestore = 25;
+    m_hpRestore = 250;
 }
 
 void Medkit::act(GameState &state)

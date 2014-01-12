@@ -2,9 +2,8 @@
 #include "GameMechanics.hpp"
 
 RegularGrenade::RegularGrenade(sf::Vector2f pos, sf::Vector2f dest)
-	: Projectile("split_bullet", pos, util::ShapeVector(util::Circle, 100), 5, 5, 0)
+	: Projectile("split_bullet", pos, util::ShapeVector(util::Circle, 100), 1, 100, 0)
 {
-	m_damage = 100;
 	sf::Vector2f v = dest - pos;
 	m_dir = util::toDir(v.x, v.y);
 	m_vel.x = 150.f * cos(m_dir);
@@ -20,6 +19,7 @@ void RegularGrenade::attack(GameState &state)
 		}
 	}
 	for (unsigned i = 0; i < state.projectiles.size(); i++) {
+		if (m_faction == state.projectiles[i]->getFaction()) continue;
 		if (util::hasCollided(m_pos, m_size.x, state.projectiles[i]->getPos(), 0)) {
 			state.projectiles[i]->hit(state, m_damage);
 		}

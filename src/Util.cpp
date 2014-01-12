@@ -1,4 +1,5 @@
 #include "Util.hpp"
+#include <cstring>
 
 namespace util
 {
@@ -198,12 +199,16 @@ namespace util
 		return elems;
 	}
 
-
 	std::vector<std::string> split(const std::string &s, char delim) 
 	{
 		std::vector<std::string> elems;
 		split(s, delim, elems);
 		return elems;
 	}
-
+	
+	bool isPrefix(const std::string &p, const std::string &s)
+	{
+		if (p.size() > s.size()) return false;
+		return !strncmp(p.c_str(), s.c_str(), p.size());
+	}
 }

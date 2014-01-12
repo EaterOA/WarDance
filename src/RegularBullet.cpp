@@ -2,7 +2,7 @@
 #include "GameMechanics.hpp"
 
 RegularBullet::RegularBullet(sf::Vector2f pos, float dir, int faction)
-	: Projectile("reg_bullet", pos, util::ShapeVector(util::Rectangle, 10, 2), 5, 5, faction)
+	: Projectile("reg_bullet", pos, util::ShapeVector(util::Rectangle, 10, 2), 1, 50, faction)
 {
 	m_dir = dir;
 	m_vel.x = 100.f * cos(m_dir);
@@ -11,7 +11,7 @@ RegularBullet::RegularBullet(sf::Vector2f pos, float dir, int faction)
 }
 
 RegularBullet::RegularBullet(sf::Vector2f pos, float dir, float unitX, float unitY, int faction)
-	: Projectile("reg_bullet", pos, util::ShapeVector(util::Rectangle, 5, 2), 5, 5, faction)
+	: Projectile("reg_bullet", pos, util::ShapeVector(util::Rectangle, 5, 2), 1, 50, faction)
 {
 	m_dir = dir;
 	m_vel.x = 100.f * unitX;

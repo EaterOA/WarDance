@@ -2,7 +2,7 @@
 #include "GameMechanics.hpp"
 
 SplittingBullet::SplittingBullet(sf::Vector2f pos, float dir, int faction)
-	: Projectile("split_bullet", pos, util::ShapeVector(util::Circle, 3.f), rand() % 40 + 15, 20, faction)
+	: Projectile("split_bullet", pos, util::ShapeVector(util::Circle, 3.f), rand() % 40 + 15, 75, faction)
 {
 	m_dir = dir;
 	m_vel.x = 100.f * cos(m_dir);
@@ -10,7 +10,7 @@ SplittingBullet::SplittingBullet(sf::Vector2f pos, float dir, int faction)
 }
 
 SplittingBullet::SplittingBullet(sf::Vector2f pos, float dir, float unitX, float unitY, int faction)
-	: Projectile("split_bullet", pos, util::ShapeVector(util::Circle, 3.f), rand() % 40 + 15, 20, faction)
+	: Projectile("split_bullet", pos, util::ShapeVector(util::Circle, 3.f), rand() % 40 + 15, 75, faction)
 {
 	m_dir = dir;
 	m_vel.x = 100.f * unitX;

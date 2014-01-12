@@ -5,7 +5,6 @@ Wiper::Wiper(sf::Vector2f pos)
 	: Projectile("wiper", pos, util::ShapeVector(util::Circle, 0), 5, 5, 0)
 {
 	m_damage = 99999;
-	m_dir = 0;
 	m_expandSpeed = 800.f;
 }
 

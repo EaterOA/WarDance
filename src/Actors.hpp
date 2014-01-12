@@ -41,7 +41,7 @@ protected:
 	void shoot(GameState &state, Bullet b, float dir, float offsetX, float offsetY);
 	void shoot(GameState &state, Bullet b, float dir, float extraDir, float offsetX, float offsetY);
 	void shoot(GameState &state, Bullet b, float dir, float unitX, float unitY, float offsetX, float offsetY);
-	int m_attack_cd;
+	float m_attack_cd;
 	int m_hp;
 	int m_maxHp;
 	int m_faction;
@@ -81,7 +81,8 @@ private:
 	int m_numGrenades;
 	float m_grenade_cd;
 	float m_laser_cd;
-	float m_shield, m_shield_cd, m_shield_regen, m_maxShield;
+	float m_shield_cd;
+	float m_shield, m_shield_regen, m_maxShield;
 	std::map<StatusT, StatusD> m_status;
 };
 
@@ -99,7 +100,7 @@ protected:
     virtual void cooldown(GameState& state);
 	float m_max_v;
 	float m_radius_close, m_radius_far;
-	int m_move_cd;
+	float m_move_cd;
 };
 
 class Sprinkler: public Fighter
@@ -121,7 +122,7 @@ public:
 protected:
 	virtual void attack(GameState& state);
     virtual void cooldown(GameState& state);
-	int m_move_cd;
+	float m_move_cd;
 	float m_max_v;
 	float m_gunDir1, m_gunDir2;
 };
@@ -180,11 +181,12 @@ class Laser: public Projectile
 {
 public:
 	Laser(sf::Vector2f pos, float dir, int faction);
-	Laser(sf::Vector2f pos, float dir, float unitX, float unitY, int faction);
 	virtual void act(GameState& state);
+	float getFadePerc() const;
 protected:
 	virtual void attack(GameState& state);
 	float m_time;
+	float m_fadeTime;
 };
 
 

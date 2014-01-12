@@ -2,7 +2,7 @@
 #include "GameMechanics.hpp"
 
 Sprinkler::Sprinkler(sf::Vector2f pos)
-	: Fighter("sprinkler", util::ShapeVector(util::Circle, 20.f), pos, 10, 1)
+	: Fighter("sprinkler", util::ShapeVector(util::Circle, 20.f), pos, 100, 1)
 {
 	m_attack_cd = 0;
 }
@@ -16,7 +16,7 @@ void Sprinkler::hit(GameState &state, int damage)
 
 void Sprinkler::attack(GameState& state)
 {
-	m_attack_cd = 150;
+	m_attack_cd = 0.15f;
 	m_dir = util::rotateRad(m_dir, util::toRad(10.f));
 	shoot(state, REGULAR, 20.f, 0);
 }

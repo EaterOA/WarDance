@@ -139,6 +139,21 @@ void GameGraphics::addSprite(const Actor &actor)
 			curIn = nextIn;
 		}
 	}
+	if (util::isPrefix("m_laser", actor.getFrame())) {
+		const Laser& laser = *(const Laser*)(&actor);
+		FrameData custom_d = d;
+		int alpha = (int)(laser.getFadePerc() * 255.f);
+		custom_d.rgba &= 0xffffff00;
+		custom_d.rgba |= alpha;
+		sf::Vertex sprite[4];
+		affixPos(sprite, actor.getPos(), d);
+		sprite[1].position.x = sprite[0].position.x + actor.getSize().x;
+		sprite[2].position.x = sprite[3].position.x + actor.getSize().x;
+		affixTexture(sprite, d);
+		rotateSprite(sprite, util::toDeg(actor.getDir()), actor.getPos(), d);
+		applyColor(sprite, custom_d);
+		m_sprites[d.sheetNum].insert(m_sprites[d.sheetNum].end(), sprite, sprite+4);
+	}
 	else {
 		sf::Vertex sprite[4];
 		affixPos(sprite, actor.getPos(), d);

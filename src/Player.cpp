@@ -2,14 +2,15 @@
 #include "GameMechanics.hpp"
 
 Player::Player(sf::Vector2f pos)
-	: Fighter("player", util::ShapeVector(util::Rectangle, 25.f, 30.f), pos, 50, 0)
+	: Fighter("player", util::ShapeVector(util::Rectangle, 25.f, 30.f), pos, 500, 0)
 {
 	m_base_v = 150.f;
 	m_numGrenades = 3;
 	m_grenade_cd = 0.f;
+	m_laser_cd = 0.f;
 	m_shield_cd = 0;
-	m_shield_regen = 1.f;
-	m_maxShield = 20.f;
+	m_shield_regen = 10.f;
+	m_maxShield = 200.f;
 	m_shield = m_maxShield;
 }
 
@@ -58,23 +59,25 @@ void Player::act(GameState &state)
 	//Trigger attack
 	cooldown(state);
 	if (conf::clicking(conf::B_LEFT) && m_attack_cd <= 0) attack(state);
-	else if (conf::clicking(conf::B_RIGHT) && m_grenade_cd <= 0 && m_numGrenades > 0) throwGrenade(state);
+	else if (conf::clicking(conf::B_RIGHT) && m_laser_cd <= 0) {
+		m_laser_cd = 0.4f;
+		shoot(state, LASER, 40.f, 10.f);
+	}
 }
 
 void Player::hit(GameState &state, int damage)
 {
 	state.shot++;
-	m_shield_cd = 10000;
+	m_shield_cd = 10.f;
 	int final = damage;
 	if (m_shield > 0) {
 		if (m_shield > damage) {
-			m_shield -= (float)damage;
 			final = 0;
+			m_shield -= (float)damage;
 		}
 		else {
-			int remaining = (int)(m_shield + 0.5f);
+			final = damage - (int)(m_shield + 0.5f);
 			m_shield = 0;
-			final = damage - remaining;
 		}
 	}
 	m_hp -= final;
@@ -98,22 +101,24 @@ float Player::getMaxShield() const
 void Player::cooldown(GameState &state)
 {
 	Fighter::cooldown(state);
-	m_grenade_cd -= state.elapsed.asMilliseconds();
-	m_shield_cd -= state.elapsed.asMilliseconds();
-	if (m_grenade_cd < -5000) m_grenade_cd = 0;
-	if (m_shield_cd < -5000) m_shield_cd = 0;
+	m_grenade_cd -= state.elapsed.asSeconds();
+	m_shield_cd -= state.elapsed.asSeconds();
+	m_laser_cd -= state.elapsed.asSeconds();
+	if (m_grenade_cd < -5) m_grenade_cd = 0;
+	if (m_shield_cd < -5) m_shield_cd = 0;
+	if (m_laser_cd < -5) m_laser_cd = 0;
 }
 
 void Player::attack(GameState &state)
 {
-	m_attack_cd = 150;
+	m_attack_cd = 0.15f;
 	shoot(state, REGULAR, 40.f, 10.f);
 }
 
 void Player::throwGrenade(GameState &state)
 {
 	m_numGrenades--;
-	m_grenade_cd = 300;
+	m_grenade_cd = 0.3f;
 	state.projectiles.push_back(new RegularGrenade(m_pos, state.cursor));
 }
 

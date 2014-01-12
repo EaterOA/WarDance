@@ -33,8 +33,8 @@ void Fighter::hit(GameState &state, int damage)
 
 void Fighter::cooldown(GameState &state)
 {
-	m_attack_cd -= state.elapsed.asMilliseconds();
-	if (m_attack_cd < -5000) m_attack_cd = 0;
+	m_attack_cd -= state.elapsed.asSeconds();
+	if (m_attack_cd < -5) m_attack_cd = 0;
 }
 
 bool Fighter::isDead(GameState &state)
