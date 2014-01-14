@@ -2,7 +2,7 @@
 #include "GameMechanics.hpp"
 
 Laser::Laser(sf::Vector2f pos, float dir, int faction)
-	: Projectile("m_laser", pos, util::ShapeVector(util::Rectangle, 600, 15), 7, 11, faction)
+	: Projectile("m_laser", pos, util::ShapeVector(util::Rectangle, 600, 15), 7, 800, faction)
 {
 	m_dir = dir;
 	m_vel.x = 0;
@@ -14,16 +14,17 @@ Laser::Laser(sf::Vector2f pos, float dir, int faction)
 
 void Laser::attack(GameState &state)
 {
+    int tickDmg = (int)(m_damage * state.elapsed.asSeconds());
 	sf::Vector2f translated_pos(m_pos.x + m_size.x/2 * cos(m_dir), m_pos.y + m_size.x/2 * sin(m_dir));
 	if (m_faction != 0) {
 		if (util::hasCollided(state.player->getPos(), state.player->getSize(), state.player->getDir(), translated_pos, m_size, m_dir)) {
-			state.player->hit(state, m_damage);
+			state.player->hit(state, tickDmg);
 		}
 	}
 	else {
 		for (unsigned i = 0; i < state.enemies.size(); i++) {
 			if (util::hasCollided(state.enemies[i]->getPos(), state.enemies[i]->getSize(), state.enemies[i]->getDir(), translated_pos, m_size, m_dir)) {
-				state.enemies[i]->hit(state, m_damage);
+				state.enemies[i]->hit(state, tickDmg);
 			}
 		}
 	}

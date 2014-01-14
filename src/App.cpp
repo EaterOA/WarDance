@@ -55,18 +55,17 @@ void paint()
 void goToMain()
 {
 	prevState = appState;
-	if (prevState == PAUSED || prevState == GAME) {
-		mAgent.end();
-	}
     appState = MAIN;
-    guiAgent.transitionState();
+    guiAgent.transitionState(mAgent.getState());
 }
 
 void startGame()
 {
-	appState = GAME;
+    appState = GAME;
 	gameClock.restart();
-	mAgent.start();
+	mAgent.initLevel();
+    guiAgent.transitionState(mAgent.getState());
+    goToLevelStart();
 }
 
 void endGame()
@@ -78,7 +77,7 @@ void endGame()
 void resumeGame()
 {
 	appState = GAME;
-	guiAgent.transitionState();
+    guiAgent.transitionState(mAgent.getState());
 	gameClock.restart();
 }
 
@@ -86,14 +85,26 @@ void pauseGame()
 {
 	gAgent.updateSprites(mAgent.getState());
 	appState = PAUSED;
-	guiAgent.transitionState();
+    guiAgent.transitionState(mAgent.getState());
 }
 
 void goToSettings()
 {
 	prevState = appState;
 	appState = SETTINGS;
-	guiAgent.transitionState();
+    guiAgent.transitionState(mAgent.getState());
+}
+
+void goToLevelEnd()
+{
+    prevState = appState;
+    appState = LEVELEND;
+    guiAgent.transitionState(mAgent.getState());
+}
+
+void goToLevelStart()
+{
+    mAgent.startLevel();
 }
 
 std::vector<sf::Event> processEvents()
@@ -123,21 +134,27 @@ std::vector<sf::Event> processEvents()
 
 void appStart()
 {
-	guiAgent.transitionState();
+	guiAgent.transitionState(mAgent.getState());
 	gameClock.restart();
 	while (window.isOpen()) {
 		std::vector<sf::Event> keyEvents = processEvents();
 		guiAgent.updateAppState(keyEvents);
-		if (appState == GAME) {
+		if (appState == GAME || appState == LEVELEND) {
 			mAgent.updateState(window, gameClock.restart());
-			mAgent.tick();
-			bool playerDead = mAgent.cleanUp();
+			int gameStatus = mAgent.tick();
 			gAgent.updateSprites(mAgent.getState());
 			guiAgent.updateGameState(mAgent.getState());
 			updateView(mAgent.getState().player->getPos());
-			if (playerDead) {
+			if (gameStatus == 1) {
 				goToMain();
 			}
+            else if (gameStatus == 2 && appState == GAME) {
+                //goToLevelEnd();
+                mAgent.endLevel();
+                if (config["level"] < config["num_levels"])
+                    config["level"]++;
+                mAgent.startLevel();
+            }
 		}
         if (appState != NOFOCUS) paint();
 	}

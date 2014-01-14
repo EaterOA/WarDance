@@ -2,7 +2,7 @@
 #define APP_HPP
 
 enum AppState {
-	SPLASH, MAIN, SETTINGS, GAME, PAUSED, DEAD, NOFOCUS, CLOSED, NONE
+	SPLASH, MAIN, SETTINGS, GAME, PAUSED, LEVELEND, NOFOCUS, CLOSED, NONE
 };
 
 const int APP_WIDTH = 800;
@@ -16,6 +16,8 @@ void pauseGame();
 void resumeGame();
 void goToSettings();
 void goToMain();
+void goToLevelEnd();
+void goToLevelStart();
 void endGame();
 
 #endif

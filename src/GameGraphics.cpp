@@ -142,7 +142,7 @@ void GameGraphics::addSprite(const Actor &actor)
 	if (util::isPrefix("m_laser", actor.getFrame())) {
 		const Laser& laser = *(const Laser*)(&actor);
 		FrameData custom_d = d;
-		int alpha = (int)(laser.getFadePerc() * 255.f);
+		unsigned alpha = (unsigned)(laser.getFadePerc() * 255.f);
 		custom_d.rgba &= 0xffffff00;
 		custom_d.rgba |= alpha;
 		sf::Vertex sprite[4];

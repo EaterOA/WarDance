@@ -47,19 +47,18 @@ bool GameMechanics::init()
 	return true;
 }
 
-void GameMechanics::start()
+void GameMechanics::initLevel()
 {
-	m_state.cleanAll();
+    m_state.cleanAll();
 	m_state.player = new Player(sf::Vector2f(100.f, 100.f));
-	startNextLevel();
 }
 
-void GameMechanics::end()
+void GameMechanics::endLevel()
 {
-	m_state.cleanAll();
+    m_state.projectiles.push_back(new Wiper(m_state.player->getPos()));
 }
 
-void GameMechanics::startNextLevel()
+void GameMechanics::startLevel()
 {
 	m_state.resetLevel();
 	std::stringstream scriptName;
@@ -67,8 +66,9 @@ void GameMechanics::startNextLevel()
 	m_script->parseFile(scriptName.str(), m_state.totalElapsed.asSeconds());
 }
 
-void GameMechanics::tick()
+int GameMechanics::tick()
 {
+    //Advance script and actors
 	m_script->tick(m_state.totalElapsed.asSeconds());
 	m_state.player->act(m_state);
 	for (unsigned i = 0; i < m_state.projectiles.size(); i++)
@@ -78,26 +78,14 @@ void GameMechanics::tick()
 	for (unsigned i = 0; i < m_state.items.size(); i++)
 		m_state.items[i]->act(m_state);
 
-	//Placeholder highscore updater
+    //Update highscore
 	if (m_state.score > config["highscore"]) config["highscore"] = m_state.score;
 
-	if (m_script->isDone() && m_state.enemies.size() == 0)
-	{
-		//maybe have something pop up to say that the level is over
-		std::cout << "Level " << config["level"] << " complete!\n";
-
-		m_state.projectiles.push_back(new Wiper(m_state.player->getPos()));
-
-		if (config["level"] < config["num_levels"])
-			config["level"]++;
-
-		startNextLevel();
-	}
-}
-
-bool GameMechanics::cleanUp()
-{
+    //Check game-ending conditions
 	if (m_state.player->isDead(m_state)) return 1;
+	if (m_script->isDone() && m_state.enemies.size() == 0) return 2;
+
+    //Clean up dead things
 	for (unsigned i = 0; i < m_state.projectiles.size(); i++) {
 		if (m_state.projectiles[i]->isDead(m_state)) {
 			delete m_state.projectiles[i];
@@ -122,7 +110,8 @@ bool GameMechanics::cleanUp()
 			i--;
 		}
 	}
-	return 0;
+
+    return 0;
 }
 
 GameState& GameMechanics::getState()

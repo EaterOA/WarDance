@@ -9,7 +9,7 @@ class GameGUI : public sf::Drawable, public sf::Transformable
 {
 public:
 	bool init();
-	void transitionState();
+	void transitionState(const GameState& state);
 	void updateGameState(const GameState& state);
 	void updateAppState(const std::vector<sf::Event> &keyEvents);
 private:
@@ -51,6 +51,7 @@ private:
 	sf::VertexArray m_settingsMenu;
 
 	//HUD
+    void updateHUD(const GameState& state);
 	sf::Font m_stencil;
 	sf::Font m_liberation;
 	sf::Text m_score;
@@ -60,6 +61,16 @@ private:
 	std::vector<sf::Vertex> m_grenadeDisplay;
 	sf::VertexArray m_hud;
 	sf::Texture m_guisheet;
+
+    //Level end
+    void initLevelEnd(const GameState& state);
+    void updateLevelEnd(const GameState& state);
+    void forwardLevelEnd();
+    float m_levelEnd_timing;
+    int m_levelEnd_timing_stage;
+    int m_scoring_amt[5];
+    float m_scoring_timing;
+    int m_scoring_timing_stage;
 };
 
 #endif

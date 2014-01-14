@@ -137,7 +137,61 @@ void GameGUI::setAlpha(sf::Vertex sprite[4], unsigned char alpha)
 	sprite[3].color.a = alpha;
 }
 
-void GameGUI::updateGameState(const GameState& state)
+void GameGUI::initLevelEnd(const GameState& state)
+{
+    m_levelEnd_timing_stage = 0;
+    m_levelEnd_timing = 2.5f;
+    m_scoring_amt[0] = (int)(20000.f * state.fired / state.hit);
+    m_scoring_timing = 1.f;
+    m_scoring_timing_stage = 0;
+}
+
+void GameGUI::forwardLevelEnd()
+{
+    if (m_levelEnd_timing_stage == 1) {
+        m_levelEnd_timing_stage++;
+    }
+    if (m_levelEnd_timing_stage == 2) {
+        m_levelEnd_timing_stage++;
+        m_levelEnd_timing = 4.f;
+    }
+}
+
+void GameGUI::updateLevelEnd(const GameState& state)
+{
+    if (m_levelEnd_timing_stage == 0) {
+        m_levelEnd_timing -= state.elapsed.asSeconds();
+        if (m_levelEnd_timing <= 0) {
+            m_levelEnd_timing_stage++;
+        }
+    }
+    else if (m_levelEnd_timing_stage == 1) {
+        m_scoring_timing -= state.elapsed.asSeconds();
+        if (m_scoring_timing <= 0) {
+            m_scoring_timing_stage++;
+            if (m_scoring_timing_stage == 2) {
+                m_levelEnd_timing_stage++;
+            }
+            else {
+                m_scoring_timing = 1.f;
+            }
+        }
+    }
+    else if (m_levelEnd_timing_stage == 3) {
+        m_levelEnd_timing -= state.elapsed.asSeconds();
+        if (m_levelEnd_timing <= 0) {
+            m_levelEnd_timing_stage++;
+        }
+    }
+    else if (m_levelEnd_timing_stage == 4) {
+        m_levelEnd_timing -= state.elapsed.asSeconds();
+        if (m_levelEnd_timing <= 0) {
+            goToLevelStart();
+        }
+    }
+}
+
+void GameGUI::updateHUD(const GameState& state)
 {
 	//Scaling bars
 	float hpPerc = float(state.player->getHP()) / state.player->getMaxHP();
@@ -158,9 +212,18 @@ void GameGUI::updateGameState(const GameState& state)
 	for (int i = 0; i < state.player->getNumGrenades(); i++) {
 		sf::Vertex grenadeSprite[4];
 		copySprite(m_grenade, grenadeSprite);
-		for (unsigned j = 0; j < 4; j++) grenadeSprite[j].position += sf::Vector2f(-25.f*i, 0);
-		m_grenadeDisplay.insert(m_grenadeDisplay.end(), grenadeSprite, grenadeSprite+4);
-	}
+		for (unsigned j = 0; j < 4; j++)
+            grenadeSprite[j].position += sf::Vector2f(-25.f*i, 0);
+	    m_grenadeDisplay.insert(m_grenadeDisplay.end(), grenadeSprite, grenadeSprite+4);	
+    }
+}
+
+void GameGUI::updateGameState(const GameState& state)
+{
+    if (appState == LEVELEND) {
+        GameGUI::updateLevelEnd(state);
+    }
+    GameGUI::updateHUD(state);
 }
 
 void GameGUI::selectPauseChoice(unsigned choice)
@@ -278,7 +341,7 @@ void GameGUI::updateAppState(const std::vector<sf::Event> &keyEvents)
 	}
 }
 
-void GameGUI::transitionState()
+void GameGUI::transitionState(const GameState& state)
 {
 	if (appState == PAUSED) {
 		selectPauseChoice(1);
@@ -290,6 +353,9 @@ void GameGUI::transitionState()
 	if (appState == MAIN) {
 		selectMainChoice(1);
 	}
+    if (appState == LEVELEND) {
+        initLevelEnd(state);
+    }
 }
 
 void GameGUI::draw(sf::RenderTarget& target, sf::RenderStates states) const

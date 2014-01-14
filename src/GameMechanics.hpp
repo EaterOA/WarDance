@@ -27,11 +27,10 @@ struct GameState {
 class GameMechanics {
 public:
 	bool init();
-	void start();
-	void end();
-	void startNextLevel();
-	void tick();
-	bool cleanUp();
+	int tick();
+    void initLevel();
+	void startLevel();
+    void endLevel();
 	GameState& getState();
 	void updateState(const sf::RenderWindow &window, const sf::Time &elapsed);
 	void spawnEnemy(std::string name);
