@@ -53,9 +53,19 @@ void GameMechanics::initLevel()
 	m_state.player = new Player(sf::Vector2f(100.f, 100.f));
 }
 
-void GameMechanics::endLevel()
+const std::map<std::string, int> GameMechanics::endLevel()
 {
+	//Wipe all enemy projectiles
     m_state.projectiles.push_back(new Wiper(m_state.player->getPos()));
+	//Calculate level end stats
+	std::map<std::string, int> levelEndStats;
+	levelEndStats["shot"] = m_state.shot;
+	levelEndStats["hit"] = m_state.hit;
+	levelEndStats["fired"] = m_state.fired;
+	levelEndStats["accuracy"] = (int)((float)m_state.hit / m_state.fired);
+	levelEndStats["bonus"] = (int)(20000.f * levelEndStats["accuracy"]);
+
+	return levelEndStats;
 }
 
 void GameMechanics::startLevel()
@@ -66,7 +76,7 @@ void GameMechanics::startLevel()
 	m_script->parseFile(scriptName.str(), m_state.totalElapsed.asSeconds());
 }
 
-int GameMechanics::tick()
+void GameMechanics::tick()
 {
     //Advance script and actors
 	m_script->tick(m_state.totalElapsed.asSeconds());
@@ -80,10 +90,6 @@ int GameMechanics::tick()
 
     //Update highscore
 	if (m_state.score > config["highscore"]) config["highscore"] = m_state.score;
-
-    //Check game-ending conditions
-	if (m_state.player->isDead(m_state)) return 1;
-	if (m_script->isDone() && m_state.enemies.size() == 0) return 2;
 
     //Clean up dead things
 	for (unsigned i = 0; i < m_state.projectiles.size(); i++) {
@@ -110,16 +116,24 @@ int GameMechanics::tick()
 			i--;
 		}
 	}
-
-    return 0;
 }
 
-GameState& GameMechanics::getState()
+bool GameMechanics::isPlayerDead() const
+{
+	return m_state.player->isDead(m_state);
+}
+
+bool GameMechanics::isLevelDone() const
+{
+	return m_script->isDone() && m_state.enemies.size() == 0;
+}
+
+GameState& GameMechanics::getGameState()
 {
 	return m_state;
 }
 
-void GameMechanics::updateState(const sf::RenderWindow &window, const sf::Time &elapsed)
+void GameMechanics::updateGameState(const sf::RenderWindow &window, const sf::Time &elapsed)
 {
 	m_state.elapsed = elapsed;
 	m_state.totalElapsed += elapsed;

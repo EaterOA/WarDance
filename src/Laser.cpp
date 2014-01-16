@@ -10,6 +10,7 @@ Laser::Laser(sf::Vector2f pos, float dir, int faction)
 	m_time = 0.15f;
 	m_fadeTime = 0.08f;
 	if (m_faction == 0) m_frame = "m_laser_p";
+	m_countHit = false;
 }
 
 void Laser::attack(GameState &state)
@@ -19,12 +20,17 @@ void Laser::attack(GameState &state)
 	if (m_faction != 0) {
 		if (util::hasCollided(state.player->getPos(), state.player->getSize(), state.player->getDir(), translated_pos, m_size, m_dir)) {
 			state.player->hit(state, tickDmg);
+			state.shot += tickDmg;
 		}
 	}
 	else {
 		for (unsigned i = 0; i < state.enemies.size(); i++) {
 			if (util::hasCollided(state.enemies[i]->getPos(), state.enemies[i]->getSize(), state.enemies[i]->getDir(), translated_pos, m_size, m_dir)) {
 				state.enemies[i]->hit(state, tickDmg);
+				if (!m_countHit) {
+					state.hit++;
+					m_countHit = 1;
+				}
 			}
 		}
 	}

@@ -1,19 +1,22 @@
 #ifndef APP_HPP
 #define APP_HPP
 
+#include <vector>
+
+struct GameState;
+
 enum AppState {
-	SPLASH, MAIN, SETTINGS, GAME, PAUSED, LEVELEND, NOFOCUS, CLOSED, NONE
+	SPLASH, MAIN, SETTINGS, GAME, PAUSED, LEVELENDSEQUENCE, NOFOCUS, CLOSED, NONE
 };
 
 const int APP_WIDTH = 800;
 const int APP_HEIGHT = 600;
-extern AppState appState;
-extern AppState prevState;
-extern AppState haltState;
+extern std::vector<AppState> appStates;
 
+void back();
+AppState getAppState();
 void startGame();
 void pauseGame();
-void resumeGame();
 void goToSettings();
 void goToMain();
 void goToLevelEnd();

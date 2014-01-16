@@ -7,7 +7,7 @@ Grunt::Grunt(sf::Vector2f pos)
 	m_max_v = 50.f;
 	m_move_cd = 0;
 	m_attack_cd = 0;
-	m_radius_close = 20.f;
+	m_radius_close = 30.f;
 	m_radius_far = 70.f;
 }
 

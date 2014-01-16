@@ -11,7 +11,7 @@ GameMechanics mAgent;
 GameGraphics gAgent;
 GameGUI guiAgent;
 sf::Clock gameClock;
-AppState prevState, appState, haltState;
+std::vector<AppState> appStates;
 
 bool appInit()
 {
@@ -26,9 +26,7 @@ bool appInit()
 	if (!guiAgent.init()) return false;
 	if (!gAgent.init()) return false;
 
-	appState = MAIN;
-    prevState = NONE;
-    haltState = NONE;
+	appStates.push_back(MAIN);
 
 	return true;
 }
@@ -36,74 +34,87 @@ bool appInit()
 void updateView(sf::Vector2f pos)
 {
 	if (pos.x < APP_WIDTH/2) pos.x = APP_WIDTH/2;
-	else if (pos.x > mAgent.getState().map_width - APP_WIDTH/2) pos.x = (float)mAgent.getState().map_width - APP_WIDTH/2;
+	else if (pos.x > mAgent.getGameState().map_width - APP_WIDTH/2) pos.x = (float)mAgent.getGameState().map_width - APP_WIDTH/2;
 	if (pos.y < 300) pos.y = 300;
-	else if (pos.y > mAgent.getState().map_height - APP_HEIGHT/2) pos.y = (float)mAgent.getState().map_height - APP_HEIGHT/2;
+	else if (pos.y > mAgent.getGameState().map_height - APP_HEIGHT/2) pos.y = (float)mAgent.getGameState().map_height - APP_HEIGHT/2;
 	camera.setCenter(pos);
 }
 
 void paint()
 {
 	window.setView(camera);
-	if (appState == PAUSED || appState == GAME) window.draw(gAgent);
+	if (getAppState() == PAUSED || getAppState() == GAME || getAppState() == LEVELENDSEQUENCE) window.draw(gAgent);
 	window.setView(hud);
 	window.draw(guiAgent);
 	window.setView(camera);
 	window.display();
 }
 
+GameState& getGameState()
+{
+	return mAgent.getGameState();
+}
+
+void back()
+{
+	if (!appStates.empty()) appStates.pop_back();
+	if (getAppState() == GAME || getAppState() == LEVELENDSEQUENCE) {
+		gameClock.restart();
+	}
+	guiAgent.transitionAppState();
+}
+
+AppState getAppState()
+{
+	if (!appStates.empty()) return appStates.back();
+	return NONE;
+}
+
 void goToMain()
 {
-	prevState = appState;
-    appState = MAIN;
-    guiAgent.transitionState(mAgent.getState());
+	while (appStates.back() != MAIN) back();
+    guiAgent.transitionAppState();
 }
 
 void startGame()
 {
-    appState = GAME;
+	appStates.push_back(GAME);
+    guiAgent.transitionAppState();
 	gameClock.restart();
 	mAgent.initLevel();
-    guiAgent.transitionState(mAgent.getState());
-    goToLevelStart();
+    mAgent.startLevel();
 }
 
 void endGame()
 {
-	appState = CLOSED;
+	while (!appStates.empty()) appStates.pop_back();
+	appStates.push_back(CLOSED);
 	window.close();
-}
-
-void resumeGame()
-{
-	appState = GAME;
-    guiAgent.transitionState(mAgent.getState());
-	gameClock.restart();
 }
 
 void pauseGame()
 {
-	gAgent.updateSprites(mAgent.getState());
-	appState = PAUSED;
-    guiAgent.transitionState(mAgent.getState());
+	appStates.push_back(PAUSED);
+    guiAgent.transitionAppState();
 }
 
 void goToSettings()
 {
-	prevState = appState;
-	appState = SETTINGS;
-    guiAgent.transitionState(mAgent.getState());
+	appStates.push_back(SETTINGS);
+    guiAgent.transitionAppState();
 }
 
-void goToLevelEnd()
+void goToLevelEndSequence()
 {
-    prevState = appState;
-    appState = LEVELEND;
-    guiAgent.transitionState(mAgent.getState());
+	appStates.push_back(LEVELENDSEQUENCE);
+	guiAgent.startLevelEndSequence(mAgent.endLevel());
 }
 
-void goToLevelStart()
+void goToNextLevel()
 {
+	while (getAppState() != GAME) appStates.pop_back();
+    if (config["level"] < config["num_levels"])
+        config["level"]++;
     mAgent.startLevel();
 }
 
@@ -117,15 +128,11 @@ std::vector<sf::Event> processEvents()
 			break;
 		}
 		else if (event.type == sf::Event::LostFocus) {
-            if (haltState != NONE) continue;
-			haltState = appState;
-			appState = NOFOCUS;
+			if (getAppState() != NOFOCUS) appStates.push_back(NOFOCUS);
 		}
 		else if (event.type == sf::Event::GainedFocus) {
-            if (haltState == NONE) continue;
-			if (haltState == GAME) pauseGame();
-			else appState = haltState;
-            haltState = NONE;
+			while (appStates.back() == NOFOCUS) appStates.pop_back();
+			if (getAppState() == GAME) pauseGame();
 		}
 		else if (event.type == sf::Event::KeyPressed) keyEvents.push_back(event);
 	}
@@ -134,29 +141,30 @@ std::vector<sf::Event> processEvents()
 
 void appStart()
 {
-	guiAgent.transitionState(mAgent.getState());
+	guiAgent.transitionAppState();
 	gameClock.restart();
 	while (window.isOpen()) {
 		std::vector<sf::Event> keyEvents = processEvents();
-		guiAgent.updateAppState(keyEvents);
-		if (appState == GAME || appState == LEVELEND) {
-			mAgent.updateState(window, gameClock.restart());
-			int gameStatus = mAgent.tick();
-			gAgent.updateSprites(mAgent.getState());
-			guiAgent.updateGameState(mAgent.getState());
-			updateView(mAgent.getState().player->getPos());
-			if (gameStatus == 1) {
+		guiAgent.processInput(keyEvents);
+		if (getAppState() == GAME || getAppState() == LEVELENDSEQUENCE) {
+			mAgent.updateGameState(window, gameClock.restart());
+			mAgent.tick();
+			guiAgent.updateGameState(mAgent.getGameState());
+			gAgent.updateSprites(mAgent.getGameState());
+			updateView(mAgent.getGameState().player->getPos());
+			if (mAgent.isPlayerDead()) {
 				goToMain();
 			}
-            else if (gameStatus == 2 && appState == GAME) {
-                //goToLevelEnd();
-                mAgent.endLevel();
-                if (config["level"] < config["num_levels"])
-                    config["level"]++;
-                mAgent.startLevel();
+            else if (mAgent.isLevelDone()) {
+				if (!guiAgent.isLevelEndSequenceStarted()) {
+					goToLevelEndSequence();
+				}
+				else if (guiAgent.isLevelEndSequenceDone()) {
+					goToNextLevel();
+				}
             }
 		}
-        if (appState != NOFOCUS) paint();
+        if (getAppState() != NOFOCUS) paint();
 	}
 }
 

@@ -27,12 +27,14 @@ struct GameState {
 class GameMechanics {
 public:
 	bool init();
-	int tick();
+	void tick();
     void initLevel();
 	void startLevel();
-    void endLevel();
-	GameState& getState();
-	void updateState(const sf::RenderWindow &window, const sf::Time &elapsed);
+    const std::map<std::string, int> endLevel();
+	bool isLevelDone() const;
+	bool isPlayerDead() const;
+	GameState& getGameState();
+	void updateGameState(const sf::RenderWindow &window, const sf::Time &elapsed);
 	void spawnEnemy(std::string name);
 	void spawnEnemy(std::string name, sf::Vector2f pos);
 private:

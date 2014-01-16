@@ -37,6 +37,8 @@ bool GameScript::parseFile(const std::string &path, float elapsed)
 
 bool GameScript::parse(const std::string &script, float elapsed)
 {
+	m_events.clear();
+
 	m_script = script;
 	std::istringstream iss(script);
 

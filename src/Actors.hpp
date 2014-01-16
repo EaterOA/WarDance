@@ -27,7 +27,7 @@ class Fighter: public Actor
 public:
 	Fighter(std::string frame, util::ShapeVector size, sf::Vector2f pos, int hp, int faction);
 	virtual void act(GameState &state) = 0;
-	virtual bool isDead(GameState &state);
+	virtual bool isDead(const GameState &state) const;
 	virtual void hit(GameState &state, int damage);
 	int getHP() const;
 	int getMaxHP() const;
@@ -134,7 +134,7 @@ class Projectile: public Fighter
 {
 public:
 	Projectile(std::string frame, sf::Vector2f pos, util::ShapeVector size, int hp, int damage, int faction);
-	virtual bool isDead(GameState &state);
+	virtual bool isDead(const GameState &state) const;
 protected:
 	virtual void attack(GameState& state);
 	int m_damage;
@@ -187,6 +187,7 @@ protected:
 	virtual void attack(GameState& state);
 	float m_time;
 	float m_fadeTime;
+	bool m_countHit;
 };
 
 
@@ -198,7 +199,7 @@ class Item: public Actor
 public:
     Item(std::string frame, sf::Vector2f pos, util::ShapeVector size, float dur);
     float getDuration() const;
-    bool isDead(GameState &state) const;
+    bool isDead(const GameState &state) const;
 protected:
     float m_duration;
 };

@@ -37,7 +37,7 @@ void Fighter::cooldown(GameState &state)
 	if (m_attack_cd < -5) m_attack_cd = 0;
 }
 
-bool Fighter::isDead(GameState &state)
+bool Fighter::isDead(const GameState &state) const
 {
 	return m_hp <= 0;
 }

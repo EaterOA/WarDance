@@ -8,7 +8,7 @@ Projectile::Projectile(std::string frame, sf::Vector2f pos, util::ShapeVector si
 	m_faction = faction;
 }
 
-bool Projectile::isDead(GameState &state)
+bool Projectile::isDead(const GameState &state) const
 {
 	//No hp or out of map
 	return m_hp <= 0 ||
