@@ -80,8 +80,14 @@ bool GameGUI::init()
 	m_scoring_numbers = std::vector<sf::Text>(6, sf::Text());
 	for (unsigned i = 0; i < num_e && util::readf(fin, 6, buf, true); i++) {
 		m_scoring_numbers[i].setPosition(buf[4], buf[5]);
-		if (i+1 < num_e) m_scoring_numbers[i].setColor(sf::Color::White);
-		else m_scoring_numbers[i].setColor(sf::Color::Green);
+		m_scoring_numbers[i].setFont(m_stencil);
+		if (i+1 < num_e) {
+			m_scoring_numbers[i].setColor(sf::Color::White);
+		}
+		else {
+			m_scoring_numbers[i].setColor(sf::Color::Green);
+			m_scoring_numbers[i].setCharacterSize(40);
+		}
 	}
 
 	fin.close();
@@ -153,6 +159,9 @@ void GameGUI::startLevelEndSequence(const std::map<std::string, int> levelEndSta
 	std::wstringstream wss;
 	wss << levelEndStats.find("accuracy")->second;
 	m_scoring_numbers[0].setString(wss.str());
+	wss = std::wstringstream();
+	wss << levelEndStats.find("bonus")->second;
+	m_scoring_numbers[5].setString(wss.str());
     m_scoring_timing_stage = 0;
     m_scoring_timing = 1.f;
     m_levelEndSequence_timing_stage = 0;
@@ -161,7 +170,10 @@ void GameGUI::startLevelEndSequence(const std::map<std::string, int> levelEndSta
 
 bool GameGUI::isLevelEndSequenceStarted() const
 {
-	return getAppState() == LEVELENDSEQUENCE;
+	for (std::vector<AppState>::reverse_iterator iter = appStates.rbegin(); iter != appStates.rend(); iter++)
+		if (*iter == LEVELENDSEQUENCE)
+			return true;
+	return false;
 }
 
 bool GameGUI::isLevelEndSequenceDone() const
@@ -169,11 +181,17 @@ bool GameGUI::isLevelEndSequenceDone() const
 	return m_levelEndSequence_timing_stage == 5;
 }
 
+float GameGUI::getLevelEndSequenceBGFade() const
+{
+	return 255;
+}
+
 void GameGUI::forwardLevelEndSequence()
 {
     if (m_levelEndSequence_timing_stage <= 1) {
-        m_levelEndSequence_timing_stage = 2;
-		m_scoring_timing_stage = 6;
+        m_levelEndSequence_timing_stage = 1;
+		m_scoring_timing_stage = 5;
+		m_scoring_timing = 0.f;
     }
     else if (m_levelEndSequence_timing_stage == 2) {
         m_levelEndSequence_timing_stage = 3;
@@ -197,6 +215,7 @@ void GameGUI::updateLevelEndSequence(const GameState& state)
         if (m_scoring_timing <= 0) {
             m_scoring_timing_stage++;
             if (m_scoring_timing_stage == 6) {
+				getGameState().score += getGameState().level_bonus;
                 m_levelEndSequence_timing_stage++;
             }
             else {
@@ -387,27 +406,42 @@ void GameGUI::transitionAppState()
 
 void GameGUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	if (getAppState() == MAIN) {
+	if (appStates.back() == MAIN) {
 		target.draw(m_main);
 		target.draw(m_mainMenu, &m_guisheet);
 		target.draw(m_mainInfo);
 	}
-	else if (getAppState() == GAME || getAppState() == PAUSED || getAppState() == LEVELENDSEQUENCE) {
-		sf::RenderStates s(&m_guisheet);
-		target.draw(m_score);
-		target.draw(m_hud, s);
-		if (!m_grenadeDisplay.empty()) target.draw(&m_grenadeDisplay[0], m_grenadeDisplay.size(), sf::Quads, s);
-		if (getAppState() == PAUSED) {
-			sf::RectangleShape fade;
-			fade.setFillColor(sf::Color(0, 0, 0, 100));
-			fade.setPosition(0, 0);
-			fade.setSize(sf::Vector2f((float)APP_WIDTH, (float)APP_HEIGHT));
-			target.draw(fade);
-			target.draw(m_pauseMenu, &m_guisheet);
-		}
-	}
-	else if (getAppState() == SETTINGS) {
+	else if (appStates.back() == SETTINGS) {
 		target.draw(m_settings);
 		target.draw(m_settingsMenu, &m_guisheet);
+	}
+	else {
+		sf::RenderStates s(&m_guisheet);
+		for (unsigned i = 0; i < appStates.size(); i++) {
+			if (appStates[i] == GAME) {
+				target.draw(m_score);
+				target.draw(m_hud, s);
+				if (!m_grenadeDisplay.empty()) target.draw(&m_grenadeDisplay[0], m_grenadeDisplay.size(), sf::Quads, s);
+			}
+			else if (appStates[i] == LEVELENDSEQUENCE) {
+				if (m_levelEndSequence_timing_stage == 1 || m_levelEndSequence_timing_stage == 2) {
+					target.draw(m_scoringScreen);
+					for (int j = 0; j < m_scoring_timing_stage; j++) {
+						target.draw(m_scoring_numbers[(unsigned)j]);
+					}
+				}
+				else if (m_levelEndSequence_timing_stage == 4) {
+
+				}
+			}
+			else if (appStates[i] == PAUSED) {
+				sf::RectangleShape fade;
+				fade.setFillColor(sf::Color(0, 0, 0, 100));
+				fade.setPosition(0, 0);
+				fade.setSize(sf::Vector2f((float)APP_WIDTH, (float)APP_HEIGHT));
+				target.draw(fade);
+				target.draw(m_pauseMenu, &m_guisheet);
+			}
+		}
 	}
 }

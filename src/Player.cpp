@@ -112,6 +112,7 @@ void Player::cooldown(GameState &state)
 void Player::attack(GameState &state)
 {
 	m_attack_cd = 0.15f;
+	state.fired++;
 	shoot(state, REGULAR, 40.f, 10.f);
 }
 

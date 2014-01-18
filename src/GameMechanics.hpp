@@ -16,6 +16,7 @@ struct GameState {
     std::vector<Item*> items;
 	Player* player;
 	
+	int level_bonus;
 	int map_width, map_height;
 	int score;
 	int fired, hit, shot;

@@ -15,6 +15,7 @@ extern std::vector<AppState> appStates;
 
 void back();
 AppState getAppState();
+GameState& getGameState();
 void startGame();
 void pauseGame();
 void goToSettings();

@@ -15,6 +15,7 @@ namespace conf
 		fin.close();
 
 		config["level"] = 1;
+		config["num_levels"] = 4;
 		config["highscore"] = 0;
 		return true;
 	}

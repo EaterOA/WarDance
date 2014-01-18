@@ -30,6 +30,7 @@ void Projectile::attack(GameState &state)
 		for (unsigned i = 0; i < state.enemies.size(); i++) {
 			if (util::hasCollided(state.enemies[i]->getPos(), state.enemies[i]->getSize(), state.enemies[i]->getDir(), m_pos, m_size, m_dir)) {
 				state.enemies[i]->hit(state, m_damage);
+				state.hit++;
 				m_hp = 0;
 				break;
 			}

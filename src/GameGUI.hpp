@@ -13,6 +13,7 @@ public:
 	void transitionAppState();
 	void processInput(const std::vector<sf::Event> &keyEvents);
     void startLevelEndSequence(const std::map<std::string, int> levelEndStats);
+	float getLevelEndSequenceBGFade() const;
 	bool isLevelEndSequenceStarted() const;
 	bool isLevelEndSequenceDone() const;
 private:
