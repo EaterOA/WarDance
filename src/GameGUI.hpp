@@ -17,7 +17,7 @@ public:
 	bool isLevelEndSequenceStarted() const;
 	bool isLevelEndSequenceDone() const;
 private:
-	void copySprite(sf::Vertex src[4], sf::Vertex dest[4]);
+	void copySprite(const sf::Vertex src[4], sf::Vertex dest[4]);
 	void affixTexture(sf::Vertex sprite[4], float coord[]);
 	void affixPos(sf::Vertex sprite[4], float coord[], float pos[]);
 	void affixPos(sf::Vertex sprite[4], sf::Vector2f topLeft, sf::Vector2f size);
@@ -72,6 +72,7 @@ private:
 	sf::Sprite m_scoringScreen;
 	sf::Texture m_scoringScreenTex;
 	std::vector<sf::Text> m_scoring_numbers;
+	sf::Vertex m_scoring_levelIcon[4];
     float m_levelEndSequence_timing;
     int m_levelEndSequence_timing_stage;
     float m_scoring_timing;

@@ -89,6 +89,11 @@ bool GameGUI::init()
 			m_scoring_numbers[i].setCharacterSize(40);
 		}
 	}
+	//Hackish way of copying levelIcon size but specifying a different position for scoring_levelIcon
+	util::readf(fin, 6, buf, true);
+	sf::Vector2f pos(buf[4], buf[5]);
+	sf::Vector2f size = m_levelIcons[0][2].position - m_levelIcons[0][0].position;
+	affixPos(m_scoring_levelIcon, pos, size);
 
 	fin.close();
 
@@ -116,7 +121,7 @@ bool GameGUI::init()
 	return true;
 }
 
-void GameGUI::copySprite(sf::Vertex src[4], sf::Vertex dest[4])
+void GameGUI::copySprite(const sf::Vertex src[4], sf::Vertex dest[4])
 {
 	for (unsigned i = 0; i < 4; i++)
 		dest[i] = src[i];
@@ -156,12 +161,17 @@ void GameGUI::setAlpha(sf::Vertex sprite[4], unsigned char alpha)
 
 void GameGUI::startLevelEndSequence(const std::map<std::string, int> levelEndStats)
 {
-	std::wstringstream wss;
-	wss << levelEndStats.find("accuracy")->second;
-	m_scoring_numbers[0].setString(wss.str());
-	wss = std::wstringstream();
-	wss << levelEndStats.find("bonus")->second;
-	m_scoring_numbers[5].setString(wss.str());
+	std::string dataList[] = {"accuracy", "time", "", "", "", "bonus"};
+	for (unsigned i = 0; i < 6; i++) {
+		std::wstringstream wss;
+		wss << levelEndStats.find(dataList[i])->second;
+		m_scoring_numbers[i].setString(wss.str());
+	}
+	sf::Vector2f pos = m_scoring_levelIcon[0].position;
+	sf::Vector2f size = m_scoring_levelIcon[2].position - pos;
+	unsigned idx = (unsigned)(config["level"]-1);
+	copySprite(&m_levelIcons[idx][0], m_scoring_levelIcon);
+	affixPos(m_scoring_levelIcon, pos, size);
     m_scoring_timing_stage = 0;
     m_scoring_timing = 1.f;
     m_levelEndSequence_timing_stage = 0;
@@ -183,7 +193,13 @@ bool GameGUI::isLevelEndSequenceDone() const
 
 float GameGUI::getLevelEndSequenceBGFade() const
 {
-	return 255;
+	if (isLevelEndSequenceStarted()) {
+		if (m_levelEndSequence_timing_stage == 4) {
+			if (m_levelEndSequence_timing >= 0) return m_levelEndSequence_timing / 1.5f;
+			return 0.f;
+		}
+	}
+	return 1.f;
 }
 
 void GameGUI::forwardLevelEndSequence()
@@ -195,13 +211,13 @@ void GameGUI::forwardLevelEndSequence()
     }
     else if (m_levelEndSequence_timing_stage == 2) {
         m_levelEndSequence_timing_stage = 3;
-        m_levelEndSequence_timing = 3.f;
+        m_levelEndSequence_timing = 2.f;
     }
 }
 
 void GameGUI::updateLevelEndSequence(const GameState& state)
 {
-	std::cout << m_levelEndSequence_timing_stage << " " << m_levelEndSequence_timing << "\n";
+	//std::cout << m_levelEndSequence_timing_stage << " " << m_levelEndSequence_timing << "\n";
 	//Initial wait for scorescreen to appear
     if (m_levelEndSequence_timing_stage == 0) {
         m_levelEndSequence_timing -= state.elapsed.asSeconds();
@@ -219,7 +235,7 @@ void GameGUI::updateLevelEndSequence(const GameState& state)
                 m_levelEndSequence_timing_stage++;
             }
             else {
-                m_scoring_timing = 0.75f;
+                m_scoring_timing = 0.5f;
             }
         }
     }
@@ -228,7 +244,7 @@ void GameGUI::updateLevelEndSequence(const GameState& state)
         m_levelEndSequence_timing -= state.elapsed.asSeconds();
         if (m_levelEndSequence_timing <= 0) {
 			m_levelEndSequence_timing_stage++;
-			m_levelEndSequence_timing = 2.f;
+			m_levelEndSequence_timing = 1.5f;
         }
     }
 	//Background fade
@@ -426,6 +442,7 @@ void GameGUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
 			else if (appStates[i] == LEVELENDSEQUENCE) {
 				if (m_levelEndSequence_timing_stage == 1 || m_levelEndSequence_timing_stage == 2) {
 					target.draw(m_scoringScreen);
+					target.draw(m_scoring_levelIcon, 4, sf::Quads, s);
 					for (int j = 0; j < m_scoring_timing_stage; j++) {
 						target.draw(m_scoring_numbers[(unsigned)j]);
 					}

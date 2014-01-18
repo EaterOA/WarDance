@@ -21,7 +21,7 @@ class GameGraphics : public sf::Drawable, public sf::Transformable
 {
 public:
 	bool init();
-	void updateSprites(const GameState&);
+	void updateSprites(const GameState&, float bgFade);
 private:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 	void affixPos(sf::Vertex sprite[4], sf::Vector2f center, const FrameData &d, float offsetLX, float offsetRX, float offsetLY, float offsetRY);
@@ -35,7 +35,7 @@ private:
 	
 	std::map<std::string, FrameData> m_frameMap;
 	std::vector<sf::Texture> m_lvlBackgroundTex;
-	sf::Sprite m_background;
+	sf::Sprite m_background, m_backgroundNext;
 	std::vector<sf::Texture> m_spritesheet;
 	std::vector<std::vector<sf::Vertex> > m_sprites;
 	std::vector<sf::Vertex> m_specialSprites;

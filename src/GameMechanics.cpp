@@ -62,8 +62,9 @@ const std::map<std::string, int> GameMechanics::endLevel()
 	levelEndStats["shot"] = m_state.shot;
 	levelEndStats["hit"] = m_state.hit;
 	levelEndStats["fired"] = m_state.fired;
-	std::cout << m_state.hit << " " << m_state.fired << "\n";
-	levelEndStats["accuracy"] = (int)(100.f * m_state.hit / m_state.fired);
+	levelEndStats["time"] = (int)m_state.totalElapsed.asSeconds();
+	if (m_state.hit >= m_state.fired) levelEndStats["accuracy"] = 100;
+	else levelEndStats["accuracy"] = (int)(100.f * m_state.hit / m_state.fired);
 	levelEndStats["bonus"] = 200*levelEndStats["accuracy"];
 
 	m_state.level_bonus = levelEndStats["bonus"];

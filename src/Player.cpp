@@ -60,6 +60,7 @@ void Player::act(GameState &state)
 	cooldown(state);
 	if (conf::clicking(conf::B_LEFT) && m_attack_cd <= 0) attack(state);
 	else if (conf::clicking(conf::B_RIGHT) && m_laser_cd <= 0) {
+		state.fired++;
 		m_laser_cd = 0.4f;
 		shoot(state, LASER, 40.f, 10.f);
 	}

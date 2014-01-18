@@ -150,7 +150,7 @@ void appStart()
 			mAgent.updateGameState(window, gameClock.restart());
 			mAgent.tick();
 			guiAgent.updateGameState(mAgent.getGameState());
-			gAgent.updateSprites(mAgent.getGameState());
+			gAgent.updateSprites(mAgent.getGameState(), guiAgent.getLevelEndSequenceBGFade());
 			updateView(mAgent.getGameState().player->getPos());
 			if (mAgent.isPlayerDead()) {
 				goToMain();
