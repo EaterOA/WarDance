@@ -1,11 +1,13 @@
 #include "Util.hpp"
 #include "Config.hpp"
 #include "GameGUI.hpp"
-#include "GameMechanics.hpp"
 #include "App.hpp"
 
-bool GameGUI::init()
+bool GameGUI::init(GameMechanics* m, GameGraphics* g)
 {
+	mAgent = m;
+	gAgent = g;
+
 	//Loading textures and fonts
 	if (!m_guisheet.loadFromFile("images/guisheet.png")) return false;
 	if (!m_mainTex.loadFromFile("images/main.png")) return false;
@@ -25,28 +27,28 @@ bool GameGUI::init()
 			 num_e = 6;
 
 	//Preparing to load gui object data
-	//Data format: 4 texture coordinates, 2 position offsets
-	float buf[6];
+	//Data format: 2 base texture coordinates, 2 texture size, 2 position coordinates
+	sf::Vector2f texCoord, size, pos;
 	std::ifstream fin;
 	fin.open("config/guidata.txt");
 	if (!fin) return false;
 
 	//Reading HUD objects
 	//- Grenades
-	if (!util::readf(fin, 6, buf, true)) return false;
-	affixTexture(m_grenade, buf);
-	affixPos(m_grenade, buf, buf+4);
+	if (!util::read3v2f(fin, texCoord, size, pos, true)) return false;
+	util::affixTexture(m_grenade, texCoord, size);
+	util::affixPos(m_grenade, pos, size, 0);
 	//- Bars
 	m_hud = sf::VertexArray(sf::Quads, 5*4);
-	for (unsigned i = 0; i < 4 && util::readf(fin, 6, buf, true); i++) {
-		affixTexture(&m_hud[i*4], buf);
-		affixPos(&m_hud[i*4], buf, buf+4);
+	for (unsigned i = 0; i < 4 && util::read3v2f(fin, texCoord, size, pos, true); i++) {
+		util::affixTexture(&m_hud[i*4], texCoord, size);
+		util::affixPos(&m_hud[i*4], pos, size, 0);
 	}
 	//- Level icons
 	m_levelIcons = std::vector<std::vector<sf::Vertex> >(num_level_icons, std::vector<sf::Vertex>(4));
-	for (unsigned i = 0; i < num_level_icons && util::readf(fin, 6, buf, true); i++) {
-		affixTexture(&m_levelIcons[i][0], buf);
-		affixPos(&m_levelIcons[i][0], buf, buf+4);
+	for (unsigned i = 0; i < num_level_icons && util::read3v2f(fin, texCoord, size, pos, true); i++) {
+		util::affixTexture(&m_levelIcons[i][0], texCoord, size);
+		util::affixPos(&m_levelIcons[i][0], pos, size, 0);
 	}
 	m_hpBar = &m_hud[1*4];
 	m_shieldBar = &m_hud[2*4];
@@ -57,29 +59,29 @@ bool GameGUI::init()
 
 	//Reading pause menu objects, initializing appearance
 	m_pauseMenu = sf::VertexArray(sf::Quads, num_p*4);
-	for (unsigned i = 0; i < num_p && util::readf(fin, 6, buf, true); i++) {
-		affixTexture(&m_pauseMenu[i*4], buf);
-		affixPos(&m_pauseMenu[i*4], buf, buf+4);
+	for (unsigned i = 0; i < num_p && util::read3v2f(fin, texCoord, size, pos, true); i++) {
+		util::affixTexture(&m_pauseMenu[i*4], texCoord, size);
+		util::affixPos(&m_pauseMenu[i*4], pos, size, 0);
 	}
 
 	//Reading settings menu objects
 	m_settingsMenu = sf::VertexArray(sf::Quads, num_s*4);
-	for (unsigned i = 0; i < num_s && util::readf(fin, 6, buf, true); i++) {
-		affixTexture(&m_settingsMenu[i*4], buf);
-		affixPos(&m_settingsMenu[i*4], buf, buf+4);
+	for (unsigned i = 0; i < num_s && util::read3v2f(fin, texCoord, size, pos, true); i++) {
+		util::affixTexture(&m_settingsMenu[i*4], texCoord, size);
+		util::affixPos(&m_settingsMenu[i*4], pos, size, 0);
 	}
 
 	//Reading main menu objects, initializing appearance
 	m_mainMenu = sf::VertexArray(sf::Quads, num_m*4);
-	for (unsigned i = 0; i < num_m && util::readf(fin, 6, buf, true); i++) {
-		affixTexture(&m_mainMenu[i*4], buf);
-		affixPos(&m_mainMenu[i*4], buf, buf+4);
+	for (unsigned i = 0; i < num_m && util::read3v2f(fin, texCoord, size, pos, true); i++) {
+		util::affixTexture(&m_mainMenu[i*4], texCoord, size);
+		util::affixPos(&m_mainMenu[i*4], pos, size, 0);
 	}
 
 	//Reading level end sequence text positions
 	m_scoring_numbers = std::vector<sf::Text>(6, sf::Text());
-	for (unsigned i = 0; i < num_e && util::readf(fin, 6, buf, true); i++) {
-		m_scoring_numbers[i].setPosition(buf[4], buf[5]);
+	for (unsigned i = 0; i < num_e && util::read3v2f(fin, texCoord, size, pos, true); i++) {
+		m_scoring_numbers[i].setPosition(pos);
 		m_scoring_numbers[i].setFont(m_stencil);
 		if (i+1 < num_e) {
 			m_scoring_numbers[i].setColor(sf::Color::White);
@@ -89,11 +91,9 @@ bool GameGUI::init()
 			m_scoring_numbers[i].setCharacterSize(40);
 		}
 	}
-	//Hackish way of copying levelIcon size but specifying a different position for scoring_levelIcon
-	util::readf(fin, 6, buf, true);
-	sf::Vector2f pos(buf[4], buf[5]);
-	sf::Vector2f size = m_levelIcons[0][2].position - m_levelIcons[0][0].position;
-	affixPos(m_scoring_levelIcon, pos, size);
+	//texCoord doesn't matter because it will be copied from levelIcons
+	util::read3v2f(fin, texCoord, size, pos, true);
+	util::affixPos(m_scoring_levelIcon, pos, size, 0);
 
 	fin.close();
 
@@ -106,9 +106,9 @@ bool GameGUI::init()
 	m_settings_choice = 1;
 	m_pause_choice = 1;
 	for (unsigned i = 1; i < num_p; i += 2)
-		setAlpha(&m_pauseMenu[i*4], 0);
+		util::setAlpha(&m_pauseMenu[i*4], 0);
 	for (unsigned i = 1; i < num_m; i += 2)
-		setAlpha(&m_mainMenu[i*4], 0);
+		util::setAlpha(&m_mainMenu[i*4], 0);
 	m_main_blink = 0;
 	m_main_blinkChg = 5;
 	m_main_blinkLoc = m_mainMenu[0].position;
@@ -121,44 +121,6 @@ bool GameGUI::init()
 	return true;
 }
 
-void GameGUI::copySprite(const sf::Vertex src[4], sf::Vertex dest[4])
-{
-	for (unsigned i = 0; i < 4; i++)
-		dest[i] = src[i];
-}
-
-void GameGUI::affixTexture(sf::Vertex sprite[4], float coord[])
-{
-	sprite[0].texCoords = sf::Vector2f(coord[0], coord[1]);
-	sprite[1].texCoords = sf::Vector2f(coord[0] + coord[2], coord[1]);
-	sprite[2].texCoords = sf::Vector2f(coord[0] + coord[2], coord[1] + coord[3]);
-	sprite[3].texCoords = sf::Vector2f(coord[0], coord[1] + coord[3]);
-}
-
-void GameGUI::affixPos(sf::Vertex sprite[4], float coord[], float pos[])
-{
-	sprite[0].position = sf::Vector2f(pos[0] - coord[2] / 2.f, pos[1] - coord[3] / 2.f);
-	sprite[1].position = sf::Vector2f(pos[0] + coord[2] / 2.f, pos[1] - coord[3] / 2.f);
-	sprite[2].position = sf::Vector2f(pos[0] + coord[2] / 2.f, pos[1] + coord[3] / 2.f);
-	sprite[3].position = sf::Vector2f(pos[0] - coord[2] / 2.f, pos[1] + coord[3] / 2.f);
-}
-
-void GameGUI::affixPos(sf::Vertex sprite[4], sf::Vector2f topLeft, sf::Vector2f size)
-{
-	sprite[0].position = topLeft;
-	sprite[1].position = topLeft + sf::Vector2f(size.x, 0);
-	sprite[2].position = topLeft + size;
-	sprite[3].position = topLeft + sf::Vector2f(0, size.y);
-}
-
-void GameGUI::setAlpha(sf::Vertex sprite[4], unsigned char alpha)
-{
-	sprite[0].color.a = alpha;
-	sprite[1].color.a = alpha;
-	sprite[2].color.a = alpha;
-	sprite[3].color.a = alpha;
-}
-
 void GameGUI::startLevelEndSequence(const std::map<std::string, int> levelEndStats)
 {
 	std::string dataList[] = {"accuracy", "time", "", "", "", "bonus"};
@@ -167,11 +129,7 @@ void GameGUI::startLevelEndSequence(const std::map<std::string, int> levelEndSta
 		wss << levelEndStats.find(dataList[i])->second;
 		m_scoring_numbers[i].setString(wss.str());
 	}
-	sf::Vector2f pos = m_scoring_levelIcon[0].position;
-	sf::Vector2f size = m_scoring_levelIcon[2].position - pos;
-	unsigned idx = (unsigned)(config["level"]-1);
-	copySprite(&m_levelIcons[idx][0], m_scoring_levelIcon);
-	affixPos(m_scoring_levelIcon, pos, size);
+	util::copyTexture(&m_levelIcons[(unsigned)(config["level"]-1)][0], m_scoring_levelIcon);
     m_scoring_timing_stage = 0;
     m_scoring_timing = 1.f;
     m_levelEndSequence_timing_stage = 0;
@@ -191,17 +149,6 @@ bool GameGUI::isLevelEndSequenceDone() const
 	return m_levelEndSequence_timing_stage == 5;
 }
 
-float GameGUI::getLevelEndSequenceBGFade() const
-{
-	if (isLevelEndSequenceStarted()) {
-		if (m_levelEndSequence_timing_stage == 4) {
-			if (m_levelEndSequence_timing >= 0) return m_levelEndSequence_timing / 1.5f;
-			return 0.f;
-		}
-	}
-	return 1.f;
-}
-
 void GameGUI::forwardLevelEndSequence()
 {
     if (m_levelEndSequence_timing_stage <= 1) {
@@ -217,7 +164,6 @@ void GameGUI::forwardLevelEndSequence()
 
 void GameGUI::updateLevelEndSequence(const GameState& state)
 {
-	//std::cout << m_levelEndSequence_timing_stage << " " << m_levelEndSequence_timing << "\n";
 	//Initial wait for scorescreen to appear
     if (m_levelEndSequence_timing_stage == 0) {
         m_levelEndSequence_timing -= state.elapsed.asSeconds();
@@ -231,7 +177,7 @@ void GameGUI::updateLevelEndSequence(const GameState& state)
         if (m_scoring_timing <= 0) {
             m_scoring_timing_stage++;
             if (m_scoring_timing_stage == 6) {
-				getGameState().score += getGameState().level_bonus;
+				mAgent->getGameState().score += mAgent->getGameState().level_bonus;
                 m_levelEndSequence_timing_stage++;
             }
             else {
@@ -253,6 +199,9 @@ void GameGUI::updateLevelEndSequence(const GameState& state)
         if (m_levelEndSequence_timing <= 0) {
 			m_levelEndSequence_timing_stage++;
         }
+		else {
+			gAgent->setNextLevelBGOpacity(1 - m_levelEndSequence_timing / 1.5f);
+		}
 	}
 }
 
@@ -265,20 +214,21 @@ void GameGUI::updateHUD(const GameState& state)
 	float shieldPerc = float(state.player->getShield()) / state.player->getMaxShield();
 	m_shieldBar[1].position.x = m_shieldBar[0].position.x + shieldPerc * 132.5f;
 	m_shieldBar[2].position.x = m_shieldBar[0].position.x + shieldPerc * 132.5f;
+
 	//Updating score
 	std::wstringstream wss;
 	wss << state.score;
 	m_score.setString(wss.str());
+
 	//Updating level icon
-	unsigned idx = (unsigned)(config["level"]-1);
-	copySprite(&m_levelIcons[idx][0], m_levelDisplay);
+	util::copySprite(&m_levelIcons[(unsigned)(config["level"]-1)][0], m_levelDisplay);
+
 	//Updating grenade display
 	m_grenadeDisplay = std::vector<sf::Vertex>();
 	for (int i = 0; i < state.player->getNumGrenades(); i++) {
 		sf::Vertex grenadeSprite[4];
-		copySprite(m_grenade, grenadeSprite);
-		for (unsigned j = 0; j < 4; j++)
-            grenadeSprite[j].position += sf::Vector2f(-25.f*i, 0);
+		util::copySprite(m_grenade, grenadeSprite);
+		util::translateSprite(grenadeSprite, sf::Vector2f(-25.f * i, 0));
 	    m_grenadeDisplay.insert(m_grenadeDisplay.end(), grenadeSprite, grenadeSprite+4);	
     }
 }
@@ -295,10 +245,10 @@ void GameGUI::selectPauseChoice(unsigned choice)
 {
 	if (choice == 0) choice += m_pause_numChoices;
 	else if (choice > m_pause_numChoices) choice -= m_pause_numChoices;
-	setAlpha(&m_pauseMenu[m_pause_choice*8-4], 0);
-	setAlpha(&m_pauseMenu[m_pause_choice*8], 255);
-	setAlpha(&m_pauseMenu[choice*8-4], 255);
-	setAlpha(&m_pauseMenu[choice*8], 0);
+	util::setAlpha(&m_pauseMenu[m_pause_choice*8-4], 0);
+	util::setAlpha(&m_pauseMenu[m_pause_choice*8], 255);
+	util::setAlpha(&m_pauseMenu[choice*8-4], 255);
+	util::setAlpha(&m_pauseMenu[choice*8], 0);
 	m_pause_choice = choice;
 }
 
@@ -313,10 +263,10 @@ void GameGUI::selectSettingsChoice(unsigned choice)
 {
 	if (choice == 0) choice += m_settings_numChoices;
 	else if (choice > m_settings_numChoices) choice -= m_settings_numChoices;
-	setAlpha(&m_settingsMenu[m_settings_choice*16-8], 0);
-	setAlpha(&m_settingsMenu[m_settings_choice*16-4], 255);
-	setAlpha(&m_settingsMenu[choice*16-8], 255);
-	setAlpha(&m_settingsMenu[choice*16-4], 0);
+	util::setAlpha(&m_settingsMenu[m_settings_choice*16-8], 0);
+	util::setAlpha(&m_settingsMenu[m_settings_choice*16-4], 255);
+	util::setAlpha(&m_settingsMenu[choice*16-8], 255);
+	util::setAlpha(&m_settingsMenu[choice*16-4], 0);
 	m_settings_choice = choice;
 }
 
@@ -330,19 +280,19 @@ void GameGUI::processSettingsChoice()
 
 void GameGUI::processSettingsSwitches()
 {
-	setAlpha(&m_settingsMenu[0], config["hitbox_enabled"] ? 0 : 255);
-	setAlpha(&m_settingsMenu[4], config["hitbox_enabled"] ? 255 : 0);
+	util::setAlpha(&m_settingsMenu[0], config["hitbox_enabled"] ? 0 : 255);
+	util::setAlpha(&m_settingsMenu[4], config["hitbox_enabled"] ? 255 : 0);
 }
 
 void GameGUI::selectMainChoice(unsigned choice)
 {
 	if (choice == 0) choice += m_main_numChoices;
 	else if (choice > m_main_numChoices) choice -= m_main_numChoices;
-	setAlpha(&m_mainMenu[m_main_choice*8-4], 0);
-	setAlpha(&m_mainMenu[m_main_choice*8], 255);
-	setAlpha(&m_mainMenu[choice*8-4], 255);
-	setAlpha(&m_mainMenu[choice*8], 0);
-	affixPos(&m_mainMenu[0], m_main_blinkLoc + sf::Vector2f(0, (choice-1) * 50.f), m_main_blinkSize);
+	util::setAlpha(&m_mainMenu[m_main_choice*8-4], 0);
+	util::setAlpha(&m_mainMenu[m_main_choice*8], 255);
+	util::setAlpha(&m_mainMenu[choice*8-4], 255);
+	util::setAlpha(&m_mainMenu[choice*8], 0);
+	util::affixPos(&m_mainMenu[0], m_main_blinkLoc + sf::Vector2f(0, (choice-1) * 50.f), m_main_blinkSize, 1);
 	m_main_choice = choice;
 }
 
@@ -358,7 +308,7 @@ void GameGUI::mainBlink()
 	if (m_main_blink + m_main_blinkChg < 0 ||
 		m_main_blink + m_main_blinkChg > 255) m_main_blinkChg *= -1;
 	m_main_blink += m_main_blinkChg;
-	setAlpha(&m_mainMenu[0], m_main_blink);
+	util::setAlpha(&m_mainMenu[0], m_main_blink);
 }
 
 void GameGUI::processInput(const std::vector<sf::Event> &keyEvents)
@@ -446,9 +396,6 @@ void GameGUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
 					for (int j = 0; j < m_scoring_timing_stage; j++) {
 						target.draw(m_scoring_numbers[(unsigned)j]);
 					}
-				}
-				else if (m_levelEndSequence_timing_stage == 4) {
-
 				}
 			}
 			else if (appStates[i] == PAUSED) {

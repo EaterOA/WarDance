@@ -13,9 +13,8 @@ const int APP_WIDTH = 800;
 const int APP_HEIGHT = 600;
 extern std::vector<AppState> appStates;
 
-void back();
 AppState getAppState();
-GameState& getGameState();
+void back();
 void startGame();
 void pauseGame();
 void goToSettings();

@@ -11,7 +11,6 @@ TODO anytime
 - MEC: Program sprinkler to forewarn its appearance
 - GFX: Find a better-looking sprite for grenade
 - GUI: Implement Select Level in main menu
-- GFX: Give each level a different background
 - GFX: Add transitions between app states
 - GUI: Add player status list to HUD
 - GFX: Add animation effects to all actors

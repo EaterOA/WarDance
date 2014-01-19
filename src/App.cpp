@@ -23,8 +23,8 @@ bool appInit()
 	window.setView(camera);
     conf::init_config("config/config.txt");
 	if (!mAgent.init()) return false;
-	if (!guiAgent.init()) return false;
 	if (!gAgent.init()) return false;
+	if (!guiAgent.init(&mAgent, &gAgent)) return false;
 
 	appStates.push_back(MAIN);
 
@@ -48,11 +48,6 @@ void paint()
 	window.draw(guiAgent);
 	window.setView(camera);
 	window.display();
-}
-
-GameState& getGameState()
-{
-	return mAgent.getGameState();
 }
 
 void back()
@@ -142,15 +137,13 @@ std::vector<sf::Event> processEvents()
 void appStart()
 {
 	guiAgent.transitionAppState();
-	gameClock.restart();
 	while (window.isOpen()) {
-		std::vector<sf::Event> keyEvents = processEvents();
-		guiAgent.processInput(keyEvents);
+		guiAgent.processInput(processEvents());
 		if (getAppState() == GAME || getAppState() == LEVELENDSEQUENCE) {
 			mAgent.updateGameState(window, gameClock.restart());
 			mAgent.tick();
 			guiAgent.updateGameState(mAgent.getGameState());
-			gAgent.updateSprites(mAgent.getGameState(), guiAgent.getLevelEndSequenceBGFade());
+			gAgent.updateSprites(mAgent.getGameState());
 			updateView(mAgent.getGameState().player->getPos());
 			if (mAgent.isPlayerDead()) {
 				goToMain();

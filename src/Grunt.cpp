@@ -20,7 +20,7 @@ void Grunt::cooldown(GameState& state)
 
 void Grunt::attack(GameState& state)
 {
-    m_attack_cd = util::rand(500, 1500) / 1000.f;
+    m_attack_cd = RAND(500, 1500) / 1000.f;
 	shoot(state, REGULAR, 40.f, 7.f);
 }
 
@@ -39,7 +39,7 @@ void Grunt::act(GameState& state)
 	cooldown(state);
 
 	if (m_move_cd <= 0) {
-        m_move_cd = util::rand(200, 600) / 1000.f;
+        m_move_cd = RAND(200, 600) / 1000.f;
 		sf::Vector2f vec = state.player->getPos() - m_pos;
 		float vr = util::getLen(vec);
 		float unitX = vec.x / vr;

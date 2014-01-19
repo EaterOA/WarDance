@@ -39,8 +39,9 @@ bool GameGraphics::init()
 		if (!(fin >> frame)) break;
 		FrameData d;
 		if (!(fin >> d.sheetNum)) return false;
-		if (!util::readf(fin, 4, d.texCoord, false)) return false;
-		if (!util::readf(fin, 2, d.posOffset, false)) return false;
+		if (!util::readv2f(fin, d.texCoord, false)) return false;
+		if (!util::readv2f(fin, d.size, false)) return false;
+		if (!util::readv2f(fin, d.posOffset, false)) return false;
 		if (!(fin >> d.rotatable)) return false;
 		if (!(fin >> std::hex >> d.rgba)) return false;
 		m_frameMap[frame] = d;
@@ -51,66 +52,20 @@ bool GameGraphics::init()
 	//Initializing some sprites and settings
 	m_background.setTexture(m_lvlBackgroundTex[0]);
 	m_background.setTextureRect(sf::IntRect(0, 0, 1600, 1200));
+	m_backgroundNext.setTexture(m_lvlBackgroundTex[0]);
 	m_backgroundNext.setTextureRect(sf::IntRect(0, 0, 1600, 1200));
 	m_hitbox_enabled = config["hitbox_enabled"];
 
 	return true;
 }
 
-void GameGraphics::affixPos(sf::Vertex sprite[4], sf::Vector2f center, const FrameData &d, float offsetLX, float offsetRX, float offsetLY, float offsetRY)
+void GameGraphics::setNextLevelBGOpacity(float amt)
 {
-	const float* coord = d.posOffset;
-
-	center += sf::Vector2f(coord[0], coord[1]);
-	sprite[0].position = center + sf::Vector2f(offsetLX, offsetLY);
-	sprite[1].position = center + sf::Vector2f(offsetRX, offsetLY);
-	sprite[2].position = center + sf::Vector2f(offsetRX, offsetRY);
-	sprite[3].position = center + sf::Vector2f(offsetLX, offsetRY);
-}
-
-void GameGraphics::affixPos(sf::Vertex sprite[4], sf::Vector2f center, const FrameData &d)
-{
-	const float* coord = d.texCoord;
-
-	float hwidth = coord[2] / 2.f;
-	float hheight = coord[3] / 2.f;
-	affixPos(sprite, center, d, -hwidth, hwidth, -hheight, hheight);
-}
-
-void GameGraphics::affixTexture(sf::Vertex sprite[4], const FrameData &d)
-{
-	const float* coord = d.texCoord;
-
-	float x = coord[0];
-	float y = coord[1];
-	float w = coord[2];
-	float h = coord[3];
-	sprite[0].texCoords = sf::Vector2f(x, y);
-	sprite[1].texCoords = sf::Vector2f(x+w, y);
-	sprite[2].texCoords = sf::Vector2f(x+w, y+h);
-	sprite[3].texCoords = sf::Vector2f(x, y+h);
-}
-
-void GameGraphics::rotateSprite(sf::Vertex sprite[4], float dir, sf::Vector2f center, const FrameData &d)
-{
-	if (!d.rotatable) return;
-	sf::Transform tr;
-	tr.rotate(dir, center);
-	for (unsigned i = 0; i < 4; i++)
-		sprite[i].position = tr.transformPoint(sprite[i].position);
-}
-
-void GameGraphics::applyColor(sf::Vertex sprite[4], const FrameData &d)
-{
-	unsigned char r = (unsigned char)(d.rgba >> 24);
-	unsigned char g = (unsigned char)((d.rgba & 0xffffff) >> 16);
-	unsigned char b = (unsigned char)((d.rgba & 0xffff) >> 8);
-	unsigned char a = (unsigned char)(d.rgba & 0xff);
-	sf::Color c(r, g, b, a);
-	sprite[0].color = c;
-	sprite[1].color = c;
-	sprite[2].color = c;
-	sprite[3].color = c;
+	if (amt > 0) {
+		unsigned idx = (unsigned)config["level"] - 1;
+		m_backgroundNext.setColor(sf::Color(255, 255, 255, (unsigned char)(255.f * amt)));
+		m_backgroundNext.setTexture(m_lvlBackgroundTex[idx + (config["level"] < config["num_levels"] ? 1 : 0)]);
+	}
 }
 
 void GameGraphics::addSprite(const Actor &actor)
@@ -142,39 +97,43 @@ void GameGraphics::addSprite(const Actor &actor)
 	}
 	if (util::isPrefix("m_laser", actor.getFrame())) {
 		const Laser& laser = *(const Laser*)(&actor);
-		FrameData custom_d = d;
 		unsigned alpha = (unsigned)(laser.getFadePerc() * 255.f);
-		custom_d.rgba &= 0xffffff00;
-		custom_d.rgba |= alpha;
+		unsigned int rgba = d.rgba & 0xffffff00 | alpha;
 		sf::Vertex sprite[4];
-		affixPos(sprite, actor.getPos(), d);
+		util::affixPos(sprite, actor.getPos() + d.posOffset, d.size, 0);
 		sprite[1].position.x = sprite[0].position.x + actor.getSize().x;
 		sprite[2].position.x = sprite[3].position.x + actor.getSize().x;
-		affixTexture(sprite, d);
-		rotateSprite(sprite, util::toDeg(actor.getDir()), actor.getPos(), d);
-		applyColor(sprite, custom_d);
+		util::affixTexture(sprite, d.texCoord, d.size);
+		if (d.rotatable) util::rotateSprite(sprite, util::toDeg(actor.getDir()), actor.getPos());
+		util::applyColor(sprite, rgba);
 		m_sprites[d.sheetNum].insert(m_sprites[d.sheetNum].end(), sprite, sprite+4);
 	}
 	else {
 		sf::Vertex sprite[4];
-		affixPos(sprite, actor.getPos(), d);
-		affixTexture(sprite, d);
-		rotateSprite(sprite, util::toDeg(actor.getDir()), actor.getPos(), d);
-		applyColor(sprite, d);
+		util::affixPos(sprite, actor.getPos() + d.posOffset, d.size, 0);
+		util::affixTexture(sprite, d.texCoord, d.size);
+		if (d.rotatable) util::rotateSprite(sprite, util::toDeg(actor.getDir()), actor.getPos());
+		util::applyColor(sprite, d.rgba);
 		m_sprites[d.sheetNum].insert(m_sprites[d.sheetNum].end(), sprite, sprite+4);
 	}
 }
 
 void GameGraphics::addHealthBar(const Fighter &fighter)
 {
-	unsigned sheetNum = m_frameMap[fighter.getFrame()].sheetNum;
-
 	sf::Vertex bar[8];
-	float hpOffset = 40.f * fighter.getHP() / fighter.getMaxHP();
-	affixPos(bar, fighter.getPos(), m_frameMap["reg_hpcase"], -20.f, 20.f, -4.5f, 4.5f);
-	affixPos(bar+4, fighter.getPos(), m_frameMap["reg_hpbar"], -20.f, -20.f + hpOffset, -4.5f, 4.5f);
-	affixTexture(bar, m_frameMap["reg_hpcase"]);
-	affixTexture(bar+4, m_frameMap["reg_hpbar"]);
+	unsigned sheetNum = m_frameMap[fighter.getFrame()].sheetNum;
+	const FrameData &caseD = m_frameMap["reg_hpcase"];
+	const FrameData &barD = m_frameMap["reg_hpbar"];
+	float hpPerc = (float)fighter.getHP() / fighter.getMaxHP();
+	sf::Vector2f barSize(40.f, 9.f);
+	sf::Vector2f halfBarSize(20.f, 4.5f);
+	sf::Vector2f reducedBarSize(40.f * hpPerc, 9.f);
+
+	util::affixPos(bar, fighter.getPos() + caseD.posOffset, barSize, 0);
+	util::affixPos(bar+4, fighter.getPos() + barD.posOffset - halfBarSize, reducedBarSize, 1);
+	util::affixTexture(bar, caseD.texCoord, caseD.size);
+	util::affixTexture(bar+4, barD.texCoord, barD.size);
+
 	m_sprites[sheetNum].insert(m_sprites[sheetNum].end(), bar, bar+8);
 }
 
@@ -210,16 +169,12 @@ void GameGraphics::addHitbox(const Fighter &f)
 	}
 }
 
-void GameGraphics::updateSprites(const GameState &state, float bgFade)
+void GameGraphics::updateSprites(const GameState &state)
 {
 	//Updating settings
 	m_hitbox_enabled = config["hitbox_enabled"];
 	unsigned idx = (unsigned)config["level"] - 1;
 	m_background.setTexture(m_lvlBackgroundTex[idx]);
-	if (bgFade < 1.f) {
-		m_background.setColor(sf::Color(255, 255, 255, (unsigned char)(255.f * bgFade)));
-		m_backgroundNext.setTexture(m_lvlBackgroundTex[idx + (config["level"] < config["num_levels"] ? 1 : 0)]);
-	}
 
 	//Recalculating sprite appearance
 	m_sprites = std::vector<std::vector<sf::Vertex> >(m_numSheets);
@@ -248,10 +203,10 @@ void GameGraphics::updateSprites(const GameState &state, float bgFade)
 
 void GameGraphics::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	if (m_background.getColor().a < 0xff) {
+	target.draw(m_background);
+	if (m_backgroundNext.getTexture() != m_background.getTexture()) {
 		target.draw(m_backgroundNext);
 	}
-	target.draw(m_background);
 	for (unsigned i = 0; i < m_numSheets; i++) {
 		if (!m_sprites[i].empty()) {
 			sf::RenderStates spriteState(&m_spritesheet[i]);

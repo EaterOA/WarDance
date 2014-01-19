@@ -182,9 +182,114 @@ namespace util
 		return true;
 	}
 
+	void copySprite(const sf::Vertex src[4], sf::Vertex dest[4])
+	{
+		dest[0] = src[0];
+		dest[1] = src[1];
+		dest[2] = src[2];
+		dest[3] = src[3];
+	}
+
+	void copyTexture(const sf::Vertex src[4], sf::Vertex dest[4])
+	{
+		dest[0].texCoords = src[0].texCoords;
+		dest[1].texCoords = src[1].texCoords;
+		dest[2].texCoords = src[2].texCoords;
+		dest[3].texCoords = src[3].texCoords;
+	}
+
+	void setAlpha(sf::Vertex sprite[4], unsigned char alpha)
+	{
+		sprite[0].color.a = alpha;
+		sprite[1].color.a = alpha;
+		sprite[2].color.a = alpha;
+		sprite[3].color.a = alpha;
+	}
+
+	void affixTexture(sf::Vertex sprite[4], sf::Vector2f texCoord, sf::Vector2f size)
+	{
+		sprite[0].texCoords = sf::Vector2f(texCoord.x, texCoord.y);
+		sprite[1].texCoords = sf::Vector2f(texCoord.x + size.x, texCoord.y);
+		sprite[2].texCoords = sf::Vector2f(texCoord.x + size.x, texCoord.y + size.y);
+		sprite[3].texCoords = sf::Vector2f(texCoord.x, texCoord.y + size.y);
+	}
+
+	void affixPos(sf::Vertex sprite[4], sf::Vector2f pos, sf::Vector2f size, int reference)
+	{
+		sf::Vector2f hSize(size.x / 2.f, size.y / 2.f);
+		sf::Vector2f realPos = pos;
+		if (reference == 1) {
+			realPos.x += hSize.x;
+			realPos.y += hSize.y;
+		}
+		else if (reference == 2) {
+			realPos.x -= hSize.x;
+			realPos.y += hSize.y;
+		}
+		else if (reference == 3) {
+			realPos.x -= hSize.x;
+			realPos.y -= hSize.y;
+		}
+		else if (reference == 4) {
+			realPos.x += hSize.x;
+			realPos.y -= hSize.y;
+		}
+		sprite[0].position = sf::Vector2f(realPos.x - hSize.x, realPos.y - hSize.y);
+		sprite[1].position = sf::Vector2f(realPos.x + hSize.x, realPos.y - hSize.y);
+		sprite[2].position = sf::Vector2f(realPos.x + hSize.x, realPos.y + hSize.y);
+		sprite[3].position = sf::Vector2f(realPos.x - hSize.x, realPos.y + hSize.y);
+	}
+
+	void applyColor(sf::Vertex sprite[4], unsigned int rgba)
+	{
+		unsigned char r = (unsigned char)(rgba >> 24);
+		unsigned char g = (unsigned char)((rgba & 0xffffff) >> 16);
+		unsigned char b = (unsigned char)((rgba & 0xffff) >> 8);
+		unsigned char a = (unsigned char)(rgba & 0xff);
+		sf::Color c(r, g, b, a);
+		sprite[0].color = c;
+		sprite[1].color = c;
+		sprite[2].color = c;
+		sprite[3].color = c;
+	}
+
+	void rotateSprite(sf::Vertex sprite[4], float dir, sf::Vector2f center)
+	{
+		sf::Transform tr;
+		tr.rotate(dir, center);
+		sprite[0].position = tr.transformPoint(sprite[0].position);
+		sprite[1].position = tr.transformPoint(sprite[1].position);
+		sprite[2].position = tr.transformPoint(sprite[2].position);
+		sprite[3].position = tr.transformPoint(sprite[3].position);
+	}
+
+	void translateSprite(sf::Vertex sprite[4], sf::Vector2f translation)
+	{
+		sprite[0].position += translation;
+		sprite[1].position += translation;
+		sprite[2].position += translation;
+		sprite[3].position += translation;
+	}
+
 	bool readf(std::istream &in, unsigned amt, float arr[], bool endline)
 	{
 		for (unsigned i = 0; i < amt && in >> arr[i]; i++);
+		if (endline) in.ignore(1000, '\n');
+		return !in.fail();
+	}
+
+	bool readv2f(std::istream &in, sf::Vector2f &dest, bool endline)
+	{
+		in >> dest.x >> dest.y;
+		if (endline) in.ignore(1000, '\n');
+		return !in.fail();
+	}
+	
+	bool read3v2f(std::istream &in, sf::Vector2f &dest1, sf::Vector2f &dest2, sf::Vector2f &dest3, bool endline)
+	{
+		in >> dest1.x >> dest1.y;
+		in >> dest2.x >> dest2.y;
+		in >> dest3.x >> dest3.y;
 		if (endline) in.ignore(1000, '\n');
 		return !in.fail();
 	}

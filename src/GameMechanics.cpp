@@ -177,16 +177,16 @@ void GameMechanics::spawnEnemy(std::string name, sf::Vector2f pos)
 
 sf::Vector2f GameMechanics::inMapEntrance()
 {
-	float x = (float)util::rand(0, m_state.map_width);
-	float y = (float)util::rand(0, m_state.map_height);
+	float x = (float)RAND(0, m_state.map_width);
+	float y = (float)RAND(0, m_state.map_height);
 	return sf::Vector2f(x, y);
 }
 
 sf::Vector2f GameMechanics::offMapEntrance(float offsetX, float offsetY)
 {
-	int side = util::rand(1, 4);
-	float x = (float)util::rand(0, m_state.map_width);
-	float y = (float)util::rand(0, m_state.map_height);
+	int side = RAND(1, 4);
+	float x = (float)RAND(0, m_state.map_width);
+	float y = (float)RAND(0, m_state.map_height);
 	if (side == 1) x = (float)m_state.map_width + offsetX;
 	else if (side == 2) y = (float)m_state.map_height + offsetY;
 	else if (side == 3) x = -offsetX;

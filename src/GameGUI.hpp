@@ -1,14 +1,13 @@
 #ifndef GAME_GUI_HPP
 #define GAME_GUI_HPP
 
-#include <SFML/Graphics.hpp>
-
-struct GameState;
+#include "GameMechanics.hpp"
+#include "GameGraphics.hpp"
 
 class GameGUI : public sf::Drawable, public sf::Transformable
 {
 public:
-	bool init();
+	bool init(GameMechanics* m, GameGraphics* g);
 	void updateGameState(const GameState& state);
 	void transitionAppState();
 	void processInput(const std::vector<sf::Event> &keyEvents);
@@ -17,12 +16,10 @@ public:
 	bool isLevelEndSequenceStarted() const;
 	bool isLevelEndSequenceDone() const;
 private:
-	void copySprite(const sf::Vertex src[4], sf::Vertex dest[4]);
-	void affixTexture(sf::Vertex sprite[4], float coord[]);
-	void affixPos(sf::Vertex sprite[4], float coord[], float pos[]);
-	void affixPos(sf::Vertex sprite[4], sf::Vector2f topLeft, sf::Vector2f size);
-    void setAlpha(sf::Vertex sprite[4], unsigned char alpha);
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+
+	GameMechanics* mAgent;
+	GameGraphics* gAgent;
 
 	//Main Menu
 	void selectMainChoice(unsigned choice);

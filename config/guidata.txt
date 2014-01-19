@@ -41,4 +41,4 @@
 0.0 0.0 0.0 0.0         200.0 390.0     # End level sequence something
 0.0 0.0 0.0 0.0         200.0 460.0     # End level sequence something
 0.0 0.0 0.0 0.0         512.0 250.0     # End level sequence bonus
-0.0 0.0 0.0 0.0         60.0 75.0       # End level level icon
+0.0 0.0 82.1 31.2       100.0 90.0      # End level level icon
