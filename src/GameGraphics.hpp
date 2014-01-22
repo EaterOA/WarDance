@@ -23,7 +23,7 @@ class GameGraphics : public sf::Drawable, public sf::Transformable
 public:
 	bool init();
 	void updateSprites(const GameState&);
-	void setNextLevelBGOpacity(float perc);
+	void setNextLevelBGOpacity(unsigned char alpha);
 private:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 

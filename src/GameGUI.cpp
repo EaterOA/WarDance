@@ -93,7 +93,7 @@ bool GameGUI::init(GameMechanics* m, GameGraphics* g)
 	}
 	//texCoord doesn't matter because it will be copied from levelIcons
 	util::read3v2f(fin, texCoord, size, pos, true);
-	util::affixPos(m_scoring_levelIcon, pos, size, 0);
+	util::affixPos(m_scoringLevelDisplay, pos, size, 0);
 
 	fin.close();
 
@@ -117,6 +117,8 @@ bool GameGUI::init(GameMechanics* m, GameGraphics* g)
 	m_mainInfo.setPosition(25, 525);
 	m_mainInfo.setCharacterSize(25);
 	m_mainInfo.setColor(sf::Color(30, 16, 8));
+    util::copySprite(&m_levelIcons[0][0], m_levelDisplay);
+    util::copySprite(&m_levelIcons[0][0], m_nextLevelDisplay);
 
 	return true;
 }
@@ -129,7 +131,12 @@ void GameGUI::startLevelEndSequence(const std::map<std::string, int> levelEndSta
 		wss << levelEndStats.find(dataList[i])->second;
 		m_scoring_numbers[i].setString(wss.str());
 	}
-	util::copyTexture(&m_levelIcons[(unsigned)(config["level"]-1)][0], m_scoring_levelIcon);
+    int lvl = config["level"];
+    unsigned idx = (unsigned)(lvl-1);
+    unsigned nextIdx = idx + (lvl < config["num_levels"] ? 1 : 0);
+	util::copyTexture(&m_levelIcons[idx][0], m_scoringLevelDisplay);
+	util::copyTexture(&m_levelIcons[nextIdx][0], m_nextLevelDisplay);
+    util::setAlpha(m_nextLevelDisplay, 0);
     m_scoring_timing_stage = 0;
     m_scoring_timing = 1.f;
     m_levelEndSequence_timing_stage = 0;
@@ -198,9 +205,15 @@ void GameGUI::updateLevelEndSequence(const GameState& state)
         m_levelEndSequence_timing -= state.elapsed.asSeconds();
         if (m_levelEndSequence_timing <= 0) {
 			m_levelEndSequence_timing_stage++;
+            util::setAlpha(m_levelDisplay, 255);
         }
 		else {
-			gAgent->setNextLevelBGOpacity(1 - m_levelEndSequence_timing / 1.5f);
+            float alphaPerc = 1.f - m_levelEndSequence_timing / 1.5f; 
+            alphaPerc *= alphaPerc*10*alphaPerc;
+            unsigned char alpha = (unsigned char)(alphaPerc * 255);
+            util::setAlpha(m_nextLevelDisplay, alpha);
+            util::setAlpha(m_levelDisplay, 255 - alpha);
+			gAgent->setNextLevelBGOpacity(alpha);
 		}
 	}
 }
@@ -221,7 +234,8 @@ void GameGUI::updateHUD(const GameState& state)
 	m_score.setString(wss.str());
 
 	//Updating level icon
-	util::copySprite(&m_levelIcons[(unsigned)(config["level"]-1)][0], m_levelDisplay);
+    unsigned idx = (unsigned)(config["level"]-1);
+	util::copyTexture(&m_levelIcons[idx][0], m_levelDisplay);
 
 	//Updating grenade display
 	m_grenadeDisplay = std::vector<sf::Vertex>();
@@ -235,10 +249,10 @@ void GameGUI::updateHUD(const GameState& state)
 
 void GameGUI::updateGameState(const GameState& state)
 {
+    GameGUI::updateHUD(state);
     if (getAppState() == LEVELENDSEQUENCE) {
         GameGUI::updateLevelEndSequence(state);
     }
-    GameGUI::updateHUD(state);
 }
 
 void GameGUI::selectPauseChoice(unsigned choice)
@@ -383,20 +397,25 @@ void GameGUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	}
 	else {
 		sf::RenderStates s(&m_guisheet);
+        //Draw all relevant appStates
 		for (unsigned i = 0; i < appStates.size(); i++) {
 			if (appStates[i] == GAME) {
 				target.draw(m_score);
 				target.draw(m_hud, s);
-				if (!m_grenadeDisplay.empty()) target.draw(&m_grenadeDisplay[0], m_grenadeDisplay.size(), sf::Quads, s);
+				if (!m_grenadeDisplay.empty())
+                    target.draw(&m_grenadeDisplay[0], m_grenadeDisplay.size(), sf::Quads, s);
 			}
 			else if (appStates[i] == LEVELENDSEQUENCE) {
 				if (m_levelEndSequence_timing_stage == 1 || m_levelEndSequence_timing_stage == 2) {
 					target.draw(m_scoringScreen);
-					target.draw(m_scoring_levelIcon, 4, sf::Quads, s);
+					target.draw(m_scoringLevelDisplay, 4, sf::Quads, s);
 					for (int j = 0; j < m_scoring_timing_stage; j++) {
 						target.draw(m_scoring_numbers[(unsigned)j]);
 					}
 				}
+                else if (m_levelEndSequence_timing_stage >= 4) {
+                    target.draw(m_nextLevelDisplay, 4, sf::Quads, s);
+                }
 			}
 			else if (appStates[i] == PAUSED) {
 				sf::RectangleShape fade;

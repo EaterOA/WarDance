@@ -38,6 +38,8 @@ public:
 	void updateGameState(const sf::RenderWindow &window, const sf::Time &elapsed);
 	void spawnEnemy(std::string name);
 	void spawnEnemy(std::string name, sf::Vector2f pos);
+    void clearEnemyProjectiles();
+    void clearPlayerProjectiles();
 private:
 	sf::Vector2f inMapEntrance();
 	sf::Vector2f offMapEntrance(float offsetX, float offsetY);

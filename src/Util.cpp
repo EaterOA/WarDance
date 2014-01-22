@@ -90,14 +90,54 @@ namespace util
 		if (s1.s == Rectangle && s2.s == Circle) return hasCollided(c1, sf::Vector2f(s1.x, s1.y), dir1, c2, s2.x);
 		if (s1.s == Circle && s2.s == Rectangle) return hasCollided(c2, sf::Vector2f(s2.x, s2.y), dir2, c1, s1.x);
 		if (s1.s == Rectangle && s2.s == Rectangle) return hasCollided(c1, sf::Vector2f(s1.x, s1.y), dir1, c2, sf::Vector2f(s2.x, s2.y), dir2);
+        if (s1.s == Stroke && s2.s == Circle) return hasCollided(c1, s1.x, s1.y, c2, s2.x);
+        if (s1.s == Stroke && s2.s == Rectangle) return hasCollided(c1, s1.x, s1.y, c2, sf::Vector2f(s2.x, s2.y), dir2);
+        if (s1.s == Circle && s2.s == Stroke) return hasCollided(c2, s2.x, s2.y, c1, s1.x);
+        if (s1.s == Rectangle && s2.s == Stroke) return hasCollided(c2, s2.x, s2.y, c1, sf::Vector2f(s1.x, s1.y), dir1);
 		return false;
 	}
 
+    //Circle vs circle
 	bool hasCollided(sf::Vector2f c1, float r1, sf::Vector2f c2, float r2)
 	{
 		return (r1 + r2 > getDist(c1, c2));
 	}
 
+    //Stroke vs circle
+    bool hasCollided(sf::Vector2f c1, float r11, float r12, sf::Vector2f c2, float r2)
+    {
+        float dist = getDist(c1, c2);
+        if (r12 + r2 < dist) return false;
+        if (r11 < 0) return false;
+        return (dist + r2 < r11);
+    }
+
+    //Stroke vs rectangle
+    bool hasCollided(sf::Vector2f c1, float r11, float r12, sf::Vector2f c2, sf::Vector2f s2, float dir2)
+    {
+        if (!hasCollided(c2, s2, dir2, c1, r12)) return false;
+        if (r11 < 0) return false;
+
+		//Transforming vectors
+		float unitX2 = cos(dir2);
+		float unitY2 = sin(dir2);
+		sf::Vector2f rotWidth2(unitX2 * s2.x / 2.f, unitY2 * s2.x / 2.f);
+		sf::Vector2f rotHeight2(-unitY2 * s2.y / 2.f, unitX2 * s2.y / 2.f);
+		sf::Vector2f tr2[] = {c2 - rotWidth2 - rotHeight2,
+			c2 + rotWidth2 - rotHeight2,
+			c2 + rotWidth2 + rotHeight2,
+			c2 - rotWidth2 + rotHeight2};
+        
+		//Inside edge cross check
+		if (getDist(c1, tr2[0]) > r11) return true;
+		if (getDist(c1, tr2[1]) > r11) return true;
+		if (getDist(c1, tr2[2]) > r11) return true;
+		if (getDist(c1, tr2[3]) > r11) return true;
+
+        return false;
+    }
+
+    //Rectangle vs circle
 	bool hasCollided(sf::Vector2f c1, sf::Vector2f s1, float dir1, sf::Vector2f c2, float r2)
 	{
 		//Basic distance check
@@ -132,6 +172,7 @@ namespace util
 		return false;
 	}
 
+    //Rectangle vs rectangle
 	bool hasCollided(sf::Vector2f c1, sf::Vector2f s1, float dir1, sf::Vector2f c2, sf::Vector2f s2, float dir2)
 	{
 		//Basic distance check

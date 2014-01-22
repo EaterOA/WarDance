@@ -69,7 +69,8 @@ private:
 	sf::Sprite m_scoringScreen;
 	sf::Texture m_scoringScreenTex;
 	std::vector<sf::Text> m_scoring_numbers;
-	sf::Vertex m_scoring_levelIcon[4];
+	sf::Vertex m_scoringLevelDisplay[4];
+    sf::Vertex m_nextLevelDisplay[4];
     float m_levelEndSequence_timing;
     int m_levelEndSequence_timing_stage;
     float m_scoring_timing;

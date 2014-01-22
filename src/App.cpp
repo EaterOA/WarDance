@@ -103,6 +103,7 @@ void goToLevelEndSequence()
 {
 	appStates.push_back(LEVELENDSEQUENCE);
 	guiAgent.startLevelEndSequence(mAgent.endLevel());
+    mAgent.clearEnemyProjectiles();
 }
 
 void goToNextLevel()
@@ -110,7 +111,9 @@ void goToNextLevel()
 	while (getAppState() != GAME) appStates.pop_back();
     if (config["level"] < config["num_levels"])
         config["level"]++;
+    mAgent.clearPlayerProjectiles();
     mAgent.startLevel();
+    guiAgent.transitionAppState();
 }
 
 std::vector<sf::Event> processEvents()
@@ -137,14 +140,12 @@ std::vector<sf::Event> processEvents()
 void appStart()
 {
 	guiAgent.transitionAppState();
+    //Game loop
 	while (window.isOpen()) {
 		guiAgent.processInput(processEvents());
 		if (getAppState() == GAME || getAppState() == LEVELENDSEQUENCE) {
 			mAgent.updateGameState(window, gameClock.restart());
 			mAgent.tick();
-			guiAgent.updateGameState(mAgent.getGameState());
-			gAgent.updateSprites(mAgent.getGameState());
-			updateView(mAgent.getGameState().player->getPos());
 			if (mAgent.isPlayerDead()) {
 				goToMain();
 			}
@@ -156,6 +157,9 @@ void appStart()
 					goToNextLevel();
 				}
             }
+			guiAgent.updateGameState(mAgent.getGameState());
+			gAgent.updateSprites(mAgent.getGameState());
+			updateView(mAgent.getGameState().player->getPos());
 		}
         if (getAppState() != NOFOCUS) paint();
 	}

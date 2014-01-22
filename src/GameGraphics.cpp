@@ -59,12 +59,13 @@ bool GameGraphics::init()
 	return true;
 }
 
-void GameGraphics::setNextLevelBGOpacity(float amt)
+void GameGraphics::setNextLevelBGOpacity(unsigned char alpha)
 {
-	if (amt > 0) {
-		unsigned idx = (unsigned)config["level"] - 1;
-		m_backgroundNext.setColor(sf::Color(255, 255, 255, (unsigned char)(255.f * amt)));
-		m_backgroundNext.setTexture(m_lvlBackgroundTex[idx + (config["level"] < config["num_levels"] ? 1 : 0)]);
+	if (alpha > 0) {
+        int lvl = config["level"];
+		unsigned nextIdx = (unsigned)(lvl < config["num_levels"] ? lvl : lvl-1);
+		m_backgroundNext.setColor(sf::Color(255, 255, 255, alpha));
+		m_backgroundNext.setTexture(m_lvlBackgroundTex[nextIdx]);
 	}
 }
 
@@ -73,17 +74,24 @@ void GameGraphics::addSprite(const Actor &actor)
 	const FrameData& d = m_frameMap[actor.getFrame()];
 
 	//Some sprites have to be specially drawn. It makes for better flexibility.
-	if (actor.getFrame() == "wiper") {
+	if (util::isPrefix("wiper", actor.getFrame())) {
 		sf::Vector2f c = actor.getPos();
-		float rOut = actor.getSize().x;
-		float rIn = (rOut > 20 ? rOut - 20 : 0);
+		float rOut = actor.getSize().y;
+        float rIn = actor.getSize().x;
+        if (rIn < 0) rIn = 0;
 		int numPt = (int)(sqrt(rOut) * 3);
 		sf::Transform tr;
 		tr.rotate(360.f / numPt, c);
 		sf::Vertex curOut(sf::Vector2f(c.x + rOut, c.y)), nextOut;
 		sf::Vertex curIn(sf::Vector2f(c.x + rIn, c.y)), nextIn;
-		curOut.color = nextOut.color = sf::Color(150, 150, 255, 255);
-		curIn.color = nextIn.color = sf::Color(150, 150, 255, 0);
+        if (actor.getFrame() == "wiper_p") {
+            curOut.color = nextOut.color = sf::Color(150, 150, 255, 255);
+            curIn.color = nextIn.color = sf::Color(150, 150, 255, 0);
+        }
+        else {
+            curOut.color = nextOut.color = sf::Color(255, 150, 150, 255);
+            curIn.color = nextIn.color = sf::Color(255, 150, 150, 0);
+        }
 		for (int i = 0; i < numPt; i++) {
 			nextOut.position = tr.transformPoint(curOut.position);
 			nextIn.position = tr.transformPoint(curIn.position);
@@ -98,7 +106,7 @@ void GameGraphics::addSprite(const Actor &actor)
 	if (util::isPrefix("m_laser", actor.getFrame())) {
 		const Laser& laser = *(const Laser*)(&actor);
 		unsigned alpha = (unsigned)(laser.getFadePerc() * 255.f);
-		unsigned int rgba = d.rgba & 0xffffff00 | alpha;
+		unsigned int rgba = (d.rgba & 0xffffff00) | alpha;
 		sf::Vertex sprite[4];
 		util::affixPos(sprite, actor.getPos() + d.posOffset, d.size, 0);
 		sprite[1].position.x = sprite[0].position.x + actor.getSize().x;

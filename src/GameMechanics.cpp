@@ -53,10 +53,18 @@ void GameMechanics::initLevel()
 	m_state.player = new Player(sf::Vector2f(100.f, 100.f));
 }
 
+void GameMechanics::clearEnemyProjectiles()
+{
+    m_state.projectiles.push_back(new Wiper(m_state.player->getPos(), 0));
+}
+
+void GameMechanics::clearPlayerProjectiles()
+{
+    m_state.projectiles.push_back(new Wiper(m_state.player->getPos(), 1));
+}
+
 const std::map<std::string, int> GameMechanics::endLevel()
 {
-	//Wipe all enemy projectiles
-    m_state.projectiles.push_back(new Wiper(m_state.player->getPos()));
 	//Calculate level end stats
 	std::map<std::string, int> levelEndStats;
 	levelEndStats["shot"] = m_state.shot;

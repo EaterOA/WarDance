@@ -171,7 +171,7 @@ protected:
 class Wiper: public Projectile
 {
 public:
-	Wiper(sf::Vector2f pos);
+	Wiper(sf::Vector2f pos, int faction);
 	virtual void act(GameState& state);
 protected:
 	float m_expandSpeed;
