@@ -255,6 +255,15 @@ namespace util
 		sprite[3].texCoords = sf::Vector2f(texCoord.x, texCoord.y + size.y);
 	}
 
+	sf::Color toColor(unsigned int rgba)
+	{
+		unsigned char r = (unsigned char)(rgba >> 24);
+		unsigned char g = (unsigned char)((rgba & 0xffffff) >> 16);
+		unsigned char b = (unsigned char)((rgba & 0xffff) >> 8);
+		unsigned char a = (unsigned char)(rgba & 0xff);
+		return sf::Color(r, g, b, a);
+	}
+
 	void affixPos(sf::Vertex sprite[4], sf::Vector2f pos, sf::Vector2f size, int reference)
 	{
 		sf::Vector2f hSize(size.x / 2.f, size.y / 2.f);
@@ -283,11 +292,7 @@ namespace util
 
 	void applyColor(sf::Vertex sprite[4], unsigned int rgba)
 	{
-		unsigned char r = (unsigned char)(rgba >> 24);
-		unsigned char g = (unsigned char)((rgba & 0xffffff) >> 16);
-		unsigned char b = (unsigned char)((rgba & 0xffff) >> 8);
-		unsigned char a = (unsigned char)(rgba & 0xff);
-		sf::Color c(r, g, b, a);
+		sf::Color c = toColor(rgba);
 		sprite[0].color = c;
 		sprite[1].color = c;
 		sprite[2].color = c;

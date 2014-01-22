@@ -63,7 +63,7 @@ void GameMechanics::clearPlayerProjectiles()
     m_state.projectiles.push_back(new Wiper(m_state.player->getPos(), 1));
 }
 
-const std::map<std::string, int> GameMechanics::endLevel()
+const std::map<std::string, int> GameMechanics::getLevelStats()
 {
 	//Calculate level end stats
 	std::map<std::string, int> levelEndStats;
@@ -88,8 +88,30 @@ void GameMechanics::startLevel()
 	m_script->parseFile(scriptName.str(), m_state.totalElapsed.asSeconds());
 }
 
-void GameMechanics::tick()
+bool GameMechanics::isPlayerDead() const
 {
+	return m_state.player->isDead(m_state);
+}
+
+bool GameMechanics::isLevelDone() const
+{
+	return m_script->isDone() && m_state.enemies.size() == 0;
+}
+
+GameState& GameMechanics::getGameState()
+{
+	return m_state;
+}
+
+void GameMechanics::updateGameState(const sf::RenderWindow &window, const sf::Time &elapsed)
+{
+	//Update application-related data
+	m_state.elapsed = elapsed;
+	m_state.totalElapsed += elapsed;
+	m_state.cursor = sf::Vector2f(sf::Mouse::getPosition(window));
+	m_state.cursor.y += window.getView().getCenter().y - window.getView().getSize().y / 2;
+	m_state.cursor.x += window.getView().getCenter().x - window.getView().getSize().x / 2;
+
     //Advance script and actors
 	m_script->tick(m_state.totalElapsed.asSeconds());
 	m_state.player->act(m_state);
@@ -128,30 +150,6 @@ void GameMechanics::tick()
 			i--;
 		}
 	}
-}
-
-bool GameMechanics::isPlayerDead() const
-{
-	return m_state.player->isDead(m_state);
-}
-
-bool GameMechanics::isLevelDone() const
-{
-	return m_script->isDone() && m_state.enemies.size() == 0;
-}
-
-GameState& GameMechanics::getGameState()
-{
-	return m_state;
-}
-
-void GameMechanics::updateGameState(const sf::RenderWindow &window, const sf::Time &elapsed)
-{
-	m_state.elapsed = elapsed;
-	m_state.totalElapsed += elapsed;
-	m_state.cursor = sf::Vector2f(sf::Mouse::getPosition(window));
-	m_state.cursor.y += window.getView().getCenter().y - window.getView().getSize().y / 2;
-	m_state.cursor.x += window.getView().getCenter().x - window.getView().getSize().x / 2;
 }
 
 void GameMechanics::spawnEnemy(std::string name)

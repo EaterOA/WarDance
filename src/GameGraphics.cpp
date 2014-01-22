@@ -73,7 +73,7 @@ void GameGraphics::addSprite(const Actor &actor)
 {
 	const FrameData& d = m_frameMap[actor.getFrame()];
 
-	//Some sprites have to be specially drawn. It makes for better flexibility.
+	//Some sprites have to be specially drawn. This makes for better flexibility.
 	if (util::isPrefix("wiper", actor.getFrame())) {
 		sf::Vector2f c = actor.getPos();
 		float rOut = actor.getSize().y;
@@ -84,14 +84,8 @@ void GameGraphics::addSprite(const Actor &actor)
 		tr.rotate(360.f / numPt, c);
 		sf::Vertex curOut(sf::Vector2f(c.x + rOut, c.y)), nextOut;
 		sf::Vertex curIn(sf::Vector2f(c.x + rIn, c.y)), nextIn;
-        if (actor.getFrame() == "wiper_p") {
-            curOut.color = nextOut.color = sf::Color(150, 150, 255, 255);
-            curIn.color = nextIn.color = sf::Color(150, 150, 255, 0);
-        }
-        else {
-            curOut.color = nextOut.color = sf::Color(255, 150, 150, 255);
-            curIn.color = nextIn.color = sf::Color(255, 150, 150, 0);
-        }
+        curOut.color = nextOut.color = util::toColor(d.rgba);
+        curIn.color = nextIn.color = util::toColor(d.rgba & 0xffffff00);
 		for (int i = 0; i < numPt; i++) {
 			nextOut.position = tr.transformPoint(curOut.position);
 			nextIn.position = tr.transformPoint(curIn.position);
@@ -103,7 +97,7 @@ void GameGraphics::addSprite(const Actor &actor)
 			curIn = nextIn;
 		}
 	}
-	if (util::isPrefix("m_laser", actor.getFrame())) {
+	else if (util::isPrefix("m_laser", actor.getFrame())) {
 		const Laser& laser = *(const Laser*)(&actor);
 		unsigned alpha = (unsigned)(laser.getFadePerc() * 255.f);
 		unsigned int rgba = (d.rgba & 0xffffff00) | alpha;

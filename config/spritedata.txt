@@ -9,7 +9,8 @@ reg_bullet_p    0   7.0 136.0 17.0 6.0      0.0 0.0     1   CCCCFFFF
 split_bullet    0   33.0 131.0 34.0 15.0    0.0 0.0     1   FFFFFFFF
 alien           0   86.0 50.0 112.0 66.0    10.0 0.0    1   FFFFFFFF
 medkit          0   0.0 174.0 35.0 26.0     0.0 0.0     0   FFFFFFFF
-wiper           0   0.0 0.0 0.0 0.0         0.0 0.0     0   FFFFFFFF
+wiper           0   0.0 0.0 0.0 0.0         0.0 0.0     0   FF9696FF
+wiper_p         0   0.0 0.0 0.0 0.0         0.0 0.0     0   9696FFFF
 w_laser         0   78.0 170.0 96.0 16.0    0.0 0.0     1   E68A00FF
 w_laser_p       0   78.0 170.0 96.0 16.0    0.0 0.0     1   5CF2FDFF
 m_laser         0   2.0 156.0 196.0 9.0     88.0 0.0    1   E68A00FF

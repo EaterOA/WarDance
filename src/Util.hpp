@@ -57,6 +57,7 @@ namespace util
 	void rotateSprite(sf::Vertex sprite[4], float dir, sf::Vector2f center);
 	void applyColor(sf::Vertex sprite[4], unsigned int rgba);
 	void setAlpha(sf::Vertex sprite[4], unsigned char alpha);
+	sf::Color toColor(unsigned int rgba);
 	
 	//IO convenience
 	bool readf(std::istream &in, unsigned amt, float arr[], bool endline);

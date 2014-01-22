@@ -102,7 +102,7 @@ void goToSettings()
 void goToLevelEndSequence()
 {
 	appStates.push_back(LEVELENDSEQUENCE);
-	guiAgent.startLevelEndSequence(mAgent.endLevel());
+	guiAgent.startLevelEndSequence(mAgent.getLevelStats());
     mAgent.clearEnemyProjectiles();
 }
 
@@ -145,7 +145,6 @@ void appStart()
 		guiAgent.processInput(processEvents());
 		if (getAppState() == GAME || getAppState() == LEVELENDSEQUENCE) {
 			mAgent.updateGameState(window, gameClock.restart());
-			mAgent.tick();
 			if (mAgent.isPlayerDead()) {
 				goToMain();
 			}

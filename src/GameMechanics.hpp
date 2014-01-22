@@ -28,10 +28,9 @@ struct GameState {
 class GameMechanics {
 public:
 	bool init();
-	void tick();
     void initLevel();
 	void startLevel();
-    const std::map<std::string, int> endLevel();
+    const std::map<std::string, int> getLevelStats();
 	bool isLevelDone() const;
 	bool isPlayerDead() const;
 	GameState& getGameState();
