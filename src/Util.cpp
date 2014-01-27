@@ -108,8 +108,8 @@ namespace util
     {
         float dist = getDist(c1, c2);
         if (r12 + r2 < dist) return false;
-        if (r11 < 0) return false;
-        return (dist + r2 < r11);
+        if (r11 < 0) return true;
+        return (dist + r2 > r11);
     }
 
     //Stroke vs rectangle

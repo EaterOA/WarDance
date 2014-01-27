@@ -7,7 +7,6 @@ Player::Player(sf::Vector2f pos)
 	m_base_v = 150.f;
 	m_numGrenades = 3;
 	m_grenade_cd = 0.f;
-	m_laser_cd = 0.f;
 	m_shield_cd = 0;
 	m_shield_regen = 10.f;
 	m_maxShield = 200.f;
@@ -59,11 +58,7 @@ void Player::act(GameState &state)
 	//Trigger attack
 	cooldown(state);
 	if (conf::clicking(conf::B_LEFT) && m_attack_cd <= 0) attack(state);
-	else if (conf::clicking(conf::B_RIGHT) && m_laser_cd <= 0) {
-		state.fired++;
-		m_laser_cd = 0.4f;
-		shoot(state, LASER, 40.f, 10.f);
-	}
+	else if (conf::clicking(conf::B_RIGHT) && m_grenade_cd <= 0 && m_numGrenades > 0) throwGrenade(state);
 }
 
 void Player::hit(GameState &state, int damage)
@@ -104,10 +99,8 @@ void Player::cooldown(GameState &state)
 	Fighter::cooldown(state);
 	m_grenade_cd -= state.elapsed.asSeconds();
 	m_shield_cd -= state.elapsed.asSeconds();
-	m_laser_cd -= state.elapsed.asSeconds();
 	if (m_grenade_cd < -5) m_grenade_cd = 0;
 	if (m_shield_cd < -5) m_shield_cd = 0;
-	if (m_laser_cd < -5) m_laser_cd = 0;
 }
 
 void Player::attack(GameState &state)
@@ -121,7 +114,7 @@ void Player::throwGrenade(GameState &state)
 {
 	m_numGrenades--;
 	m_grenade_cd = 0.3f;
-	state.projectiles.push_back(new RegularGrenade(m_pos, state.cursor));
+	state.projectiles.push_back(new Grenade(m_pos, state.cursor));
 }
 
 void Player::restoreHP(int amt)

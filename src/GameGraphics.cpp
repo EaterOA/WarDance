@@ -74,7 +74,33 @@ void GameGraphics::addSprite(const Actor &actor)
 	const FrameData& d = m_frameMap[actor.getFrame()];
 
 	//Some sprites have to be specially drawn. This makes for better flexibility.
-	if (util::isPrefix("wiper", actor.getFrame())) {
+	if (util::isPrefix("gwiper", actor.getFrame())) {
+		sf::Vector2f c = actor.getPos();
+		float rOut = actor.getSize().y;
+        float rIn = actor.getSize().x;
+        if (rIn < 0) rIn = 0;
+		int numPt = (int)(sqrt(rOut) * 20);
+		sf::Transform tr;
+		tr.rotate(360.f / numPt, c);
+		sf::Vertex curOut(sf::Vector2f(c.x + rOut, c.y)), nextOut;
+		sf::Vertex curIn(sf::Vector2f(c.x + rIn, c.y)), nextIn;
+        curOut.color = nextOut.color = util::toColor(d.rgba);
+        curIn.color = nextIn.color = util::toColor(d.rgba);
+		for (int i = 0; i < numPt; i++) {
+			nextOut.position = tr.transformPoint(curOut.position);
+			nextIn.position = tr.transformPoint(curIn.position);
+			nextIn.color.a = RAND(0, 255);
+			if (RAND(0,1)) {
+				m_specialSprites.push_back(curOut);
+				m_specialSprites.push_back(nextIn);
+				m_specialSprites.push_back(nextOut);
+				m_specialSprites.push_back(curOut);
+			}
+			curOut = nextOut;
+			curIn = nextIn;
+		}
+	}
+	else if (util::isPrefix("wiper", actor.getFrame())) {
 		sf::Vector2f c = actor.getPos();
 		float rOut = actor.getSize().y;
         float rIn = actor.getSize().x;
@@ -85,7 +111,7 @@ void GameGraphics::addSprite(const Actor &actor)
 		sf::Vertex curOut(sf::Vector2f(c.x + rOut, c.y)), nextOut;
 		sf::Vertex curIn(sf::Vector2f(c.x + rIn, c.y)), nextIn;
         curOut.color = nextOut.color = util::toColor(d.rgba);
-        curIn.color = nextIn.color = util::toColor(d.rgba & 0xffffff00);
+		curIn.color = nextIn.color = util::toColor(d.rgba & 0xffffff00);
 		for (int i = 0; i < numPt; i++) {
 			nextOut.position = tr.transformPoint(curOut.position);
 			nextIn.position = tr.transformPoint(curIn.position);

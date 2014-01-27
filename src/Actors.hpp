@@ -80,7 +80,6 @@ private:
 	float m_base_v;
 	int m_numGrenades;
 	float m_grenade_cd;
-	float m_laser_cd;
 	float m_shield_cd;
 	float m_shield, m_shield_regen, m_maxShield;
 	std::map<StatusT, StatusD> m_status;
@@ -140,14 +139,17 @@ protected:
 	int m_damage;
 };
 
-class RegularGrenade: public Projectile
+class Grenade: public Projectile
 {
 public:
-	RegularGrenade(sf::Vector2f pos, sf::Vector2f dest);
+	Grenade(sf::Vector2f pos, sf::Vector2f dest);
 	virtual void act(GameState& state);
+	virtual bool isDead(const GameState &state) const;
 protected:
 	virtual void attack(GameState& state);
+	bool m_attacked;
 	float m_time;
+	float m_animationTime;
 };
 
 class RegularBullet: public Projectile
@@ -172,9 +174,22 @@ class Wiper: public Projectile
 {
 public:
 	Wiper(sf::Vector2f pos, int faction);
+	virtual bool isDead(const GameState& state) const;
 	virtual void act(GameState& state);
 protected:
 	float m_expandSpeed;
+};
+
+class GrenadeWiper: public Wiper
+{
+public:
+	GrenadeWiper(sf::Vector2f pos);
+	virtual bool isDead(const GameState& state) const;
+	virtual void act(GameState& state);
+protected:
+	virtual void attack(GameState& state);
+	float m_expandAccel;
+	float m_expandJerk;
 };
 
 class Laser: public Projectile

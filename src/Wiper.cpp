@@ -2,13 +2,17 @@
 #include "GameMechanics.hpp"
 
 Wiper::Wiper(sf::Vector2f pos, int faction)
-	: Projectile("wiper", pos, util::ShapeVector(util::Stroke, -20, 0), 5, 5, faction)
+	: Projectile("wiper", pos, util::ShapeVector(util::Stroke, -20, 0), 1, 99999, faction)
 {
     if (faction == 0) {
         m_frame = "wiper_p";
     }
-	m_damage = 99999;
 	m_expandSpeed = 800.f;
+}
+
+bool Wiper::isDead(const GameState &state) const
+{
+	return m_size.x > MAX(state.map_height, state.map_width);
 }
 
 void Wiper::act(GameState &state)
@@ -22,5 +26,4 @@ void Wiper::act(GameState &state)
 			state.projectiles[i]->hit(state, m_damage);
 		}
 	}
-	if (m_size.x > MAX(state.map_height, state.map_width)) m_hp = 0;
 }
