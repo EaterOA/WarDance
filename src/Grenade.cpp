@@ -2,7 +2,7 @@
 #include "GameMechanics.hpp"
 
 Grenade::Grenade(sf::Vector2f pos, sf::Vector2f dest)
-	: Projectile("split_bullet", pos, util::ShapeVector(util::Circle, 90), 1, 1000, 0)
+	: Projectile("grenade", pos, util::ShapeVector(util::Circle, 90), 1, 1000, 0)
 {
 	sf::Vector2f v = dest - pos;
 	m_dir = util::toDir(v.x, v.y);
@@ -44,6 +44,7 @@ void Grenade::act(GameState &state)
 	}
 	else {
 		Actor::act(state);
+		m_dir = util::rotateRad(m_dir, state.elapsed.asSeconds() * 12);
 		m_time -= state.elapsed.asSeconds();
 	}
 }

@@ -322,7 +322,7 @@ void GameGUI::mainBlink()
 	if (m_main_blink + m_main_blinkChg < 0 ||
 		m_main_blink + m_main_blinkChg > 255) m_main_blinkChg *= -1;
 	m_main_blink += m_main_blinkChg;
-	util::setAlpha(&m_mainMenu[0], m_main_blink);
+	util::setAlpha(&m_mainMenu[0], (unsigned char)m_main_blink);
 }
 
 void GameGUI::processInput(const std::vector<sf::Event> &keyEvents)

@@ -8,6 +8,8 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <map>
+#include <set>
 #include <SFML/Graphics.hpp>
 
 #define MIN(a,b) (a < b ? a : b)
@@ -58,6 +60,8 @@ namespace util
 	void applyColor(sf::Vertex sprite[4], unsigned int rgba);
 	void setAlpha(sf::Vertex sprite[4], unsigned char alpha);
 	sf::Color toColor(unsigned int rgba);
+	sf::Vector2f translatePos(sf::Vector2f pos, float dir, float offsetX, float offsetY);
+	sf::Vector2f translatePos(sf::Vector2f pos, float unitX, float unitY, float offsetX, float offsetY);
 	
 	//IO convenience
 	bool readf(std::istream &in, unsigned amt, float arr[], bool endline);

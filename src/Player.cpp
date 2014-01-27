@@ -114,7 +114,8 @@ void Player::throwGrenade(GameState &state)
 {
 	m_numGrenades--;
 	m_grenade_cd = 0.3f;
-	state.projectiles.push_back(new Grenade(m_pos, state.cursor));
+	sf::Vector2f grenadePos = util::translatePos(m_pos, m_dir, 30.f, 10.f);
+	state.projectiles.push_back(new Grenade(grenadePos, state.cursor));
 }
 
 void Player::restoreHP(int amt)

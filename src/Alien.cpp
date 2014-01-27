@@ -29,8 +29,10 @@ void Alien::attack(GameState& state)
 	m_attack_cd = 0.1f;
 	m_gunDir1 = util::rotateRad(m_gunDir1, util::toRad(17.f));
 	m_gunDir2 = util::rotateRad(m_gunDir2, util::toRad(11.f));
-	shoot(state, REGULAR, m_dir, m_gunDir1, 18, 25);
-	shoot(state, REGULAR, m_dir, m_gunDir2, 18, -25);
+    sf::Vector2f gunPos1 = util::translatePos(m_pos, m_dir, 18.f, 25.f);
+    sf::Vector2f gunPos2 = util::translatePos(m_pos, m_dir, 18.f, -25.f);
+	shoot(state, REGULAR, gunPos1, m_dir + m_gunDir1);
+	shoot(state, REGULAR, gunPos2, m_dir + m_gunDir2);
 }
 
 void Alien::act(GameState& state)

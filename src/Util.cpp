@@ -264,6 +264,24 @@ namespace util
 		return sf::Color(r, g, b, a);
 	}
 
+	sf::Vector2f translatePos(sf::Vector2f pos, float dir, float offsetX, float offsetY)
+	{
+		float unitX, unitY;
+		unitX = cos(dir);
+		unitY = sin(dir);
+		return translatePos(pos, unitX, unitY, offsetX, offsetY);
+	}
+
+	sf::Vector2f translatePos(sf::Vector2f pos, float unitX, float unitY, float offsetX, float offsetY)
+	{
+		float rotX, rotY, outX, outY;
+		rotX = unitY * -1 * offsetY;
+		rotY = unitX * offsetY;
+		outX = unitX * offsetX;
+		outY = unitY * offsetX;
+		return sf::Vector2f(pos.x + outX + rotX, pos.y + outY + rotY);
+	}
+
 	void affixPos(sf::Vertex sprite[4], sf::Vector2f pos, sf::Vector2f size, int reference)
 	{
 		sf::Vector2f hSize(size.x / 2.f, size.y / 2.f);

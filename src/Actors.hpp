@@ -39,8 +39,7 @@ protected:
 	void shoot(GameState &state, Bullet b, float offsetX, float offsetY);
 	void shoot(GameState &state, Bullet b, sf::Vector2f &dest, float offsetX, float offsetY);
 	void shoot(GameState &state, Bullet b, float dir, float offsetX, float offsetY);
-	void shoot(GameState &state, Bullet b, float dir, float extraDir, float offsetX, float offsetY);
-	void shoot(GameState &state, Bullet b, float dir, float unitX, float unitY, float offsetX, float offsetY);
+	void shoot(GameState &state, Bullet b, sf::Vector2f pos, float dir);
 	float m_attack_cd;
 	int m_hp;
 	int m_maxHp;
@@ -190,6 +189,8 @@ protected:
 	virtual void attack(GameState& state);
 	float m_expandAccel;
 	float m_expandJerk;
+	float m_range;
+	std::set<Actor*> m_hit;
 };
 
 class Laser: public Projectile

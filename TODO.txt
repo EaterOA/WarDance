@@ -7,9 +7,11 @@ Each list is ordered by increasing estimated priority vs effort/time
 
 
 TODO anytime
+- CODE: Convert all tabs to spaces
+- CODE: Make a util function to calculate angle of a vector
+- MEC: Shorten grunt fire range
 - MEC: Design more enemy and projectile types
 - MEC: Program sprinkler to forewarn its appearance
-- GFX: Find a better-looking sprite for grenade
 - GUI: Implement Select Level in main menu
 - GFX: Add transitions between app states
 - GUI: Add player status list to HUD

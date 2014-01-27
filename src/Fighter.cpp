@@ -53,42 +53,24 @@ void Fighter::shoot(GameState &state, Bullet b, sf::Vector2f &dest, float offset
 	float unitX = (dest.x - m_pos.x) / dist;
 	float unitY = (dest.y - m_pos.y) / dist;
 	float dir = util::toDir(unitX, unitY);
-	shoot(state, b, dir, unitX, unitY, offsetX, offsetY);
+    sf::Vector2f pos = util::translatePos(m_pos, unitX, unitY, offsetX, offsetY);
+	shoot(state, b, pos, dir);
 }
 
 void Fighter::shoot(GameState &state, Bullet b, float dir, float offsetX, float offsetY)
 {
-	float unitX = cos(dir);
-	float unitY = sin(dir);
-	shoot(state, b, dir, unitX, unitY, offsetX, offsetY);
+    sf::Vector2f pos = util::translatePos(m_pos, dir, offsetX, offsetY);
+	shoot(state, b, pos, dir);
 }
 
-void Fighter::shoot(GameState &state, Bullet b, float dir, float extraDir, float offsetX, float offsetY)
+void Fighter::shoot(GameState &state, Bullet b, sf::Vector2f pos, float dir)
 {
-	float unitX = cos(dir);
-	float unitY = sin(dir);
-	shoot(state, b, dir + extraDir, unitX, unitY, offsetX, offsetY);
-}
-
-void Fighter::shoot(GameState &state, Bullet b, float dir, float unitX, float unitY, float offsetX, float offsetY)
-{
-	float rotX, rotY, outX, outY;
-
-	if (offsetX != 0 || offsetY != 0) {
-		rotX = unitY * -1 * offsetY;
-		rotY = unitX * offsetY;
-		outX = unitX * offsetX;
-		outY = unitY * offsetX;
-	}
-	else {
-		outX = outY = rotX = rotY = 0;
-	}
     Projectile* bullet;
     if (b == SPLITTING) 
-	    bullet = new SplittingBullet(sf::Vector2f(m_pos.x + outX + rotX, m_pos.y + outY + rotY), dir, m_faction);
+	    bullet = new SplittingBullet(pos, dir, m_faction);
 	else if(b == LASER)
-		bullet = new Laser(sf::Vector2f(m_pos.x + outX + rotX, m_pos.y + outY + rotY), dir, m_faction);
+		bullet = new Laser(pos, dir, m_faction);
 	else
-	    bullet = new RegularBullet(sf::Vector2f(m_pos.x + outX + rotX, m_pos.y + outY + rotY), dir, m_faction);
+	    bullet = new RegularBullet(pos, dir, m_faction);
 	state.projectiles.push_back(bullet);
 }
