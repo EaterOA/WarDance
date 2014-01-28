@@ -1,5 +1,5 @@
 #include "Util.hpp"
-#include "Config.hpp"
+#include "GameConfig.hpp"
 #include "GameGraphics.hpp"
 #include "GameMechanics.hpp"
 
@@ -8,10 +8,10 @@ bool GameGraphics::init()
     std::ifstream fin;
     
     //Initializing texture and map lists
-    m_numSheets = unsigned(config["num_sheets"]);
-    unsigned numLevels = unsigned(config["num_levels"]);
+    unsigned numSheets = 2;
+    unsigned numLevels = unsigned(config.getInt("num_levels"));
     m_lvlBackgroundTex = std::vector<sf::Texture>(numLevels);
-    m_spritesheet = std::vector<sf::Texture>(m_numSheets);
+    m_spritesheet = std::vector<sf::Texture>(numSheets);
     m_frameMap = std::map<std::string, FrameData>();
 
     //Loading level background textures
@@ -23,7 +23,7 @@ bool GameGraphics::init()
     }
 
     //Loading spritesheets
-    for (unsigned i = 0; i < m_numSheets; i++) {
+    for (unsigned i = 0; i < numSheets; i++) {
         std::stringstream ss;
         ss << "images/spritesheet" << i << ".png";
         if (!m_spritesheet[i].loadFromFile(ss.str())) return false;
@@ -54,7 +54,7 @@ bool GameGraphics::init()
     m_background.setTextureRect(sf::IntRect(0, 0, 1600, 1200));
     m_backgroundNext.setTexture(m_lvlBackgroundTex[0]);
     m_backgroundNext.setTextureRect(sf::IntRect(0, 0, 1600, 1200));
-    m_hitbox_enabled = config["hitbox_enabled"];
+    m_hitbox_enabled = config.getInt("hitbox_enabled");
 
     return true;
 }
@@ -62,8 +62,8 @@ bool GameGraphics::init()
 void GameGraphics::setNextLevelBGOpacity(unsigned char alpha)
 {
     if (alpha > 0) {
-        int lvl = config["level"];
-        unsigned nextIdx = (unsigned)(lvl < config["num_levels"] ? lvl : lvl-1);
+        int lvl = config.getInt("level");
+        unsigned nextIdx = (unsigned)(lvl < config.getInt("num_levels") ? lvl : lvl-1);
         m_backgroundNext.setColor(sf::Color(255, 255, 255, alpha));
         m_backgroundNext.setTexture(m_lvlBackgroundTex[nextIdx]);
     }
@@ -200,12 +200,12 @@ void GameGraphics::addHitbox(const Fighter &f)
 void GameGraphics::updateSprites(const GameState &state)
 {
     //Updating settings
-    m_hitbox_enabled = config["hitbox_enabled"];
-    unsigned idx = (unsigned)config["level"] - 1;
+    m_hitbox_enabled = config.getInt("hitbox_enabled");
+    unsigned idx = (unsigned)config.getInt("level") - 1;
     m_background.setTexture(m_lvlBackgroundTex[idx]);
 
     //Recalculating sprite appearance
-    m_sprites = std::vector<std::vector<sf::Vertex> >(m_numSheets);
+    m_sprites = std::vector<std::vector<sf::Vertex> >(m_spritesheet.size());
     m_specialSprites = std::vector<sf::Vertex>();
     if (m_hitbox_enabled)
         m_hitboxes = std::vector<sf::Vertex>();
@@ -235,7 +235,7 @@ void GameGraphics::draw(sf::RenderTarget& target, sf::RenderStates states) const
     if (m_backgroundNext.getTexture() != m_background.getTexture()) {
         target.draw(m_backgroundNext);
     }
-    for (unsigned i = 0; i < m_numSheets; i++) {
+    for (unsigned i = 0; i < m_spritesheet.size(); i++) {
         if (!m_sprites[i].empty()) {
             sf::RenderStates spriteState(&m_spritesheet[i]);
             target.draw(&m_sprites[i][0], m_sprites[i].size(), sf::Quads, spriteState);

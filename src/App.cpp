@@ -1,5 +1,5 @@
 #include "App.hpp"
-#include "Config.hpp"
+#include "GameConfig.hpp"
 #include "GameMechanics.hpp"
 #include "GameGraphics.hpp"
 #include "GameGUI.hpp"
@@ -21,7 +21,7 @@ bool appInit()
     window.create(sf::VideoMode(APP_WIDTH, APP_HEIGHT), "War Dance", sf::Style::Close, settings);
     window.setFramerateLimit(60);
     window.setView(camera);
-    conf::init_config("config/config.txt");
+    config.loadConfig("config/config.txt");
     if (!mAgent.init()) return false;
     if (!gAgent.init()) return false;
     if (!guiAgent.init(&mAgent, &gAgent)) return false;
@@ -109,8 +109,9 @@ void goToLevelEndSequence()
 void goToNextLevel()
 {
     while (getAppState() != GAME) appStates.pop_back();
-    if (config["level"] < config["num_levels"])
-        config["level"]++;
+    int lvl = config.getInt("level");
+    if (lvl < config.getInt("num_levels"))
+        config.setInt("level", lvl+1);
     mAgent.clearPlayerProjectiles();
     mAgent.startLevel();
     guiAgent.transitionAppState();

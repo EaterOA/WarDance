@@ -1,4 +1,4 @@
-#include "Config.hpp"
+#include "GameConfig.hpp"
 #include "GameMechanics.hpp"
 #include "GameScript.hpp"
 
@@ -84,7 +84,7 @@ void GameMechanics::startLevel()
 {
     m_state.resetLevel();
     std::stringstream scriptName;
-    scriptName << "config/lvl" << config["level"] << ".wds";
+    scriptName << "config/lvl" << config.getInt("level") << ".wds";
     m_script->parseFile(scriptName.str(), m_state.totalElapsed.asSeconds());
 }
 
@@ -123,7 +123,7 @@ void GameMechanics::updateGameState(const sf::RenderWindow &window, const sf::Ti
         m_state.items[i]->act(m_state);
 
     //Update highscore
-    if (m_state.score > config["highscore"]) config["highscore"] = m_state.score;
+    if (m_state.score > config.getInt("highscore")) config.setInt("highscore", m_state.score);
 
     //Clean up dead things
     for (unsigned i = 0; i < m_state.projectiles.size(); i++) {

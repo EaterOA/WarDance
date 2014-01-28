@@ -1,5 +1,5 @@
 #include "Util.hpp"
-#include "Config.hpp"
+#include "GameConfig.hpp"
 #include "GameGUI.hpp"
 #include "App.hpp"
 
@@ -131,9 +131,9 @@ void GameGUI::startLevelEndSequence(const std::map<std::string, int> levelEndSta
         wss << levelEndStats.find(dataList[i])->second;
         m_scoring_numbers[i].setString(wss.str());
     }
-    int lvl = config["level"];
+    int lvl = config.getInt("level");
     unsigned idx = (unsigned)(lvl-1);
-    unsigned nextIdx = idx + (lvl < config["num_levels"] ? 1 : 0);
+    unsigned nextIdx = idx + (lvl < config.getInt("num_levels") ? 1 : 0);
     util::copyTexture(&m_levelIcons[idx][0], m_scoringLevelDisplay);
     util::copyTexture(&m_levelIcons[nextIdx][0], m_nextLevelDisplay);
     util::setAlpha(m_nextLevelDisplay, 0);
@@ -234,7 +234,7 @@ void GameGUI::updateHUD(const GameState& state)
     m_score.setString(wss.str());
 
     //Updating level icon
-    unsigned idx = (unsigned)(config["level"]-1);
+    unsigned idx = (unsigned)(config.getInt("level")-1);
     util::copyTexture(&m_levelIcons[idx][0], m_levelDisplay);
 
     //Updating grenade display
@@ -287,15 +287,15 @@ void GameGUI::selectSettingsChoice(unsigned choice)
 void GameGUI::processSettingsChoice()
 {
     if (m_settings_choice == 1) {
-        config["hitbox_enabled"] = !config["hitbox_enabled"];
+        config.setInt("hitbox_enabled", !config.getInt("hitbox_enabled"));
     }
     processSettingsSwitches();
 }
 
 void GameGUI::processSettingsSwitches()
 {
-    util::setAlpha(&m_settingsMenu[0], config["hitbox_enabled"] ? 0 : 255);
-    util::setAlpha(&m_settingsMenu[4], config["hitbox_enabled"] ? 255 : 0);
+    util::setAlpha(&m_settingsMenu[0], config.getInt("hitbox_enabled") ? 0 : 255);
+    util::setAlpha(&m_settingsMenu[4], config.getInt("hitbox_enabled") ? 255 : 0);
 }
 
 void GameGUI::selectMainChoice(unsigned choice)
@@ -330,7 +330,7 @@ void GameGUI::processInput(const std::vector<sf::Event> &keyEvents)
     if (getAppState() == MAIN) {
         mainBlink();
         std::wstringstream wss;
-        wss << "Level " << config["level"] << "\nHighscore " << config["highscore"];
+        wss << "Level " << config.getInt("level") << "\nHighscore " << config.getInt("highscore");
         m_mainInfo.setString(wss.str());
     }
 
@@ -340,25 +340,25 @@ void GameGUI::processInput(const std::vector<sf::Event> &keyEvents)
                 forwardLevelEndSequence();
         }
         else if (getAppState() == PAUSED) {
-            if (conf::pressing(conf::K_DOWN, keyEvents[i].key.code))
+            if (config.pressing(GameConfig::K_DOWN, keyEvents[i].key.code))
                 selectPauseChoice(m_pause_choice + 1);
-            else if (conf::pressing(conf::K_UP, keyEvents[i].key.code))
+            else if (config.pressing(GameConfig::K_UP, keyEvents[i].key.code))
                 selectPauseChoice(m_pause_choice - 1);
             if (keyEvents[i].key.code == sf::Keyboard::Return)
                 processPauseChoice();
         }
         else if (getAppState() == SETTINGS) {
-            if (conf::pressing(conf::K_DOWN, keyEvents[i].key.code))
+            if (config.pressing(GameConfig::K_DOWN, keyEvents[i].key.code))
                 selectSettingsChoice(m_settings_choice + 1);
-            else if (conf::pressing(conf::K_UP, keyEvents[i].key.code))
+            else if (config.pressing(GameConfig::K_UP, keyEvents[i].key.code))
                 selectSettingsChoice(m_settings_choice - 1);
             if (keyEvents[i].key.code == sf::Keyboard::Return)
                 processSettingsChoice();
         }
         else if (getAppState() == MAIN) {
-            if (conf::pressing(conf::K_DOWN, keyEvents[i].key.code))
+            if (config.pressing(GameConfig::K_DOWN, keyEvents[i].key.code))
                 selectMainChoice(m_main_choice + 1);
-            else if (conf::pressing(conf::K_UP, keyEvents[i].key.code))
+            else if (config.pressing(GameConfig::K_UP, keyEvents[i].key.code))
                 selectMainChoice(m_main_choice - 1);
             if (keyEvents[i].key.code == sf::Keyboard::Return)
                 processMainChoice();

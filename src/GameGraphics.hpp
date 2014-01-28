@@ -40,7 +40,6 @@ private:
     std::vector<sf::Vertex> m_hitboxes;
 
     int m_hitbox_enabled;
-    unsigned m_numSheets;
 };
 
 #endif

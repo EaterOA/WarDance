@@ -7,6 +7,7 @@ Each list is ordered by increasing estimated priority vs effort/time
 
 
 TODO anytime
+- GUI: Allow configurable key bindings
 - MEC: Design more enemy and projectile types
 - MEC: Program sprinkler to forewarn its appearance
 - GUI: Implement Select Level in main menu

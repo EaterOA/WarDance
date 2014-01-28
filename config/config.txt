@@ -1,2 +1,1 @@
 hitbox_enabled 0
-num_sheets 2

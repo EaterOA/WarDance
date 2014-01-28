@@ -1,7 +1,7 @@
 #ifndef GAMESCRIPT_H
 #define GAMESCRIPT_H
 
-#include "Config.hpp"
+#include <SFML/Graphics.hpp>
 #include <list>
 
 class GameMechanics;
