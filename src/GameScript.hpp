@@ -8,13 +8,13 @@ class GameMechanics;
 
 struct Event
 {
-	float time;
-	std::string name;
-	sf::Vector2f pos;
-	bool random;
+    float time;
+    std::string name;
+    sf::Vector2f pos;
+    bool random;
 
-	Event(float t, std::string n, sf::Vector2f p);
-	Event(float t, std::string n);
+    Event(float t, std::string n, sf::Vector2f p);
+    Event(float t, std::string n);
 };
 
 /*
@@ -24,16 +24,16 @@ struct Event
 class GameScript
 {
 public:
-	GameScript(GameMechanics* origin);
-	~GameScript();
-	bool parseFile(const std::string &path, float elapsed);
-	bool parse(const std::string &script, float elapsed);
-	void tick(float t);
-	bool isDone();
+    GameScript(GameMechanics* origin);
+    ~GameScript();
+    bool parseFile(const std::string &path, float elapsed);
+    bool parse(const std::string &script, float elapsed);
+    void tick(float t);
+    bool isDone();
 private:
-	GameMechanics* m_origin;
-	std::list<Event> m_events;
-	std::string m_script;
+    GameMechanics* m_origin;
+    std::list<Event> m_events;
+    std::string m_script;
 };
 
 #endif
