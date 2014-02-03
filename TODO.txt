@@ -10,7 +10,6 @@ TODO anytime
 - GUI: Allow configurable key bindings
 - MEC: Design more enemy and projectile types
 - MEC: Program sprinkler to forewarn its appearance
-- GUI: Implement Select Level in main menu
 - GFX: Add transitions between app states
 - GUI: Add player status list to HUD
 - GFX: Add animation effects to all actors

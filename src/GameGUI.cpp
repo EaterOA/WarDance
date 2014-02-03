@@ -123,6 +123,7 @@ bool GameGUI::init(GameMechanics* m, GameGraphics* g)
     m_main_choice = 1;
     m_settings_choice = 1;
     m_pause_choice = 1;
+    m_select_choice = 1;
     for (unsigned i = 1; i < num_p; i += 2)
         util::setAlpha(&m_pauseMenu[i*4], 0);
     for (unsigned i = 1; i < num_m; i += 2)
@@ -347,45 +348,69 @@ void GameGUI::mainBlink()
     util::setAlpha(&m_mainMenu[0], (unsigned char)m_main_blink);
 }
 
-void GameGUI::processInput(const std::vector<sf::Event> &keyEvents)
+void GameGUI::selectSelectChoice(unsigned choice)
 {
-    if (getAppState() == MAIN) {
+    if (choice == 0 || choice > (unsigned)config.getInt("num_levels")) return;
+    m_select_choice = choice;
+    util::copyTexture(&m_levelIcons[choice-1][0], &m_select[1*4]);
+}
+
+void GameGUI::processSelectChoice()
+{
+    config.setInt("level", (int)m_select_choice);
+    gAgent->setNextLevelBGOpacity(0);
+    goToMain();
+}
+
+void GameGUI::updateAppState()
+{
+    if (getAppState() == MAIN || getAppState() == SELECTLEVEL) {
         mainBlink();
         std::wstringstream wss;
         wss << "Level " << config.getInt("level") << "\nHighscore " << config.getInt("highscore");
         m_mainInfo.setString(wss.str());
+        if (getAppState() == SELECTLEVEL) {
+            if (config.pressing(GameConfig::K_UP)) util::copyTexture(&m_selectLit[0*4], &m_select[2*4]);
+            else util::copyTexture(&m_selectDim[0*4], &m_select[2*4]);
+            if (config.pressing(GameConfig::K_DOWN)) util::copyTexture(&m_selectLit[1*4], &m_select[3*4]);
+            else util::copyTexture(&m_selectDim[1*4], &m_select[3*4]);
+        }
     }
+}
 
+void GameGUI::processInput(const std::vector<sf::Event> &keyEvents)
+{
     for (unsigned i = 0; i < keyEvents.size(); i++) {
+
+        bool up = config.pressing(GameConfig::K_UP, keyEvents[i].key.code);
+        bool down = config.pressing(GameConfig::K_DOWN, keyEvents[i].key.code);
+        bool enter = keyEvents[i].key.code == sf::Keyboard::Return;
+        bool esc = keyEvents[i].key.code == sf::Keyboard::Escape;
+
         if (getAppState() == LEVELENDSEQUENCE) {
-            if (keyEvents[i].key.code == sf::Keyboard::Return)
-                forwardLevelEndSequence();
+            if (enter) forwardLevelEndSequence();
+        }
+        else if (getAppState() == SELECTLEVEL) {
+            if (down) selectSelectChoice(m_select_choice - 1);
+            else if (up) selectSelectChoice(m_select_choice + 1);
+            else if (enter) processSelectChoice();
         }
         else if (getAppState() == PAUSED) {
-            if (config.pressing(GameConfig::K_DOWN, keyEvents[i].key.code))
-                selectPauseChoice(m_pause_choice + 1);
-            else if (config.pressing(GameConfig::K_UP, keyEvents[i].key.code))
-                selectPauseChoice(m_pause_choice - 1);
-            if (keyEvents[i].key.code == sf::Keyboard::Return)
-                processPauseChoice();
+            if (down) selectPauseChoice(m_pause_choice + 1);
+            else if (up) selectPauseChoice(m_pause_choice - 1);
+            else if (enter) processPauseChoice();
         }
         else if (getAppState() == SETTINGS) {
-            if (config.pressing(GameConfig::K_DOWN, keyEvents[i].key.code))
-                selectSettingsChoice(m_settings_choice + 1);
-            else if (config.pressing(GameConfig::K_UP, keyEvents[i].key.code))
-                selectSettingsChoice(m_settings_choice - 1);
-            if (keyEvents[i].key.code == sf::Keyboard::Return)
-                processSettingsChoice();
+            if (down) selectSettingsChoice(m_settings_choice + 1);
+            else if (up) selectSettingsChoice(m_settings_choice - 1);
+            else if (enter) processSettingsChoice();
         }
         else if (getAppState() == MAIN) {
-            if (config.pressing(GameConfig::K_DOWN, keyEvents[i].key.code))
-                selectMainChoice(m_main_choice + 1);
-            else if (config.pressing(GameConfig::K_UP, keyEvents[i].key.code))
-                selectMainChoice(m_main_choice - 1);
-            if (keyEvents[i].key.code == sf::Keyboard::Return)
-                processMainChoice();
+            if (down) selectMainChoice(m_main_choice + 1);
+            else if (up) selectMainChoice(m_main_choice - 1);
+            else if (enter) processMainChoice();
         }
-        if (keyEvents[i].key.code == sf::Keyboard::Escape) {
+        if (esc) {
             if (getAppState() == GAME || getAppState() == LEVELENDSEQUENCE) pauseGame();
             else if (getAppState() != MAIN) back();
         }
@@ -404,16 +429,19 @@ void GameGUI::transitionAppState()
     if (getAppState() == MAIN) {
         selectMainChoice(1);
     }
+    if (getAppState() == SELECTLEVEL) {
+        selectSelectChoice((unsigned)config.getInt("level"));
+    }
 }
 
 void GameGUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     sf::RenderStates s(&m_guisheet);
-    if (appStates.back() == MAIN || appStates.back() == SELECTLEVEL) {
+    if (getAppState() == MAIN || getAppState() == SELECTLEVEL) {
         target.draw(m_main);
         target.draw(m_mainMenu, &m_guisheet);
         target.draw(m_mainInfo);
-        if (appStates.back() == SELECTLEVEL) {
+        if (getAppState() == SELECTLEVEL) {
             sf::RectangleShape fade;
             fade.setFillColor(sf::Color(0, 0, 0, 100));
             fade.setPosition(0, 0);
@@ -422,7 +450,7 @@ void GameGUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
             target.draw(&m_select[0], m_select.size(), sf::Quads, s);
         }
     }
-    else if (appStates.back() == SETTINGS) {
+    else if (getAppState() == SETTINGS) {
         target.draw(m_settings);
         target.draw(m_settingsMenu, &m_guisheet);
     }

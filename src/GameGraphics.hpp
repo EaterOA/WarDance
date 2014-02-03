@@ -22,6 +22,7 @@ class GameGraphics : public sf::Drawable, public sf::Transformable
 {
 public:
     bool init();
+    void updateMisc(const GameState &state);
     void updateSprites(const GameState&);
     void setNextLevelBGOpacity(unsigned char alpha);
 private:

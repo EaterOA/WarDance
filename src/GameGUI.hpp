@@ -9,6 +9,7 @@ class GameGUI : public sf::Drawable, public sf::Transformable
 public:
     bool init(GameMechanics* m, GameGraphics* g);
     void updateGameState(const GameState& state);
+    void updateAppState();
     void transitionAppState();
     void processInput(const std::vector<sf::Event> &keyEvents);
     void startLevelEndSequence(const std::map<std::string, int> levelEndStats);
@@ -80,7 +81,7 @@ private:
     void selectSelectChoice(unsigned choice);
     void processSelectChoice();
     std::vector<sf::Vertex> m_select;
-    std::vector<sf::Vertex> m_selectToggles, m_selectLit, m_selectDim;
+    std::vector<sf::Vertex> m_selectLit, m_selectDim;
     unsigned m_select_choice;
 };
 

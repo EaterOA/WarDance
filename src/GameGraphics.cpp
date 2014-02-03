@@ -197,13 +197,17 @@ void GameGraphics::addHitbox(const Fighter &f)
     }
 }
 
-void GameGraphics::updateSprites(const GameState &state)
+void GameGraphics::updateMisc(const GameState &state)
 {
     //Updating settings
     m_hitbox_enabled = config.getInt("hitbox_enabled");
     unsigned idx = (unsigned)config.getInt("level") - 1;
     m_background.setTexture(m_lvlBackgroundTex[idx]);
+    m_backgroundNext.setTexture(m_lvlBackgroundTex[idx]);
+}
 
+void GameGraphics::updateSprites(const GameState &state)
+{
     //Recalculating sprite appearance
     m_sprites = std::vector<std::vector<sf::Vertex> >(m_spritesheet.size());
     m_specialSprites = std::vector<sf::Vertex>();

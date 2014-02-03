@@ -23,8 +23,6 @@ bool GameConfig::loadConfig(const std::string& path)
 	return true;
 }
 
-#include <iostream>
-
 int GameConfig::getInt(const std::string& key) const
 {
     std::map<std::string, int>::const_iterator iter = db_int.find(key);

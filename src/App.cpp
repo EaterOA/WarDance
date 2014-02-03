@@ -150,6 +150,7 @@ void appStart()
     //Game loop
     while (window.isOpen()) {
         guiAgent.processInput(processEvents());
+        guiAgent.updateAppState();
         if (getAppState() == GAME || getAppState() == LEVELENDSEQUENCE) {
             mAgent.updateGameState(window, gameClock.restart());
             if (mAgent.isPlayerDead()) {
@@ -163,6 +164,7 @@ void appStart()
                     goToNextLevel();
                 }
             }
+            gAgent.updateMisc(mAgent.getGameState());
             guiAgent.updateGameState(mAgent.getGameState());
             gAgent.updateSprites(mAgent.getGameState());
             updateView(mAgent.getGameState().player->getPos());
