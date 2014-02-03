@@ -40,8 +40,7 @@ void GameState::cleanAll()
 
 bool GameMechanics::init()
 { 
-    m_state.map_width = 1600;
-    m_state.map_height = 1200;
+    m_state.map = sf::Vector2f(1600.f, 1200.f);
     m_script = new GameScript(this);
 
     return true;
@@ -183,18 +182,18 @@ void GameMechanics::spawnEnemy(std::string name, sf::Vector2f pos)
 
 sf::Vector2f GameMechanics::inMapEntrance()
 {
-    float x = (float)RAND(0, m_state.map_width);
-    float y = (float)RAND(0, m_state.map_height);
+    float x = (float)RAND(0, (int)m_state.map.x);
+    float y = (float)RAND(0, (int)m_state.map.y);
     return sf::Vector2f(x, y);
 }
 
 sf::Vector2f GameMechanics::offMapEntrance(float offsetX, float offsetY)
 {
     int side = RAND(1, 4);
-    float x = (float)RAND(0, m_state.map_width);
-    float y = (float)RAND(0, m_state.map_height);
-    if (side == 1) x = (float)m_state.map_width + offsetX;
-    else if (side == 2) y = (float)m_state.map_height + offsetY;
+    float x = (float)RAND(0, (int)m_state.map.x);
+    float y = (float)RAND(0, (int)m_state.map.y);
+    if (side == 1) x = m_state.map.x + offsetX;
+    else if (side == 2) y = m_state.map.y + offsetY;
     else if (side == 3) x = -offsetX;
     else if (side == 4) y = -offsetY;
     return sf::Vector2f(x, y);

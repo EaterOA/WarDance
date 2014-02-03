@@ -3,7 +3,7 @@
 #include "GameConfig.hpp"
 
 Player::Player(sf::Vector2f pos)
-    : Fighter("player", util::ShapeVector(util::Rectangle, 25.f, 30.f), pos, 500, 0)
+    : Fighter("player", util::ShapeVector(util::Rectangle, 20.f, 25.f), pos, 500, 0)
 {
     m_base_v = 150.f;
     m_numGrenades = 3;
@@ -51,9 +51,9 @@ void Player::act(GameState &state)
 
     //Bound by map
     if (m_pos.x < 0) m_pos.x = 0;
-    else if (m_pos.x > (float)state.map_width) m_pos.x = (float)state.map_width;
+    else if (m_pos.x > state.map.x) m_pos.x = state.map.x;
     if (m_pos.y < 0) m_pos.y = 0;
-    else if (m_pos.y > (float)state.map_height) m_pos.y = (float)state.map_height;
+    else if (m_pos.y > state.map.y) m_pos.y = state.map.y;
     m_dir = util::toDir(state.cursor.x - m_pos.x, state.cursor.y - m_pos.y);
 
     //Trigger attack

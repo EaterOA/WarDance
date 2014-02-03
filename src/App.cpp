@@ -34,9 +34,9 @@ bool appInit()
 void updateView(sf::Vector2f pos)
 {
     if (pos.x < APP_WIDTH/2) pos.x = APP_WIDTH/2;
-    else if (pos.x > mAgent.getGameState().map_width - APP_WIDTH/2) pos.x = (float)mAgent.getGameState().map_width - APP_WIDTH/2;
+    else if (pos.x > mAgent.getGameState().map.x - APP_WIDTH/2) pos.x = mAgent.getGameState().map.x - APP_WIDTH/2;
     if (pos.y < 300) pos.y = 300;
-    else if (pos.y > mAgent.getGameState().map_height - APP_HEIGHT/2) pos.y = (float)mAgent.getGameState().map_height - APP_HEIGHT/2;
+    else if (pos.y > mAgent.getGameState().map.y - APP_HEIGHT/2) pos.y = mAgent.getGameState().map.y - APP_HEIGHT/2;
     camera.setCenter(pos);
 }
 

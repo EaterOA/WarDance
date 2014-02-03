@@ -12,7 +12,7 @@ Wiper::Wiper(sf::Vector2f pos, int faction)
 
 bool Wiper::isDead(const GameState &state) const
 {
-    return m_size.x > MAX(state.map_height, state.map_width);
+    return m_size.x > MAX(state.map.x, state.map.y);
 }
 
 void Wiper::act(GameState &state)

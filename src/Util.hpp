@@ -25,6 +25,7 @@ namespace util
         ShapeVector() {};
         ShapeVector(Shape ss, float r): s(ss), x(r), y(r) {};
         ShapeVector(Shape ss, float xx, float yy): s(ss), x(xx), y(yy) {};
+        ShapeVector(Shape ss, sf::Vector2f v): s(ss), x(v.x), y(v.y) {};
         Shape s;
         float x, y;
     };

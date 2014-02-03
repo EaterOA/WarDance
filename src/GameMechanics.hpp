@@ -16,12 +16,12 @@ struct GameState {
     std::vector<Item*> items;
     Player* player;
     
-    int level_bonus;
-    int map_width, map_height;
+    sf::Vector2f map;
     int score;
     int fired, hit, shot;
     sf::Time totalElapsed;
     sf::Time elapsed;
+    int level_bonus;
     sf::Vector2f cursor;
 };
 

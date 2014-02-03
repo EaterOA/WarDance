@@ -33,7 +33,7 @@ public:
     int getMaxHP() const;
     int getFaction() const;
 protected:
-    enum Bullet { REGULAR, SPLITTING, LASER };
+    enum Bullet { REGULAR, SPLITTING, LASER, ROUND };
     virtual void attack(GameState &state) = 0;
     virtual void cooldown(GameState &state);
     void shoot(GameState &state, Bullet b, float offsetX, float offsetY);
@@ -155,7 +155,6 @@ class RegularBullet: public Projectile
 {
 public:
     RegularBullet(sf::Vector2f pos, float dir, int faction);
-    RegularBullet(sf::Vector2f pos, float dir, float unitX, float unitY, int faction);
     virtual void act(GameState& state);
 protected:
 };
@@ -164,9 +163,15 @@ class SplittingBullet: public Projectile
 {
 public:
     SplittingBullet(sf::Vector2f pos, float dir, int faction);
-    SplittingBullet(sf::Vector2f pos, float dir, float unitX, float unitY, int faction);
     virtual void act(GameState& state);
 protected:
+};
+
+class RoundBullet: public Projectile
+{
+public:
+    RoundBullet(sf::Vector2f pos, float dir, int faction);
+    virtual void act(GameState& state);
 };
 
 class Wiper: public Projectile

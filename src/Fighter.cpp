@@ -70,6 +70,8 @@ void Fighter::shoot(GameState &state, Bullet b, sf::Vector2f pos, float dir)
         bullet = new SplittingBullet(pos, dir, m_faction);
     else if(b == LASER)
         bullet = new Laser(pos, dir, m_faction);
+    else if (b == ROUND)
+        bullet = new RoundBullet(pos, dir, m_faction);
     else
         bullet = new RegularBullet(pos, dir, m_faction);
     state.projectiles.push_back(bullet);

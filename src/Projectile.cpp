@@ -11,11 +11,10 @@ Projectile::Projectile(std::string frame, sf::Vector2f pos, util::ShapeVector si
 bool Projectile::isDead(const GameState &state) const
 {
     //No hp or out of map
+    sf::Vector2f map_pos(state.map.x / 2.f, state.map.y / 2.f);
+    util::ShapeVector map_size(util::Rectangle, state.map);
     return m_hp <= 0 ||
-           m_pos.x + m_size.x < 0 ||
-           m_pos.x - m_size.x > state.map_width ||
-           m_pos.y + m_size.y < 0 ||
-           m_pos.y - m_size.y > state.map_height;
+           !util::hasCollided(m_pos, m_size, m_dir, map_pos, map_size, 0.f);
 }
 
 void Projectile::attack(GameState &state)
