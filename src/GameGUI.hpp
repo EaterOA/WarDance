@@ -75,6 +75,13 @@ private:
     int m_levelEndSequence_timing_stage;
     float m_scoring_timing;
     int m_scoring_timing_stage;
+
+    //Select level
+    void selectSelectChoice(unsigned choice);
+    void processSelectChoice();
+    std::vector<sf::Vertex> m_select;
+    std::vector<sf::Vertex> m_selectToggles, m_selectLit, m_selectDim;
+    unsigned m_select_choice;
 };
 
 #endif

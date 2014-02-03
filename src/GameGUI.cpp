@@ -24,6 +24,7 @@ bool GameGUI::init(GameMechanics* m, GameGraphics* g)
              num_p = m_pause_numChoices*2 + 1,
              num_s = m_settings_numChoices*4,
              num_m = m_main_numChoices*2 + 1,
+             num_l = 4,
              num_e = 6;
 
     //Preparing to load gui object data
@@ -94,6 +95,23 @@ bool GameGUI::init(GameMechanics* m, GameGraphics* g)
     //texCoord doesn't matter because it will be copied from levelIcons
     util::read3v2f(fin, texCoord, size, pos, true);
     util::affixPos(m_scoringLevelDisplay, pos, size, 0);
+    
+    //Reading select level objects
+    m_select = std::vector<sf::Vertex>(num_l*4, sf::Vertex());
+    m_selectLit = std::vector<sf::Vertex>(2*4, sf::Vertex());
+    m_selectDim = std::vector<sf::Vertex>(2*4, sf::Vertex());
+    for (unsigned i = 0; i < 2 && util::read3v2f(fin, texCoord, size, pos, true); i++) {
+        util::affixTexture(&m_select[i*4], texCoord, size);
+        util::affixPos(&m_select[i*4], pos, size, 0);
+    }
+    for (unsigned i = 0; i < 2 && util::read3v2f(fin, texCoord, size, pos, true); i++) {
+        util::affixTexture(&m_selectLit[i*4], texCoord, size);
+        util::affixPos(&m_selectLit[i*4], pos, size, 0);
+    }
+    for (unsigned i = 0; i < 2 && util::read3v2f(fin, texCoord, size, pos, true); i++) {
+        util::affixTexture(&m_selectDim[i*4], texCoord, size);
+        util::affixPos(&m_selectDim[i*4], pos, size, 0);
+    }
 
     fin.close();
 
@@ -119,6 +137,9 @@ bool GameGUI::init(GameMechanics* m, GameGraphics* g)
     m_mainInfo.setColor(sf::Color(30, 16, 8));
     util::copySprite(&m_levelIcons[0][0], m_levelDisplay);
     util::copySprite(&m_levelIcons[0][0], m_nextLevelDisplay);
+    util::copyTexture(&m_levelIcons[0][0], &m_select[1*4]);
+    util::copySprite(&m_selectDim[0*4], &m_select[2*4]);
+    util::copySprite(&m_selectDim[1*4], &m_select[3*4]);
 
     return true;
 }
@@ -313,6 +334,7 @@ void GameGUI::selectMainChoice(unsigned choice)
 void GameGUI::processMainChoice()
 {
     if (m_main_choice == 1) startGame();
+    else if (m_main_choice == 2) goToSelectLevel();
     else if (m_main_choice == 3) goToSettings();
     else if (m_main_choice == 5) endGame();
 }
@@ -386,17 +408,25 @@ void GameGUI::transitionAppState()
 
 void GameGUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    if (appStates.back() == MAIN) {
+    sf::RenderStates s(&m_guisheet);
+    if (appStates.back() == MAIN || appStates.back() == SELECTLEVEL) {
         target.draw(m_main);
         target.draw(m_mainMenu, &m_guisheet);
         target.draw(m_mainInfo);
+        if (appStates.back() == SELECTLEVEL) {
+            sf::RectangleShape fade;
+            fade.setFillColor(sf::Color(0, 0, 0, 100));
+            fade.setPosition(0, 0);
+            fade.setSize(sf::Vector2f((float)APP_WIDTH, (float)APP_HEIGHT));
+            target.draw(fade);
+            target.draw(&m_select[0], m_select.size(), sf::Quads, s);
+        }
     }
     else if (appStates.back() == SETTINGS) {
         target.draw(m_settings);
         target.draw(m_settingsMenu, &m_guisheet);
     }
     else {
-        sf::RenderStates s(&m_guisheet);
         //Draw all relevant appStates
         for (unsigned i = 0; i < appStates.size(); i++) {
             if (appStates[i] == GAME) {

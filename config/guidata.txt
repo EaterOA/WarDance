@@ -42,3 +42,9 @@
 0.0 0.0 0.0 0.0         200.0 460.0     # End level sequence something
 0.0 0.0 0.0 0.0         512.0 250.0     # End level sequence bonus
 0.0 0.0 82.1 31.2       100.0 90.0      # End level level icon
+5.0 545.0 282.0 172.0   300.0 300.0     # Select level slab
+0.0 0.0 82.1 31.2       320.0 290.0     # Select level choice
+350.6 335.0 20.9 19.5   220.0 280.0     # Select level up lit
+350.6 361.0 20.9 19.5   220.0 310.0     # Select level down lit
+320.6 335.0 20.9 19.5   220.0 280.0     # Select level up dim
+320.6 361.0 20.9 19.5   220.0 310.0     # Select level down dim

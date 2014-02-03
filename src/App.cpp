@@ -99,6 +99,12 @@ void goToSettings()
     guiAgent.transitionAppState();
 }
 
+void goToSelectLevel()
+{
+    appStates.push_back(SELECTLEVEL);
+    guiAgent.transitionAppState();
+}
+
 void goToLevelEndSequence()
 {
     appStates.push_back(LEVELENDSEQUENCE);

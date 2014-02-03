@@ -6,7 +6,7 @@
 struct GameState;
 
 enum AppState {
-    SPLASH, MAIN, SETTINGS, GAME, PAUSED, LEVELENDSEQUENCE, NOFOCUS, CLOSED, NONE
+    SPLASH, MAIN, SELECTLEVEL, SETTINGS, GAME, PAUSED, LEVELENDSEQUENCE, NOFOCUS, CLOSED, NONE
 };
 
 const int APP_WIDTH = 800;
@@ -18,6 +18,7 @@ void back();
 void startGame();
 void pauseGame();
 void goToSettings();
+void goToSelectLevel();
 void goToMain();
 void goToLevelEnd();
 void goToLevelStart();
