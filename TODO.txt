@@ -8,15 +8,23 @@ Each list is ordered by increasing estimated priority vs effort/time
 
 TODO anytime
 - GUI: Allow configurable key bindings
+- GFX: Allow Actors to customize appearance in addition to specifying frame
 - MEC: Design more enemy and projectile types
-- MEC: Program sprinkler to forewarn its appearance
+    * Chasing bullet (rocket)
+    * Orbiting bullet
+    * Missile strike
+    * (Player) Broken laser
+    * (Player) Persistent laser
+- MEC: Balance game
+    * Program sprinkler to forewarn its appearance
+- MEC: Expand GameScript capability
 - GFX: Add transitions between app states
 - GUI: Add player status list to HUD
-- GFX: Add animation effects to all actors
 - GFX: Add initial splash/loading screen
 - GUI: Make menu items selectable by mouse
 
 
 TODO future
+- CODE: Rearchitect app state handling system
 - GFX: Replace all sprites with properly licensed ones
 - GUI: Implement Credits in main menu
