@@ -1,5 +1,5 @@
 #include "Util.hpp"
-#include "GameConfig.hpp"
+#include "Config.hpp"
 #include "GameGraphics.hpp"
 #include "GameMechanics.hpp"
 
