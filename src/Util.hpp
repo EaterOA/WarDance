@@ -71,6 +71,7 @@ namespace util
     bool read3v2f(std::istream &in, sf::Vector2f &dest1, sf::Vector2f &dest2, sf::Vector2f &dest3, bool endline);
 
     //String manipulation
+    std::string trim(const std::string &s);
     std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems);
     std::vector<std::string> split(const std::string &s, char delim);
     bool isPrefix(const std::string &p, const std::string &s);

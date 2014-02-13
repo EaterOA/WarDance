@@ -1,44 +1,93 @@
 #include "GameConfig.hpp"
+#include "Util.hpp"
 #include <assert.h>
 #include <fstream>
+#include <iostream>
+#include <sstream>
 
 GameConfig config;
 
-GameConfig::GameConfig()
+std::map<std::string, std::string> GameConfig::parse(std::istream& in)
 {
+    std::map<std::string, std::string> c;
+    std::string line;
+    while (getline(in, line)) {
+        std::size_t idx = line.find("=");
+        if (idx != std::string::npos) {
+            std::string key = line.substr(0, idx);
+            key = util::trim(key);
+            std::string value = line.substr(idx+1);
+            value = util::trim(value);
+            c[key] = value;
+        }
+    }
+    return c;
 }
 
 bool GameConfig::loadConfig(const std::string& path)
 {
 	std::fstream fin(path.c_str());
 	if (fin.bad()) return false;
-	std::string param;
-	int value;
-	while (fin >> param >> value) db_int[param] = value;
+    db_str = parse(fin);
 	fin.close();
 
-	db_int["level"] = 1;
-	db_int["num_levels"] = 5;
-	db_int["highscore"] = 0;
+	db_str["level"] = "1";
+	db_str["num_levels"] = "5";
+	db_str["highscore"] = "0";
 	return true;
 }
 
-int GameConfig::getInt(const std::string& key) const
+std::string GameConfig::getStr(const std::string& key)
 {
-    std::map<std::string, int>::const_iterator iter = db_int.find(key);
-    assert(iter != db_int.end());
+    std::map<std::string, std::string>::iterator iter = db_str.find(key);
+    assert(iter != db_str.end());
     return iter->second;
 }
 
-
-int GameConfig::getInt(const std::string& key, int defaultValue) const
+std::string GameConfig::getStr(const std::string& key, const std::string& defaultValue)
 {
-    std::map<std::string, int>::const_iterator iter = db_int.find(key);
-    return (iter != db_int.end() ? iter->second : defaultValue);
+    std::map<std::string, std::string>::iterator iter = db_str.find(key);
+    return "";
+    return iter != db_str.end() ? iter->second : defaultValue;
+}
+
+void GameConfig::setStr(const std::string& key, const std::string& value)
+{
+    db_str[key] = value;
+}
+
+int GameConfig::getInt(const std::string& key)
+{
+    std::map<std::string, std::string>::iterator iter1 = db_str.find(key);
+    if (iter1 != db_str.end()) {
+        int val;
+        assert(std::stringstream(iter1->second) >> val);
+        db_int[key] = val;
+        db_str.erase(iter1);
+    }
+    std::map<std::string, int>::const_iterator iter2 = db_int.find(key);
+    assert(iter2 != db_int.end());
+    return iter2->second;
+}
+
+
+int GameConfig::getInt(const std::string& key, int defaultValue)
+{
+    std::map<std::string, std::string>::iterator iter1 = db_str.find(key);
+    if (iter1 != db_str.end()) {
+        int val;
+        assert(std::stringstream(iter1->second) >> val);
+        db_int[key] = val;
+        db_str.erase(iter1);
+    }
+    std::map<std::string, int>::iterator iter2 = db_int.find(key);
+    return (iter2 != db_int.end() ? iter2->second : defaultValue);
 }
 
 void GameConfig::setInt(const std::string& key, int value)
 {
+    std::map<std::string, std::string>::iterator iter = db_str.find(key);
+    if (iter != db_str.end()) db_str.erase(iter);
     db_int[key] = value;
 }
 

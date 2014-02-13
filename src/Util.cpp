@@ -365,6 +365,15 @@ namespace util
         return !in.fail();
     }
 
+    std::string trim(const std::string &s)
+    {
+        std::size_t idx1 = s.find_first_not_of("\t\n ");
+        std::size_t idx2 = s.find_last_not_of("\t\n ");
+        if (idx1 == std::string::npos) return "";
+        std::size_t len = idx2 - idx1 + 1;
+        return s.substr(idx1, len);
+    }
+
     std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) 
     {
         std::stringstream ss(s);

@@ -1,1 +1,7 @@
-hitbox_enabled 0
+hitbox_enabled = 0
+bind_enter = KEY_RETURN         
+bind_esc   = KEY_ESC
+bind_up    = KEY_W
+bind_down  = KEY_S
+bind_left = KEY_A
+bind_right = KEY_D
