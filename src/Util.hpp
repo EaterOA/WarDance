@@ -74,6 +74,7 @@ namespace util
     std::string trim(const std::string &s);
     std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems);
     std::vector<std::string> split(const std::string &s, char delim);
+    std::vector<std::string> split(const std::string &s);
     bool isPrefix(const std::string &p, const std::string &s);
 }
 

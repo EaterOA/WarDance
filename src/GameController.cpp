@@ -1,6 +1,6 @@
 #include "GameController.hpp"
 #include "GameConfig.hpp"
-#include <set>
+#include "Util.hpp"
 
 GameController controller;
 
@@ -17,21 +17,24 @@ Returns true on success, false if one or more keys failed to bind
 */
 bool GameController::updateBinding()
 {
-    //Configurable binding of keyboard keys
+    //Configurable binding of multiple keyboard keys
     const std::string config_list[] = {"bind_enter", "bind_escape", "bind_up",
                                        "bind_down", "bind_left", "bind_right"};
     const Key key_list[] = {K_ENTER, K_ESCAPE, K_UP, K_DOWN, K_LEFT, K_RIGHT};
     bool flag = true;
     std::set<std::string> used;
     for (unsigned i = 0; i < 6; i++) {
-        std::string key_name = config.getStr(config_list[i], "");
-        if (used.find(key_name) != used.end() || keycode_map.find(key_name) == keycode_map.end()) {
-            flag = false;
-            key_map[key_list[i]] = sf::Keyboard::Unknown;
+        key_map[key_list[i]] = std::vector<sf::Keyboard::Key>();
+        std::vector<std::string> key_name = util::split(config.getStr(config_list[i], ""));
+        for (unsigned j = 0; j < key_name.size(); j++) {
+            const std::string& name = key_name[j];
+            if (used.find(name) == used.end() && keycode_map.find(name) != keycode_map.end()) {
+                key_map[key_list[i]].push_back(keycode_map[name]);
+            }
         }
-        else {
-            used.insert(key_name);
-            key_map[key_list[i]] = keycode_map[key_name];
+        if (key_map[key_list[i]].empty()) {
+            flag = false;
+            key_map[key_list[i]].push_back(sf::Keyboard::Unknown);
         }
     }
 
@@ -56,7 +59,10 @@ Check if a specific key code is the binded key
 */	
 bool GameController::pressing(Key key, sf::Keyboard::Key code)
 {
-    return code == key_map[key];
+    for (unsigned i = 0; i < key_map[key].size(); i++)
+        if (key_map[key][i] == code)
+            return true;
+    return false;
 }
 
 /*
@@ -64,7 +70,10 @@ Check if a binded key is being pressed
 */
 bool GameController::pressing(Key key)
 {
-    return sf::Keyboard::isKeyPressed(key_map[key]);
+    for (unsigned i = 0; i < key_map[key].size(); i++)
+        if (sf::Keyboard::isKeyPressed(key_map[key][i]))
+            return true;
+    return false;
 }
 
 void GameController::initKeycodeMap()

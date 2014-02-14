@@ -1,7 +1,7 @@
 hitbox_enabled = 0
 bind_enter = Key_Return
 bind_escape = Key_Escape
-bind_up = Key_W
-bind_down = Key_S
-bind_left = Key_A
-bind_right = Key_D
+bind_up = Key_Up Key_W
+bind_down = Key_Down Key_S
+bind_left = Key_Left Key_A
+bind_right = Key_Right Key_D

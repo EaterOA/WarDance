@@ -390,6 +390,20 @@ namespace util
         split(s, delim, elems);
         return elems;
     }
+
+    //Split on whitespace [ \t\r\n]
+    std::vector<std::string> split(const std::string &s)
+    {
+        const std::string match = " \t\r\n";
+        std::vector<std::string> elems;
+        std::size_t idx = s.find_first_not_of(match);
+        while (idx != std::string::npos) {
+            std::size_t endIdx = s.find_first_of(match, idx);
+            elems.push_back(s.substr(idx, endIdx-idx));
+            idx = s.find_first_not_of(match, endIdx);
+        }
+        return elems;
+    }
     
     bool isPrefix(const std::string &p, const std::string &s)
     {

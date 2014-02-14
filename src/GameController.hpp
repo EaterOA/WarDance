@@ -18,7 +18,7 @@ private:
     void initKeycodeMap();
 
     std::map<std::string, sf::Keyboard::Key> keycode_map;
-    std::map<Key, sf::Keyboard::Key> key_map;
+    std::map<Key, std::vector<sf::Keyboard::Key> > key_map;
     std::map<Button, sf::Mouse::Button> button_map;
 };
 

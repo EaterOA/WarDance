@@ -78,7 +78,9 @@ int Config::getInt(const std::string& key)
     std::map<std::string, std::string>::iterator iter1 = db_str.find(key);
     if (iter1 != db_str.end()) {
         int val;
-        assert(std::stringstream(iter1->second) >> val);
+        std::stringstream ss(iter1->second);
+        ss >> val;
+        assert(!ss.bad());
         db_int[key] = val;
         db_str.erase(iter1);
     }
@@ -93,7 +95,9 @@ int Config::getInt(const std::string& key, int defaultValue)
     std::map<std::string, std::string>::iterator iter1 = db_str.find(key);
     if (iter1 != db_str.end()) {
         int val;
-        assert(std::stringstream(iter1->second) >> val);
+        std::stringstream ss(iter1->second);
+        ss >> val;
+        assert(!ss.bad());
         db_int[key] = val;
         db_str.erase(iter1);
     }

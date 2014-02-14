@@ -13,7 +13,7 @@ bool GameGraphics::init()
     m_lvlBackgroundTex = std::vector<sf::Texture>(numLevels);
     m_spritesheet = std::vector<sf::Texture>(numSheets);
     m_frameMap = std::map<std::string, FrameData>();
-
+    
     //Loading level background textures
     for (unsigned i = 0; i < numLevels; i++) {
         std::stringstream ss;
@@ -29,7 +29,6 @@ bool GameGraphics::init()
         if (!m_spritesheet[i].loadFromFile(ss.str())) return false;
         m_spritesheet[i].setSmooth(true);
     }
-
     //Reading sprite data
     //Data format: frame name, sheet #, 4 texture coordinates, 2 position offsets
     fin.open("config/spritedata.txt");
