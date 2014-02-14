@@ -59,7 +59,6 @@ std::string Config::getStr(const std::string& key)
 std::string Config::getStr(const std::string& key, const std::string& defaultValue)
 {
     std::map<std::string, std::string>::iterator iter = db_str.find(key);
-    return "";
     return iter != db_str.end() ? iter->second : defaultValue;
 }
 
