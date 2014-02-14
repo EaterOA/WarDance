@@ -7,7 +7,7 @@ bool GameConfig::init()
     std::map<std::string, std::string> defaults;
     defaults["hitbox_enabled"] = "0";
     defaults["bind_enter"] = "Key_Return";
-    defaults["bind_escape"] = "KEY_Escape";
+    defaults["bind_escape"] = "Key_Escape";
     defaults["bind_up"] = "Key_W";
     defaults["bind_down"] = "Key_S";
     defaults["bind_left"] = "Key_A";

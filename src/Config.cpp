@@ -2,7 +2,6 @@
 #include "Util.hpp"
 #include <assert.h>
 #include <fstream>
-#include <iostream>
 #include <sstream>
 
 void Config::parse(std::istream& in)
@@ -20,13 +19,15 @@ void Config::parse(std::istream& in)
 
 bool Config::load(const std::string& path, const std::map<std::string, std::string>& defaultValues /*= std::map<std::string, std::string>()*/)
 {
-	std::fstream fin(path.c_str());
-	if (fin.bad()) return false;
+    std::fstream fin(path.c_str());
+    if (fin.bad()) return false;
     parse(fin);
-	db_str["level"] = "1";
-	db_str["num_levels"] = "5";
-	db_str["highscore"] = "0";
-	return true;
+    for (std::map<std::string, std::string>::const_iterator iter = defaultValues.begin(); iter != defaultValues.end(); iter++) {
+        if (db_str.find(iter->first) == db_str.end()) {
+            db_str[iter->first] = iter->second;
+        }
+    }
+    return true;
 }
 
 bool Config::load(const std::vector<std::string>& paths, const std::map<std::string, std::string>& defaultValues /*= std::map<std::string, std::string>()*/)
@@ -37,6 +38,11 @@ bool Config::load(const std::vector<std::string>& paths, const std::map<std::str
         if (fin.bad()) continue;
         flag = true;
         parse(fin);
+    }
+    for (std::map<std::string, std::string>::const_iterator iter = defaultValues.begin(); iter != defaultValues.end(); iter++) {
+        if (db_str.find(iter->first) == db_str.end()) {
+            db_str[iter->first] = iter->second;
+        }
     }
     return flag;
 }

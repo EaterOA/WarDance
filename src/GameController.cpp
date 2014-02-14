@@ -1,7 +1,6 @@
 #include "GameController.hpp"
 #include "GameConfig.hpp"
 #include <set>
-#include <iostream>
 
 GameController controller;
 
@@ -25,8 +24,7 @@ bool GameController::updateBinding()
     bool flag = true;
     std::set<std::string> used;
     for (unsigned i = 0; i < 6; i++) {
-        std::string key_name = config.getStr("bind_enter");
-        key_name = config.getStr(config_list[i], "");
+        std::string key_name = config.getStr(config_list[i], "");
         if (used.find(key_name) != used.end() || keycode_map.find(key_name) == keycode_map.end()) {
             flag = false;
             key_map[key_list[i]] = sf::Keyboard::Unknown;
