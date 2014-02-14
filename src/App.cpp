@@ -1,5 +1,5 @@
 #include "App.hpp"
-#include "Config.hpp"
+#include "GameConfig.hpp"
 #include "GameMechanics.hpp"
 #include "GameGraphics.hpp"
 #include "GameGUI.hpp"
@@ -21,7 +21,7 @@ bool appInit()
     window.create(sf::VideoMode(APP_WIDTH, APP_HEIGHT), "War Dance", sf::Style::Close, settings);
     window.setFramerateLimit(60);
     window.setView(camera);
-    config.load("config/config.txt");
+    if (!config.init()) return false;
     if (!mAgent.init()) return false;
     if (!gAgent.init()) return false;
     if (!guiAgent.init(&mAgent, &gAgent)) return false;

@@ -1,6 +1,6 @@
 #include "Actors.hpp"
 #include "GameMechanics.hpp"
-#include "Config.hpp"
+#include "GameConfig.hpp"
 
 Player::Player(sf::Vector2f pos)
     : Fighter("player", util::ShapeVector(util::Rectangle, 20.f, 25.f), pos, 500, 0)
@@ -35,10 +35,10 @@ void Player::act(GameState &state)
 
     //Compute velocity based on player activity
     bool confuse = isStatus(CONFUSE);
-    bool up = config.pressing(Config::K_UP) ^ confuse,
-         left = config.pressing(Config::K_LEFT) ^ confuse,
-         down = config.pressing(Config::K_DOWN) ^ confuse,
-         right = config.pressing(Config::K_RIGHT) ^ confuse;
+    bool up = config.pressing(GameConfig::K_UP) ^ confuse,
+         left = config.pressing(GameConfig::K_LEFT) ^ confuse,
+         down = config.pressing(GameConfig::K_DOWN) ^ confuse,
+         right = config.pressing(GameConfig::K_RIGHT) ^ confuse;
     float final_v = m_base_v
                     + (isStatus(HASTE) ? 75.f : 0.f)
                     - (isStatus(SLOW) ? 60.f : 0.f);
@@ -58,8 +58,8 @@ void Player::act(GameState &state)
 
     //Trigger attack
     cooldown(state);
-    if (config.clicking(Config::B_LEFT) && m_attack_cd <= 0) attack(state);
-    else if (config.clicking(Config::B_RIGHT) && m_grenade_cd <= 0 && m_numGrenades > 0) throwGrenade(state);
+    if (config.clicking(GameConfig::B_LEFT) && m_attack_cd <= 0) attack(state);
+    else if (config.clicking(GameConfig::B_RIGHT) && m_grenade_cd <= 0 && m_numGrenades > 0) throwGrenade(state);
 }
 
 void Player::hit(GameState &state, int damage)

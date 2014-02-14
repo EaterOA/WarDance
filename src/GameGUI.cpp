@@ -1,5 +1,5 @@
 #include "Util.hpp"
-#include "Config.hpp"
+#include "GameConfig.hpp"
 #include "GameGUI.hpp"
 #include "App.hpp"
 
@@ -370,9 +370,9 @@ void GameGUI::updateAppState()
         wss << "Level " << config.getInt("level") << "\nHighscore " << config.getInt("highscore");
         m_mainInfo.setString(wss.str());
         if (getAppState() == SELECTLEVEL) {
-            if (config.pressing(Config::K_UP)) util::copyTexture(&m_selectLit[0*4], &m_select[2*4]);
+            if (config.pressing(GameConfig::K_UP)) util::copyTexture(&m_selectLit[0*4], &m_select[2*4]);
             else util::copyTexture(&m_selectDim[0*4], &m_select[2*4]);
-            if (config.pressing(Config::K_DOWN)) util::copyTexture(&m_selectLit[1*4], &m_select[3*4]);
+            if (config.pressing(GameConfig::K_DOWN)) util::copyTexture(&m_selectLit[1*4], &m_select[3*4]);
             else util::copyTexture(&m_selectDim[1*4], &m_select[3*4]);
         }
     }
@@ -382,8 +382,8 @@ void GameGUI::processInput(const std::vector<sf::Event> &keyEvents)
 {
     for (unsigned i = 0; i < keyEvents.size(); i++) {
 
-        bool up = config.pressing(Config::K_UP, keyEvents[i].key.code);
-        bool down = config.pressing(Config::K_DOWN, keyEvents[i].key.code);
+        bool up = config.pressing(GameConfig::K_UP, keyEvents[i].key.code);
+        bool down = config.pressing(GameConfig::K_DOWN, keyEvents[i].key.code);
         bool enter = keyEvents[i].key.code == sf::Keyboard::Return;
         bool esc = keyEvents[i].key.code == sf::Keyboard::Escape;
 

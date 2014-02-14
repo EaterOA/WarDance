@@ -14,12 +14,12 @@
 306.6 5.0 82.1 31.2     39.0 42.0       # IX
 306.6 37.0 82.1 31.2    39.0 42.0       # X
 7.0 66.0 232.0 60.0     405.0 120.0     # Pause title
-13.1 127.8 155.7 44.4   400.0 180.0     # Pause resume lit
-13.1 177.8 155.7 44.4   400.0 180.0     # Pause resume dim
-10.9 327.8 188.3 44.4   400.0 230.0     # Pause settings lit
-10.9 377.8 183.3 44.4   400.0 230.0     # Pause settings dim
-10.9 227.8 92.3 44.4    400.0 280.0     # Pause quit lit
-10.9 277.8 92.3 44.4    400.0 280.0     # Pause quit dim
+8.1 127.8 165.7 44.4    400.0 180.0     # Pause resume lit
+8.1 177.8 165.7 44.4    400.0 180.0     # Pause resume dim
+5.9 327.8 198.3 44.4    400.0 230.0     # Pause settings lit
+5.9 377.8 193.3 44.4    400.0 230.0     # Pause settings dim
+5.9 227.8 102.3 44.4    400.0 280.0     # Pause quit lit
+5.9 277.8 102.3 44.4    400.0 280.0     # Pause quit dim
 255.6 87.7 34.8 22.6    250.0 200.0     # Settings hitbox off
 303.7 87.7 26.7 22.6    250.0 200.0     # Settings hitbox on
 198.7 127.3 120.7 45.2  150.0 200.0     # Settings hitbox lit

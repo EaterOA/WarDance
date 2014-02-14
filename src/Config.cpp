@@ -5,8 +5,6 @@
 #include <iostream>
 #include <sstream>
 
-Config config;
-
 void Config::parse(std::istream& in)
 {
     std::string line;
@@ -103,30 +101,4 @@ void Config::setInt(const std::string& key, int value)
     std::map<std::string, std::string>::iterator iter = db_str.find(key);
     if (iter != db_str.end()) db_str.erase(iter);
     db_int[key] = value;
-}
-
-bool Config::clicking(Button button)
-{
-	if (button == B_LEFT) return sf::Mouse::isButtonPressed(sf::Mouse::Left);
-	if (button == B_MIDDLE) return sf::Mouse::isButtonPressed(sf::Mouse::Middle);
-	if (button == B_RIGHT) return sf::Mouse::isButtonPressed(sf::Mouse::Right);
-	return false;
-}
-	
-bool Config::pressing(Key key, sf::Keyboard::Key code)
-{
-	if (key == K_UP) return code == sf::Keyboard::W || code == sf::Keyboard::Up;
-	if (key == K_DOWN) return code == sf::Keyboard::S || code == sf::Keyboard::Down;
-	if (key == K_LEFT) return code == sf::Keyboard::A || code == sf::Keyboard::Left;
-	if (key == K_RIGHT) return code == sf::Keyboard::D || code == sf::Keyboard::Right;
-	return false;
-}
-
-bool Config::pressing(Key key)
-{
-	if (key == K_UP) return sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up);
-	if (key == K_DOWN) return sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down);
-	if (key == K_LEFT) return sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left);
-	if (key == K_RIGHT) return sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right);
-	return false;
 }
