@@ -2,14 +2,14 @@
 #include "GameMechanics.hpp"
 
 Laser::Laser(sf::Vector2f pos, float dir, int faction)
-    : Projectile("m_laser", pos, util::ShapeVector(util::Rectangle, 600, 15), 7, 800, faction)
+    : Projectile(ActorImage("m_laser"), pos, util::ShapeVector(util::Rectangle, 600, 15), 7, 800, faction)
 {
     m_dir = dir;
     m_vel.x = 0;
     m_vel.y = 0;
     m_time = 0.15f;
     m_fadeTime = 0.08f;
-    if (m_faction == 0) m_frame = "m_laser_p";
+    if (m_faction == 0) m_image.frame = "m_laser_p";
     m_countHit = false;
 }
 

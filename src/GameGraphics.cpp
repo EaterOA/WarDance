@@ -70,10 +70,11 @@ void GameGraphics::setNextLevelBGOpacity(unsigned char alpha)
 
 void GameGraphics::addSprite(const Actor &actor)
 {
-    const FrameData& d = m_frameMap[actor.getFrame()];
+    const ActorImage& img = actor.getImage();
+    const FrameData& d = m_frameMap[img.frame];
 
     //Some sprites have to be specially drawn. This makes for better flexibility.
-    if (util::isPrefix("gwiper", actor.getFrame())) {
+    if (util::isPrefix("gwiper", img.frame)) {
         sf::Vector2f c = actor.getPos();
         float rOut = actor.getSize().y;
         float rIn = actor.getSize().x;
@@ -99,7 +100,7 @@ void GameGraphics::addSprite(const Actor &actor)
             curIn = nextIn;
         }
     }
-    else if (util::isPrefix("wiper", actor.getFrame())) {
+    else if (util::isPrefix("wiper", img.frame)) {
         sf::Vector2f c = actor.getPos();
         float rOut = actor.getSize().y;
         float rIn = actor.getSize().x;
@@ -122,17 +123,14 @@ void GameGraphics::addSprite(const Actor &actor)
             curIn = nextIn;
         }
     }
-    else if (util::isPrefix("m_laser", actor.getFrame())) {
-        const Laser& laser = *(const Laser*)(&actor);
-        unsigned alpha = (unsigned)(laser.getFadePerc() * 255.f);
-        unsigned int rgba = (d.rgba & 0xffffff00) | alpha;
+    else if (util::isPrefix("m_laser", img.frame)) {
         sf::Vertex sprite[4];
         util::affixPos(sprite, actor.getPos() + d.posOffset, d.size, 0);
         sprite[1].position.x = sprite[0].position.x + actor.getSize().x;
         sprite[2].position.x = sprite[3].position.x + actor.getSize().x;
         util::affixTexture(sprite, d.texCoord, d.size);
         if (d.rotatable) util::rotateSprite(sprite, util::toDeg(actor.getDir()), actor.getPos());
-        util::applyColor(sprite, rgba);
+        util::applyColor(sprite, d.rgba);
         m_sprites[d.sheetNum].insert(m_sprites[d.sheetNum].end(), sprite, sprite+4);
     }
     else {
@@ -148,7 +146,7 @@ void GameGraphics::addSprite(const Actor &actor)
 void GameGraphics::addHealthBar(const Fighter &fighter)
 {
     sf::Vertex bar[8];
-    unsigned sheetNum = m_frameMap[fighter.getFrame()].sheetNum;
+    unsigned sheetNum = m_frameMap[fighter.getImage().frame].sheetNum;
     const FrameData &caseD = m_frameMap["reg_hpcase"];
     const FrameData &barD = m_frameMap["reg_hpbar"];
     float hpPerc = (float)fighter.getHP() / fighter.getMaxHP();

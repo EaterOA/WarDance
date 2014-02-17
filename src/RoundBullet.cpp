@@ -2,7 +2,7 @@
 #include "GameMechanics.hpp"
 
 RoundBullet::RoundBullet(sf::Vector2f pos, float dir, int faction)
-    : Projectile("round_bullet", pos, util::ShapeVector(util::Circle, 11), 1, 50, faction)
+    : Projectile(ActorImage("round_bullet"), pos, util::ShapeVector(util::Circle, 11), 1, 50, faction)
 {
     m_dir = dir;
     float maxV = 75.f;

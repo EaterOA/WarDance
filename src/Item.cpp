@@ -1,7 +1,7 @@
 #include "Actors.hpp"
 
-Item::Item(std::string frame, sf::Vector2f pos, util::ShapeVector size, float dur)
-    : Actor(frame, pos, size)
+Item::Item(const ActorImage& img, sf::Vector2f pos, util::ShapeVector size, float dur)
+    : Actor(img, pos, size)
 {
     m_duration = dur;
 }

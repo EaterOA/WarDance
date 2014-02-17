@@ -6,17 +6,27 @@
 
 struct GameState;
 
+struct ActorImage
+{
+    ActorImage() {}
+    ActorImage(const std::string &f): frame(f), rgba(0xffffff), size(1), rotated(1) {}
+    std::string frame;
+    unsigned rgba;
+    float size;
+    bool rotated;
+};
+
 class Actor
 {
 public:
-    Actor(std::string frame, sf::Vector2f pos, util::ShapeVector size);
+    Actor(const ActorImage &img, sf::Vector2f pos, util::ShapeVector size);
     virtual void act(GameState& state);
     sf::Vector2f getPos() const;
-    const std::string& getFrame() const;
+    const ActorImage& getImage() const;
     float getDir() const;
     util::ShapeVector getSize() const;
 protected:
-    std::string m_frame;
+    ActorImage m_image;
     sf::Vector2f m_pos, m_vel, m_acc;
     float m_dir;
     util::ShapeVector m_size;
@@ -25,7 +35,7 @@ protected:
 class Fighter: public Actor
 {
 public:
-    Fighter(std::string frame, util::ShapeVector size, sf::Vector2f pos, int hp, int faction);
+    Fighter(const ActorImage &img, util::ShapeVector size, sf::Vector2f pos, int hp, int faction);
     virtual void act(GameState &state) = 0;
     virtual bool isDead(const GameState &state) const;
     virtual void hit(GameState &state, int damage);
@@ -131,7 +141,7 @@ protected:
 class Projectile: public Fighter
 {
 public:
-    Projectile(std::string frame, sf::Vector2f pos, util::ShapeVector size, int hp, int damage, int faction);
+    Projectile(const ActorImage &img, sf::Vector2f pos, util::ShapeVector size, int hp, int damage, int faction);
     virtual bool isDead(const GameState &state) const;
 protected:
     virtual void attack(GameState& state);
@@ -218,7 +228,7 @@ protected:
 class Item: public Actor
 {
 public:
-    Item(std::string frame, sf::Vector2f pos, util::ShapeVector size, float dur);
+    Item(const ActorImage &img, sf::Vector2f pos, util::ShapeVector size, float dur);
     float getDuration() const;
     bool isDead(const GameState &state) const;
 protected:

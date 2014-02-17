@@ -1,9 +1,9 @@
 #include "Actors.hpp"
 #include "GameMechanics.hpp"
 
-Actor::Actor(std::string frame, sf::Vector2f pos, util::ShapeVector size)
+Actor::Actor(const ActorImage &img, sf::Vector2f pos, util::ShapeVector size)
 {
-    m_frame = frame;
+    m_image = img;
     m_pos = pos;
     m_size = size;
     m_dir = 0;
@@ -15,9 +15,9 @@ void Actor::act(GameState& state)
     m_pos += m_vel * state.elapsed.asSeconds();
 }
 
-const std::string& Actor::getFrame() const
+const ActorImage& Actor::getImage() const
 {
-    return m_frame;
+    return m_image;
 }
 
 sf::Vector2f Actor::getPos() const

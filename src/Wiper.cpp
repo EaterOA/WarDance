@@ -2,10 +2,10 @@
 #include "GameMechanics.hpp"
 
 Wiper::Wiper(sf::Vector2f pos, int faction)
-    : Projectile("wiper", pos, util::ShapeVector(util::Stroke, -20, 0), 1, 99999, faction)
+    : Projectile(ActorImage("wiper"), pos, util::ShapeVector(util::Stroke, -20, 0), 1, 99999, faction)
 {
     if (faction == 0) {
-        m_frame = "wiper_p";
+        m_image.frame = "wiper_p";
     }
     m_expandSpeed = 800.f;
 }

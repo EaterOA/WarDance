@@ -4,7 +4,7 @@
 GrenadeWiper::GrenadeWiper(sf::Vector2f pos)
     : Wiper(pos, 0)
 {
-    m_frame = "gwiper_p";
+    m_image.frame = "gwiper_p";
     m_size.x = -50;
     m_expandSpeed = 1200.f;
     m_expandAccel = -1000.f;

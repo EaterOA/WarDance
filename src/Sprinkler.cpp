@@ -2,7 +2,7 @@
 #include "GameMechanics.hpp"
 
 Sprinkler::Sprinkler(sf::Vector2f pos)
-    : Fighter("sprinkler", util::ShapeVector(util::Circle, 20.f), pos, 100, 1)
+    : Fighter(ActorImage("sprinkler"), util::ShapeVector(util::Circle, 20.f), pos, 100, 1)
 {
     m_attack_cd = 0;
 }

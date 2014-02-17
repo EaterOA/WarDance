@@ -2,7 +2,7 @@
 #include "GameMechanics.hpp"
 
 Grenade::Grenade(sf::Vector2f pos, sf::Vector2f dest)
-    : Projectile("grenade", pos, util::ShapeVector(util::Circle, 90), 1, 1000, 0)
+    : Projectile(ActorImage("grenade"), pos, util::ShapeVector(util::Circle, 90), 1, 1000, 0)
 {
     sf::Vector2f v = dest - pos;
     m_dir = util::toDir(v.x, v.y);
@@ -38,7 +38,7 @@ void Grenade::act(GameState &state)
         else if (m_animationTime > 0) {
             std::stringstream ss;
             ss << "exp" << (int)(m_animationTime * 24.f);
-            m_frame = ss.str();
+            m_image.frame = ss.str();
         }
         m_animationTime -= state.elapsed.asSeconds();
     }
