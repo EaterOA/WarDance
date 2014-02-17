@@ -2,7 +2,7 @@
 #include "GameMechanics.hpp"
 
 Alien::Alien(sf::Vector2f pos)
-    : Fighter(ActorImage("alien"), util::ShapeVector(util::Rectangle, 60.f, 45.f), pos, 2500, 1)
+    : Fighter(Actor::Image("alien"), util::ShapeVector(util::Rectangle, 60.f, 45.f), pos, 2500, 1)
 {
     m_dir = 0;
     m_move_cd = 0;

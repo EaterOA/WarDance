@@ -2,7 +2,7 @@
 #include "GameMechanics.hpp"
 #include <math.h>
 
-Fighter::Fighter(const ActorImage &img, util::ShapeVector size, sf::Vector2f pos, int hp, int faction)
+Fighter::Fighter(const Actor::Image &img, util::ShapeVector size, sf::Vector2f pos, int hp, int faction)
     : Actor(img, pos, size)
 {
     m_attack_cd = 0;

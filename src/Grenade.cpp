@@ -2,7 +2,7 @@
 #include "GameMechanics.hpp"
 
 Grenade::Grenade(sf::Vector2f pos, sf::Vector2f dest)
-    : Projectile(ActorImage("grenade"), pos, util::ShapeVector(util::Circle, 90), 1, 1000, 0)
+    : Projectile(Actor::Image("grenade"), pos, util::ShapeVector(util::Circle, 90), 1, 1000, 0)
 {
     sf::Vector2f v = dest - pos;
     m_dir = util::toDir(v.x, v.y);

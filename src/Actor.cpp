@@ -1,7 +1,19 @@
 #include "Actors.hpp"
 #include "GameMechanics.hpp"
 
-Actor::Actor(const ActorImage &img, sf::Vector2f pos, util::ShapeVector size)
+Actor::Image::Image()
+{
+}
+
+Actor::Image::Image(const std::string& f)
+{
+    frame = f;
+    color = sf::Color(255, 255, 255, 255);
+    rotated = true;
+    resized = false;
+}
+
+Actor::Actor(const Actor::Image &img, sf::Vector2f pos, util::ShapeVector size)
 {
     m_image = img;
     m_pos = pos;
@@ -15,7 +27,7 @@ void Actor::act(GameState& state)
     m_pos += m_vel * state.elapsed.asSeconds();
 }
 
-const ActorImage& Actor::getImage() const
+const Actor::Image& Actor::getImage() const
 {
     return m_image;
 }

@@ -10,6 +10,9 @@ GrenadeWiper::GrenadeWiper(sf::Vector2f pos)
     m_expandAccel = -1000.f;
     m_expandJerk = -10000.f;
     m_range = 300.f;
+
+    m_image.rotated = false;
+    m_image.color = sf::Color(255, 102, 0);
 }
 
 bool GrenadeWiper::isDead(const GameState& state) const

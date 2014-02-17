@@ -4,7 +4,7 @@
 #include "GameController.hpp"
 
 Player::Player(sf::Vector2f pos)
-    : Fighter(ActorImage("player"), util::ShapeVector(util::Rectangle, 20.f, 25.f), pos, 500, 0)
+    : Fighter(Actor::Image("player"), util::ShapeVector(util::Rectangle, 20.f, 25.f), pos, 500, 0)
 {
     m_base_v = 150.f;
     m_numGrenades = 3;
@@ -109,7 +109,7 @@ void Player::attack(GameState &state)
 {
     m_attack_cd = 0.15f;
     state.fired++;
-    shoot(state, REGULAR, 40.f, 10.f);
+    shoot(state, REGULAR, 35.f, 10.f);
 }
 
 void Player::throwGrenade(GameState &state)

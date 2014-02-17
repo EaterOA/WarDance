@@ -2,9 +2,11 @@
 #include "GameMechanics.hpp"
 
 Medkit::Medkit(sf::Vector2f pos, float dur)
-    : Item(ActorImage("medkit"), pos, util::ShapeVector(util::Rectangle, 10, 10), dur)
+    : Item(Actor::Image("medkit"), pos, util::ShapeVector(util::Rectangle, 10, 10), dur)
 {
     m_hpRestore = 250;
+
+    m_image.rotated = false;
 }
 
 void Medkit::act(GameState &state)

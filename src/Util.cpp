@@ -262,15 +262,6 @@ namespace util
         sprite[3].texCoords = sf::Vector2f(texCoord.x, texCoord.y + size.y);
     }
 
-    sf::Color toColor(unsigned int rgba)
-    {
-        unsigned char r = (unsigned char)(rgba >> 24);
-        unsigned char g = (unsigned char)((rgba & 0xffffff) >> 16);
-        unsigned char b = (unsigned char)((rgba & 0xffff) >> 8);
-        unsigned char a = (unsigned char)(rgba & 0xff);
-        return sf::Color(r, g, b, a);
-    }
-
     sf::Vector2f translatePos(sf::Vector2f pos, float dir, float offsetX, float offsetY)
     {
         float unitX, unitY;
@@ -315,9 +306,8 @@ namespace util
         sprite[3].position = sf::Vector2f(realPos.x - hSize.x, realPos.y + hSize.y);
     }
 
-    void applyColor(sf::Vertex sprite[4], unsigned int rgba)
+    void applyColor(sf::Vertex sprite[4], sf::Color c)
     {
-        sf::Color c = toColor(rgba);
         sprite[0].color = c;
         sprite[1].color = c;
         sprite[2].color = c;

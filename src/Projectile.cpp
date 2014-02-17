@@ -1,7 +1,7 @@
 #include "Actors.hpp"
 #include "GameMechanics.hpp"
 
-Projectile::Projectile(const ActorImage &img, sf::Vector2f pos, util::ShapeVector size, int hp, int damage, int faction)
+Projectile::Projectile(const Actor::Image &img, sf::Vector2f pos, util::ShapeVector size, int hp, int damage, int faction)
     : Fighter(img, size, pos, hp, faction)
 {
     m_damage = damage;

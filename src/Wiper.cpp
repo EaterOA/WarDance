@@ -2,12 +2,13 @@
 #include "GameMechanics.hpp"
 
 Wiper::Wiper(sf::Vector2f pos, int faction)
-    : Projectile(ActorImage("wiper"), pos, util::ShapeVector(util::Stroke, -20, 0), 1, 99999, faction)
+    : Projectile(Actor::Image("wiper"), pos, util::ShapeVector(util::Stroke, -20, 0), 1, 99999, faction)
 {
-    if (faction == 0) {
-        m_image.frame = "wiper_p";
-    }
     m_expandSpeed = 800.f;
+
+    m_image.rotated = false;
+    if (faction == 0) m_image.color = sf::Color(150, 150, 255);
+    else m_image.color = sf::Color(255, 150, 150);
 }
 
 bool Wiper::isDead(const GameState &state) const

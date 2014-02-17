@@ -29,8 +29,8 @@ bool GameGraphics::init()
         if (!m_spritesheet[i].loadFromFile(ss.str())) return false;
         m_spritesheet[i].setSmooth(true);
     }
-    //Reading sprite data
-    //Data format: frame name, sheet #, 4 texture coordinates, 2 position offsets
+    //Reading sprite frame data
+    //Data format: frame name, sheet #, 4 texture coordinates, 2 position offsets (for minute adjustments to texture position)
     fin.open("config/spritedata.txt");
     if (!fin) return 0;
     for (unsigned i = 0; i < 1000; i++) {
@@ -41,8 +41,6 @@ bool GameGraphics::init()
         if (!util::readv2f(fin, d.texCoord, false)) return false;
         if (!util::readv2f(fin, d.size, false)) return false;
         if (!util::readv2f(fin, d.posOffset, false)) return false;
-        if (!(fin >> d.rotatable)) return false;
-        if (!(fin >> std::hex >> d.rgba)) return false;
         m_frameMap[frame] = d;
         fin.ignore(1000, '\n');
     }
@@ -70,7 +68,7 @@ void GameGraphics::setNextLevelBGOpacity(unsigned char alpha)
 
 void GameGraphics::addSprite(const Actor &actor)
 {
-    const ActorImage& img = actor.getImage();
+    const Actor::Image& img = actor.getImage();
     const FrameData& d = m_frameMap[img.frame];
 
     //Some sprites have to be specially drawn. This makes for better flexibility.
@@ -84,8 +82,8 @@ void GameGraphics::addSprite(const Actor &actor)
         tr.rotate(360.f / numPt, c);
         sf::Vertex curOut(sf::Vector2f(c.x + rOut, c.y)), nextOut;
         sf::Vertex curIn(sf::Vector2f(c.x + rIn, c.y)), nextIn;
-        curOut.color = nextOut.color = util::toColor(d.rgba);
-        curIn.color = nextIn.color = util::toColor(d.rgba);
+        curOut.color = nextOut.color = img.color;
+        curIn.color = nextIn.color = img.color; 
         for (int i = 0; i < numPt; i++) {
             nextOut.position = tr.transformPoint(curOut.position);
             nextIn.position = tr.transformPoint(curIn.position);
@@ -110,8 +108,9 @@ void GameGraphics::addSprite(const Actor &actor)
         tr.rotate(360.f / numPt, c);
         sf::Vertex curOut(sf::Vector2f(c.x + rOut, c.y)), nextOut;
         sf::Vertex curIn(sf::Vector2f(c.x + rIn, c.y)), nextIn;
-        curOut.color = nextOut.color = util::toColor(d.rgba);
-        curIn.color = nextIn.color = util::toColor(d.rgba & 0xffffff00);
+        curOut.color = nextOut.color = img.color; 
+        curIn.color = nextIn.color = img.color;
+        curIn.color.a = nextIn.color.a = 0;
         for (int i = 0; i < numPt; i++) {
             nextOut.position = tr.transformPoint(curOut.position);
             nextIn.position = tr.transformPoint(curIn.position);
@@ -123,22 +122,13 @@ void GameGraphics::addSprite(const Actor &actor)
             curIn = nextIn;
         }
     }
-    else if (util::isPrefix("m_laser", img.frame)) {
-        sf::Vertex sprite[4];
-        util::affixPos(sprite, actor.getPos() + d.posOffset, d.size, 0);
-        sprite[1].position.x = sprite[0].position.x + actor.getSize().x;
-        sprite[2].position.x = sprite[3].position.x + actor.getSize().x;
-        util::affixTexture(sprite, d.texCoord, d.size);
-        if (d.rotatable) util::rotateSprite(sprite, util::toDeg(actor.getDir()), actor.getPos());
-        util::applyColor(sprite, d.rgba);
-        m_sprites[d.sheetNum].insert(m_sprites[d.sheetNum].end(), sprite, sprite+4);
-    }
     else {
         sf::Vertex sprite[4];
-        util::affixPos(sprite, actor.getPos() + d.posOffset, d.size, 0);
+        sf::Vector2f size = (img.resized ? img.size : d.size);
+        util::affixPos(sprite, actor.getPos() + d.posOffset, size, 0);
         util::affixTexture(sprite, d.texCoord, d.size);
-        if (d.rotatable) util::rotateSprite(sprite, util::toDeg(actor.getDir()), actor.getPos());
-        util::applyColor(sprite, d.rgba);
+        if (img.rotated) util::rotateSprite(sprite, util::toDeg(actor.getDir()), actor.getPos());
+        util::applyColor(sprite, img.color);
         m_sprites[d.sheetNum].insert(m_sprites[d.sheetNum].end(), sprite, sprite+4);
     }
 }

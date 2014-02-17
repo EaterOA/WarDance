@@ -7,7 +7,6 @@ Each list is ordered by increasing estimated priority vs effort/time
 
 
 TODO anytime
-- GFX: Allow Actors to customize appearance in addition to specifying frame
 - MEC: Design more enemy and projectile types
     * Chasing bullet (rocket)
     * Orbiting bullet

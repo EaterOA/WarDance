@@ -59,9 +59,8 @@ namespace util
     void affixPos(sf::Vertex sprite[4], sf::Vector2f pos, sf::Vector2f size, int reference);
     void affixTexture(sf::Vertex sprite[4], sf::Vector2f texCoord, sf::Vector2f size);
     void rotateSprite(sf::Vertex sprite[4], float dir, sf::Vector2f center);
-    void applyColor(sf::Vertex sprite[4], unsigned int rgba);
+    void applyColor(sf::Vertex sprite[4], sf::Color c);
     void setAlpha(sf::Vertex sprite[4], unsigned char alpha);
-    sf::Color toColor(unsigned int rgba);
     sf::Vector2f translatePos(sf::Vector2f pos, float dir, float offsetX, float offsetY);
     sf::Vector2f translatePos(sf::Vector2f pos, float unitX, float unitY, float offsetX, float offsetY);
     
