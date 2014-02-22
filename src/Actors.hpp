@@ -175,6 +175,8 @@ public:
     SplittingBullet(sf::Vector2f pos, float dir, int faction);
     virtual void act(GameState& state);
 protected:
+    float m_dur, m_maxDur;
+    float m_angSpeed;
 };
 
 class RoundBullet: public Projectile
