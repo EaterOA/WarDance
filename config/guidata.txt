@@ -20,11 +20,11 @@
 5.9 377.8 193.3 44.4    400.0 230.0     # Pause settings dim
 5.9 227.8 102.3 44.4    400.0 280.0     # Pause quit lit
 5.9 277.8 102.3 44.4    400.0 280.0     # Pause quit dim
-255.6 87.7 34.8 22.6    250.0 200.0     # Settings hitbox off
-303.7 87.7 26.7 22.6    250.0 200.0     # Settings hitbox on
 198.7 127.3 120.7 45.2  150.0 200.0     # Settings hitbox lit
 198.7 177.3 120.7 45.2  150.0 200.0     # Settings hitbox dim
-164.0 257.0 246.0 49.0  610.0 250.0     # Main highlight
+303.7 87.7 26.7 22.6    250.0 200.0     # Settings hitbox on
+255.6 87.7 34.8 22.6    250.0 200.0     # Settings hitbox off
+164.0 257.0 246.0 49.0  610.0 250.0     # Main blinker
 488.0 24.4 92.3 49.2    600.0 250.0     # Main start lit
 501.2 275.0 79.2 43.6   600.0 250.0     # Main start dim
 371.0 74.4 209.3 49.2   600.0 300.0     # Main select level lit
@@ -45,6 +45,6 @@
 5.0 545.0 282.0 172.0   300.0 300.0     # Select level slab
 0.0 0.0 82.1 31.2       320.0 290.0     # Select level choice
 350.6 335.0 20.9 19.5   220.0 280.0     # Select level up lit
-350.6 361.0 20.9 19.5   220.0 310.0     # Select level down lit
 320.6 335.0 20.9 19.5   220.0 280.0     # Select level up dim
+350.6 361.0 20.9 19.5   220.0 310.0     # Select level down lit
 320.6 361.0 20.9 19.5   220.0 310.0     # Select level down dim

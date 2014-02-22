@@ -2,7 +2,7 @@
 #include "GameMechanics.hpp"
 
 Laser::Laser(sf::Vector2f pos, float dir, int faction)
-    : Projectile(Actor::Image("m_laser"), pos, util::ShapeVector(util::Rectangle, 600, 12), 7, 800, faction)
+    : Projectile(pos, util::ShapeVector(util::Rectangle, 600, 12), 7, 800, faction)
 {
     m_dir = dir;
     m_vel.x = 0;
@@ -13,6 +13,7 @@ Laser::Laser(sf::Vector2f pos, float dir, int faction)
     m_fadeTime = 0.08f;
     m_countHit = false;
 
+    m_image.frame = "m_laser";
     m_image.resized = true;
     m_image.size.y = 9;
     m_image.size.x = 600;
@@ -55,6 +56,6 @@ void Laser::act(GameState& state)
         if (m_fadeTime <= 0)
             m_hp = 0;
     }
-    m_image.color.a = 255 * (m_fadeTime / 0.1f);
+    m_image.color.a = (unsigned char)(255 * (m_fadeTime / 0.1f));
 }
 

@@ -2,12 +2,14 @@
 #include "GameMechanics.hpp"
 
 Alien::Alien(sf::Vector2f pos)
-    : Fighter(Actor::Image("alien"), util::ShapeVector(util::Rectangle, 60.f, 45.f), pos, 2500, 1)
+    : Fighter(util::ShapeVector(util::Rectangle, 60.f, 45.f), pos, 2500, 1)
 {
     m_dir = 0;
     m_move_cd = 0;
     m_gunDir1 = m_gunDir2 = 0;
     m_max_v = 30.f;
+
+    m_image.frame = "alien"; 
 }
 
 void Alien::hit(GameState& state, int damage)

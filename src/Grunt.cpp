@@ -2,13 +2,15 @@
 #include "GameMechanics.hpp"
 
 Grunt::Grunt(sf::Vector2f pos)
-    : Fighter(Actor::Image("grunt"), util::ShapeVector(util::Rectangle, 50.f, 50.f), pos, 200, 1)
+    : Fighter(util::ShapeVector(util::Rectangle, 50.f, 50.f), pos, 200, 1)
 {
     m_max_v = 50.f;
     m_move_cd = 0;
     m_attack_cd = 0;
     m_radius_close = 30.f;
     m_radius_far = 70.f;
+
+    m_image.frame = "grunt";
 }
 
 void Grunt::cooldown(GameState& state)

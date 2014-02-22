@@ -4,13 +4,13 @@
 GrenadeWiper::GrenadeWiper(sf::Vector2f pos)
     : Wiper(pos, 0)
 {
-    m_image.frame = "gwiper_p";
     m_size.x = -50;
     m_expandSpeed = 1200.f;
     m_expandAccel = -1000.f;
     m_expandJerk = -10000.f;
     m_range = 300.f;
-
+    
+    m_image.frame = "gwiper_p";
     m_image.rotated = false;
     m_image.color = sf::Color(255, 102, 0);
 }

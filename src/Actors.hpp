@@ -12,14 +12,13 @@ public:
     struct Image
     {
         Image();
-        Image(const std::string &f);
         std::string frame;
         sf::Color color;
         bool rotated, resized;
         sf::Vector2f size;
     };
 
-    Actor(const Actor::Image &img, sf::Vector2f pos, util::ShapeVector size);
+    Actor(sf::Vector2f pos, util::ShapeVector size);
     virtual void act(GameState& state);
     sf::Vector2f getPos() const;
     const Actor::Image& getImage() const;
@@ -35,7 +34,7 @@ protected:
 class Fighter: public Actor
 {
 public:
-    Fighter(const Actor::Image &img, util::ShapeVector size, sf::Vector2f pos, int hp, int faction);
+    Fighter(util::ShapeVector size, sf::Vector2f pos, int hp, int faction);
     virtual void act(GameState &state) = 0;
     virtual bool isDead(const GameState &state) const;
     virtual void hit(GameState &state, int damage);
@@ -141,7 +140,7 @@ protected:
 class Projectile: public Fighter
 {
 public:
-    Projectile(const Actor::Image &img, sf::Vector2f pos, util::ShapeVector size, int hp, int damage, int faction);
+    Projectile(sf::Vector2f pos, util::ShapeVector size, int hp, int damage, int faction);
     virtual bool isDead(const GameState &state) const;
 protected:
     virtual void attack(GameState& state);
@@ -229,7 +228,7 @@ protected:
 class Item: public Actor
 {
 public:
-    Item(const Actor::Image &img, sf::Vector2f pos, util::ShapeVector size, float dur);
+    Item(sf::Vector2f pos, util::ShapeVector size, float dur);
     float getDuration() const;
     bool isDead(const GameState &state) const;
 protected:

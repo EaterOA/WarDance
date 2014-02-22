@@ -2,7 +2,7 @@
 #include "GameMechanics.hpp"
 
 Grenade::Grenade(sf::Vector2f pos, sf::Vector2f dest)
-    : Projectile(Actor::Image("grenade"), pos, util::ShapeVector(util::Circle, 90), 1, 1000, 0)
+    : Projectile(pos, util::ShapeVector(util::Circle, 90), 1, 1000, 0)
 {
     sf::Vector2f v = dest - pos;
     m_dir = util::toDir(v.x, v.y);
@@ -11,6 +11,8 @@ Grenade::Grenade(sf::Vector2f pos, sf::Vector2f dest)
     m_time = sqrt(util::dot(v, v)) / 250.f;
     m_animationTime = 0.499f;
     m_attacked = false;
+
+    m_image.frame = "grenade";
 }
 
 bool Grenade::isDead(const GameState &state) const

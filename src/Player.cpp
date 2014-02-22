@@ -4,7 +4,7 @@
 #include "GameController.hpp"
 
 Player::Player(sf::Vector2f pos)
-    : Fighter(Actor::Image("player"), util::ShapeVector(util::Rectangle, 20.f, 25.f), pos, 500, 0)
+    : Fighter(util::ShapeVector(util::Rectangle, 20.f, 25.f), pos, 500, 0)
 {
     m_base_v = 150.f;
     m_numGrenades = 3;
@@ -13,6 +13,8 @@ Player::Player(sf::Vector2f pos)
     m_shield_regen = 10.f;
     m_maxShield = 200.f;
     m_shield = m_maxShield;
+
+    m_image.frame = "player";
 }
 
 void Player::act(GameState &state)

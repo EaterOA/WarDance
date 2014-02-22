@@ -25,14 +25,15 @@ private:
     //Main Menu
     void selectMainChoice(unsigned choice);
     void processMainChoice();
-    void mainBlink();
     unsigned m_main_numChoices;
     unsigned m_main_choice;
-    int m_main_blink, m_main_blinkChg;
-    sf::Vector2f m_main_blinkLoc, m_main_blinkSize;
-    sf::Sprite m_main;
-    sf::Texture m_mainTex;
-    sf::VertexArray m_mainMenu;
+    sf::Vertex* m_main_blinker, *m_mainMenu;
+    int m_main_blinkerAlphaChg;
+    sf::Vector2f m_main_blinkerBaseLoc;
+    sf::Sprite m_main_bg;
+    sf::Texture m_main_bgTex;
+    std::vector<sf::Vertex> m_main;
+    std::vector<sf::Vertex> m_mainLit, m_mainDim;
     sf::Text m_mainInfo;
     
     //Pause Menu
@@ -40,7 +41,9 @@ private:
     void processPauseChoice();
     unsigned m_pause_numChoices;
     unsigned m_pause_choice;
-    sf::VertexArray m_pauseMenu;
+    sf::Vertex* m_pauseMenu;
+    std::vector<sf::Vertex> m_pause;
+    std::vector<sf::Vertex> m_pauseLit, m_pauseDim;
 
     //Settings Menu
     void selectSettingsChoice(unsigned choice);
@@ -48,9 +51,12 @@ private:
     void processSettingsSwitches();
     unsigned m_settings_numChoices;
     unsigned m_settings_choice;
-    sf::Sprite m_settings;
-    sf::Texture m_settingsTex;
-    sf::VertexArray m_settingsMenu;
+    sf::Sprite m_settings_bg;
+    sf::Texture m_settings_bgTex;
+    sf::Vertex* m_settingsMenu, *m_settingsSwitches;
+    std::vector<sf::Vertex> m_settings;
+    std::vector<sf::Vertex> m_settingsLit, m_settingsDim;
+    std::vector<sf::Vertex> m_settingsOn, m_settingsOff;
 
     //HUD
     void updateHUD(const GameState& state);
@@ -80,6 +86,7 @@ private:
     //Select level
     void selectSelectChoice(unsigned choice);
     void processSelectChoice();
+    sf::Vertex* m_selectButtons;
     std::vector<sf::Vertex> m_select;
     std::vector<sf::Vertex> m_selectLit, m_selectDim;
     unsigned m_select_choice;

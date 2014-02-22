@@ -3,19 +3,14 @@
 
 Actor::Image::Image()
 {
-}
-
-Actor::Image::Image(const std::string& f)
-{
-    frame = f;
+    frame = "";
     color = sf::Color(255, 255, 255, 255);
     rotated = true;
     resized = false;
 }
 
-Actor::Actor(const Actor::Image &img, sf::Vector2f pos, util::ShapeVector size)
+Actor::Actor(sf::Vector2f pos, util::ShapeVector size)
 {
-    m_image = img;
     m_pos = pos;
     m_size = size;
     m_dir = 0;
