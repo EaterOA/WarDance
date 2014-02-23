@@ -1,5 +1,6 @@
 #include "App.hpp"
 #include "GameConfig.hpp"
+#include "GameResourceManager.hpp"
 #include "GameController.hpp"
 #include "GameMechanics.hpp"
 #include "GameGraphics.hpp"
@@ -23,6 +24,7 @@ bool appInit()
     window.setFramerateLimit(60);
     window.setView(camera);
     if (!config.init()) return false;
+    if (!resource.init()) return false;
     if (!controller.init()) return false;
     if (!mAgent.init()) return false;
     if (!gAgent.init()) return false;

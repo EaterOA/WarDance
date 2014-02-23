@@ -1,5 +1,6 @@
 #include "Util.hpp"
 #include "GameConfig.hpp"
+#include "GameResourceManager.hpp"
 #include "GameGraphics.hpp"
 #include "GameMechanics.hpp"
 
@@ -10,25 +11,18 @@ bool GameGraphics::init()
     //Initializing texture and map lists
     unsigned numSheets = 2;
     unsigned numLevels = unsigned(config.getInt("num_levels"));
-    m_lvlBackgroundTex = std::vector<sf::Texture>(numLevels);
-    m_spritesheet = std::vector<sf::Texture>(numSheets);
+    m_lvlBackgroundTex = std::vector<const sf::Texture*>(numLevels);
+    m_spritesheet = std::vector<const sf::Texture*>(numSheets);
     m_frameMap = std::map<std::string, FrameData>();
     
     //Loading level background textures
     for (unsigned i = 0; i < numLevels; i++) {
-        std::stringstream ss;
-        ss << "images/bg" << i << ".png";
-        if (!m_lvlBackgroundTex[i].loadFromFile(ss.str())) return false;
-        m_lvlBackgroundTex[i].setRepeated(true);
+        m_lvlBackgroundTex[i] = &resource.getTexture(util::appendNumber("bg", i));
+    }
+    for (unsigned i = 0; i < numSheets; i++) {
+        m_spritesheet[i] = &resource.getTexture(util::appendNumber("spritesheet", i));
     }
 
-    //Loading spritesheets
-    for (unsigned i = 0; i < numSheets; i++) {
-        std::stringstream ss;
-        ss << "images/spritesheet" << i << ".png";
-        if (!m_spritesheet[i].loadFromFile(ss.str())) return false;
-        m_spritesheet[i].setSmooth(true);
-    }
     //Reading sprite frame data
     //Data format: frame name, sheet #, 4 texture coordinates, 2 position offsets (for minute adjustments to texture position)
     fin.open("config/spritedata.txt");
@@ -47,9 +41,9 @@ bool GameGraphics::init()
     fin.close();
 
     //Initializing some sprites and settings
-    m_background.setTexture(m_lvlBackgroundTex[0]);
+    m_background.setTexture(*m_lvlBackgroundTex[0]);
     m_background.setTextureRect(sf::IntRect(0, 0, 1600, 1200));
-    m_backgroundNext.setTexture(m_lvlBackgroundTex[0]);
+    m_backgroundNext.setTexture(*m_lvlBackgroundTex[0]);
     m_backgroundNext.setTextureRect(sf::IntRect(0, 0, 1600, 1200));
     m_hitbox_enabled = config.getInt("hitbox_enabled");
 
@@ -62,7 +56,7 @@ void GameGraphics::setNextLevelBGOpacity(unsigned char alpha)
         int lvl = config.getInt("level");
         unsigned nextIdx = (unsigned)(lvl < config.getInt("num_levels") ? lvl : lvl-1);
         m_backgroundNext.setColor(sf::Color(255, 255, 255, alpha));
-        m_backgroundNext.setTexture(m_lvlBackgroundTex[nextIdx]);
+        m_backgroundNext.setTexture(*m_lvlBackgroundTex[nextIdx]);
     }
 }
 
@@ -189,8 +183,8 @@ void GameGraphics::updateMisc(const GameState &state)
     //Updating settings
     m_hitbox_enabled = config.getInt("hitbox_enabled");
     unsigned idx = (unsigned)config.getInt("level") - 1;
-    m_background.setTexture(m_lvlBackgroundTex[idx]);
-    m_backgroundNext.setTexture(m_lvlBackgroundTex[idx]);
+    m_background.setTexture(*m_lvlBackgroundTex[idx]);
+    m_backgroundNext.setTexture(*m_lvlBackgroundTex[idx]);
 }
 
 void GameGraphics::updateSprites(const GameState &state)
@@ -228,7 +222,7 @@ void GameGraphics::draw(sf::RenderTarget& target, sf::RenderStates states) const
     }
     for (unsigned i = 0; i < m_spritesheet.size(); i++) {
         if (!m_sprites[i].empty()) {
-            sf::RenderStates spriteState(&m_spritesheet[i]);
+            sf::RenderStates spriteState(m_spritesheet[i]);
             target.draw(&m_sprites[i][0], m_sprites[i].size(), sf::Quads, spriteState);
         }
     }

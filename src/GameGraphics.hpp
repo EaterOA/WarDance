@@ -33,9 +33,9 @@ private:
     void addHitbox(const Fighter &fighter);
     
     std::map<std::string, FrameData> m_frameMap;
-    std::vector<sf::Texture> m_lvlBackgroundTex;
+    std::vector<const sf::Texture*> m_lvlBackgroundTex;
     sf::Sprite m_background, m_backgroundNext;
-    std::vector<sf::Texture> m_spritesheet;
+    std::vector<const sf::Texture*> m_spritesheet;
     std::vector<std::vector<sf::Vertex> > m_sprites;
     std::vector<sf::Vertex> m_specialSprites;
     std::vector<sf::Vertex> m_hitboxes;

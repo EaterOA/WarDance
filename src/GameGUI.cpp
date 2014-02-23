@@ -1,6 +1,7 @@
 #include "GameGUI.hpp"
 #include "Util.hpp"
 #include "GameConfig.hpp"
+#include "GameResourceManager.hpp"
 #include "GameController.hpp"
 #include "App.hpp"
 
@@ -8,14 +9,6 @@ bool GameGUI::init(GameMechanics* m, GameGraphics* g)
 {
     mAgent = m;
     gAgent = g;
-
-    //Loading textures and fonts
-    if (!m_guisheet.loadFromFile("images/guisheet.png")) return false;
-    if (!m_main_bgTex.loadFromFile("images/main.png")) return false;
-    if (!m_settings_bgTex.loadFromFile("images/settings.png")) return false;
-    if (!m_scoringScreenTex.loadFromFile("images/scoring.png")) return false;
-    if (!m_stencil.loadFromFile("fonts/stenc_ex.ttf")) return false;
-    if (!m_liberation.loadFromFile("fonts/LiberationSerif-Regular.ttf")) return false;
 
     //Initializing object counts
     m_pause_numChoices = 3;
@@ -56,7 +49,7 @@ bool GameGUI::init(GameMechanics* m, GameGraphics* g)
     m_hpBar = &m_hud[1*4];
     m_shieldBar = &m_hud[2*4];
     m_levelDisplay = &m_hud[4*4];
-    m_score.setFont(m_stencil);
+    m_score.setFont(resource.getFont("stencil"));
     m_score.setPosition(22, 560);
     m_score.setCharacterSize(24);
 
@@ -124,7 +117,7 @@ bool GameGUI::init(GameMechanics* m, GameGraphics* g)
     m_scoring_numbers = std::vector<sf::Text>(6, sf::Text());
     for (unsigned i = 0; i < num_e && util::read3v2f(fin, texCoord, size, pos, true); i++) {
         m_scoring_numbers[i].setPosition(pos);
-        m_scoring_numbers[i].setFont(m_stencil);
+        m_scoring_numbers[i].setFont(resource.getFont("stencil"));
         if (i+1 < num_e) {
             m_scoring_numbers[i].setColor(sf::Color::White);
         }
@@ -154,17 +147,16 @@ bool GameGUI::init(GameMechanics* m, GameGraphics* g)
     fin.close();
 
     //Initializing appearance and configuration of objects
-    m_guisheet.setSmooth(true);
-    m_main_bg.setTexture(m_main_bgTex);
-    m_settings_bg.setTexture(m_settings_bgTex);
-    m_scoringScreen.setTexture(m_scoringScreenTex);
+    m_main_bg.setTexture(resource.getTexture("main_bg"));
+    m_settings_bg.setTexture(resource.getTexture("settings_bg"));
+    m_scoringScreen.setTexture(resource.getTexture("scoring"));
     m_main_choice = 1;
     m_settings_choice = 1;
     m_pause_choice = 1;
     m_select_choice = 1;
     m_main_blinkerBaseLoc = m_main_blinker[0].position;
     m_main_blinkerAlphaChg = 5;
-    m_mainInfo.setFont(m_liberation);
+    m_mainInfo.setFont(resource.getFont("liberation"));
     m_mainInfo.setPosition(25, 525);
     m_mainInfo.setCharacterSize(25);
     m_mainInfo.setColor(sf::Color(30, 16, 8));
@@ -473,7 +465,7 @@ void GameGUI::transitionAppState()
 
 void GameGUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    sf::RenderStates s(&m_guisheet);
+    sf::RenderStates s(&resource.getTexture("guisheet"));
     if (getAppState() == MAIN || getAppState() == SELECTLEVEL) {
         target.draw(m_main_bg);
         target.draw(&m_main[0], m_main.size(), sf::Quads, s);

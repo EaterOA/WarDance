@@ -400,4 +400,11 @@ namespace util
         if (p.size() > s.size()) return false;
         return !strncmp(p.c_str(), s.c_str(), p.size());
     }
+
+    std::string appendNumber(const std::string &s, int n)
+    {
+        std::stringstream ss;
+        ss << s << n;
+        return ss.str();
+    }
 }

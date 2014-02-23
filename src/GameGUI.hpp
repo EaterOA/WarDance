@@ -31,7 +31,6 @@ private:
     int m_main_blinkerAlphaChg;
     sf::Vector2f m_main_blinkerBaseLoc;
     sf::Sprite m_main_bg;
-    sf::Texture m_main_bgTex;
     std::vector<sf::Vertex> m_main;
     std::vector<sf::Vertex> m_mainLit, m_mainDim;
     sf::Text m_mainInfo;
@@ -52,7 +51,6 @@ private:
     unsigned m_settings_numChoices;
     unsigned m_settings_choice;
     sf::Sprite m_settings_bg;
-    sf::Texture m_settings_bgTex;
     sf::Vertex* m_settingsMenu, *m_settingsSwitches;
     std::vector<sf::Vertex> m_settings;
     std::vector<sf::Vertex> m_settingsLit, m_settingsDim;
@@ -60,21 +58,17 @@ private:
 
     //HUD
     void updateHUD(const GameState& state);
-    sf::Font m_stencil;
-    sf::Font m_liberation;
     sf::Text m_score;
     sf::Vertex *m_hpBar, *m_shieldBar, *m_levelDisplay;
     std::vector<std::vector<sf::Vertex> > m_levelIcons;
     sf::Vertex m_grenade[4];
     std::vector<sf::Vertex> m_grenadeDisplay;
     sf::VertexArray m_hud;
-    sf::Texture m_guisheet;
 
     //Level end sequence
     void updateLevelEndSequence(const GameState& state);
     void forwardLevelEndSequence();
     sf::Sprite m_scoringScreen;
-    sf::Texture m_scoringScreenTex;
     std::vector<sf::Text> m_scoring_numbers;
     sf::Vertex m_scoringLevelDisplay[4];
     sf::Vertex m_nextLevelDisplay[4];
