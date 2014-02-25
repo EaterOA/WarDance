@@ -14,8 +14,6 @@ struct FrameData
     sf::Vector2f size;
     sf::Vector2f texCoord;
     sf::Vector2f posOffset;
-    bool rotatable;
-    unsigned rgba;
 };
 
 class GameGraphics : public sf::Drawable, public sf::Transformable

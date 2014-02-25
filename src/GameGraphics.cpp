@@ -17,10 +17,10 @@ bool GameGraphics::init()
     
     //Loading level background textures
     for (unsigned i = 0; i < numLevels; i++) {
-        m_lvlBackgroundTex[i] = &resource.getTexture(util::appendNumber("bg", i));
+        m_lvlBackgroundTex[i] = &resource.getTexture(util::appendNumber("bg", (int)i));
     }
     for (unsigned i = 0; i < numSheets; i++) {
-        m_spritesheet[i] = &resource.getTexture(util::appendNumber("spritesheet", i));
+        m_spritesheet[i] = &resource.getTexture(util::appendNumber("spritesheet", (int)i));
     }
 
     //Reading sprite frame data

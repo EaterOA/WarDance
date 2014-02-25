@@ -386,7 +386,7 @@ void GameGUI::updateAppState()
     if (getAppState() == MAIN || getAppState() == SELECTLEVEL) {
 
         //Blinking main menu highlight
-        unsigned a = m_main_blinker[0].color.a;
+        int a = (int)m_main_blinker[0].color.a;
         sf::Vector2f main_blinkerSize = m_main_blinker[2].position - m_main_blinker[0].position;
         sf::Vector2f main_blinkerLoc = m_main_blinkerBaseLoc + sf::Vector2f(0, (m_main_choice-1) * 50.f);
         util::affixPos(&m_main_blinker[0], main_blinkerLoc, main_blinkerSize, 1);
