@@ -23,7 +23,7 @@ bool GameGUI::init(GameMechanics* m, GameGraphics* g)
              num_e = 6;
 
     //Preparing to load gui object data
-    //Data format: 2 base texture coordinates, 2 texture size, 2 position coordinates
+    //Data format: 2 base texture coordinates, 2 texture size, 2 (center) position coordinates
     sf::Vector2f texCoord, size, pos;
     std::ifstream fin;
     fin.open("config/guidata.txt");
@@ -160,6 +160,7 @@ bool GameGUI::init(GameMechanics* m, GameGraphics* g)
     m_mainInfo.setPosition(25, 525);
     m_mainInfo.setCharacterSize(25);
     m_mainInfo.setColor(sf::Color(30, 16, 8));
+    m_select_upLitTime = m_select_downLitTime = 0.f;
     util::copySprite(&m_levelIcons[0][0], m_levelDisplay);
     util::copySprite(&m_levelIcons[0][0], m_nextLevelDisplay);
     util::copyTexture(&m_levelIcons[0][0], &m_select[1*4]);
@@ -350,8 +351,8 @@ void GameGUI::selectMainChoice(unsigned choice)
     else if (choice > m_main_numChoices) choice -= m_main_numChoices;
     unsigned prev = m_main_choice-1;
     unsigned next = choice-1;
-    util::copyTexture(&m_mainDim[prev*4], &m_mainMenu[prev*4]);
-    util::copyTexture(&m_mainLit[next*4], &m_mainMenu[next*4]);
+    util::copySprite(&m_mainDim[prev*4], &m_mainMenu[prev*4]);
+    util::copySprite(&m_mainLit[next*4], &m_mainMenu[next*4]);
     m_main_choice = choice;
 }
 
@@ -377,7 +378,7 @@ void GameGUI::processSelectChoice()
     goToMain();
 }
 
-void GameGUI::updateAppState()
+void GameGUI::updateAppState(const sf::Time &elapsed)
 {
     if (getAppState() == SETTINGS) {
         processSettingsSwitches();
@@ -398,26 +399,88 @@ void GameGUI::updateAppState()
         wss << "Level " << config.getInt("level") << "\nHighscore " << config.getInt("highscore");
         m_mainInfo.setString(wss.str());
 
-        //Lighting select level arrows
-        if (getAppState() == SELECTLEVEL) {
-            if (controller.pressing(GameController::K_UP)) util::copyTexture(&m_selectLit[0*4], &m_select[2*4]);
-            else util::copyTexture(&m_selectDim[0*4], &m_select[2*4]);
-            if (controller.pressing(GameController::K_DOWN)) util::copyTexture(&m_selectLit[1*4], &m_select[3*4]);
-            else util::copyTexture(&m_selectDim[1*4], &m_select[3*4]);
+        //Lighting or dimming select level arrows
+        m_select_upLitTime -= elapsed.asSeconds();
+        m_select_downLitTime -= elapsed.asSeconds();
+        if (m_select_upLitTime > 0) util::copyTexture(&m_selectLit[0*4], &m_select[2*4]);
+        else util::copyTexture(&m_selectDim[0*4], &m_select[2*4]);
+        if (m_select_downLitTime > 0) util::copyTexture(&m_selectLit[1*4], &m_select[3*4]);
+        else util::copyTexture(&m_selectDim[1*4], &m_select[3*4]);
+    }
+}
+
+unsigned GameGUI::translateOption(AppState state, float x, float y)
+{
+    sf::Vector2f m(x, y);
+    if (state == MAIN) {
+        for (unsigned i = 0; i < m_main_numChoices; i++) {
+            unsigned idx = (i+1)*4;
+            sf::Vector2f size = m_main[idx+2].position - m_main[idx].position;
+            sf::Vector2f pos = util::referenceToCenter(m_main[idx].position, size, 1);
+            if (util::hasCollided(m, pos, size, 0)) return i+1;
         }
     }
+    else if (state == PAUSED) {
+        for (unsigned i = 0; i < m_pause_numChoices; i++) {
+            unsigned idx = (i+1)*4;
+            sf::Vector2f size = m_pause[idx+2].position - m_pause[idx].position;
+            sf::Vector2f pos = util::referenceToCenter(m_pause[idx].position, size, 1);
+            if (util::hasCollided(m, pos, size, 0)) return i+1;
+        }
+    }
+    else if (state == SETTINGS) {
+        for (unsigned i = 0; i < m_settings_numChoices; i++) {
+            unsigned idx = i*4;
+            sf::Vector2f size = m_settingsMenu[idx+2].position - m_settingsMenu[idx].position;
+            sf::Vector2f pos = util::referenceToCenter(m_settingsMenu[idx].position, size, 1);
+            if (util::hasCollided(m, pos, size, 0)) return i+1;
+        }
+    }
+    else if (state == SELECTLEVEL) {
+        for (unsigned i = 0; i < 2; i++) {
+            unsigned idx = (i+2)*4;
+            sf::Vector2f size = m_select[idx+2].position - m_select[idx].position;
+            sf::Vector2f pos = util::referenceToCenter(m_select[idx].position, size, 1);
+            if (util::hasCollided(m, pos, size, 0)) return i+1;
+        }
+    }    return 0;
 }
 
 void GameGUI::processInput(const std::vector<sf::Event> &events)
 {
     for (unsigned i = 0; i < events.size(); i++) {
 
-        if (events[i].type == sf::Event::MouseButtonPressed) {
+        //Mouse presses
+        if (events[i].type == sf::Event::MouseButtonReleased) {
+            float x = (float)events[i].mouseButton.x;
+            float y = (float)events[i].mouseButton.y;
+            unsigned opt = translateOption(getAppState(), x, y);
+            if (!opt) continue;
+            if (getAppState() == MAIN) processMainChoice();
+            else if (getAppState() == PAUSED) processPauseChoice();
+            else if (getAppState() == SETTINGS) processSettingsChoice();
+            else if (getAppState() == SELECTLEVEL) {
+                if (opt == 1) {
+                    m_select_upLitTime = 0.1f;
+                    selectSelectChoice(m_select_choice + 1);
+                }
+                else if (opt == 2) {
+                    m_select_downLitTime = 0.1f;
+                    selectSelectChoice(m_select_choice - 1);
+                }
+            }
+        }
+        //Mouse movement
+        else if (events[i].type == sf::Event::MouseMoved) {
             float x = (float)events[i].mouseMove.x;
             float y = (float)events[i].mouseMove.y;
+            unsigned opt = translateOption(getAppState(), x, y);
+            if (!opt) continue;
+            if (getAppState() == MAIN) selectMainChoice(opt);
+            else if (getAppState() == PAUSED) selectPauseChoice(opt);
+            else if (getAppState() == SETTINGS) selectSettingsChoice(opt);
         }
-        else if (events[i].type == sf::Event::MouseMoved) {
-        }
+        //Keyboard events
         else if (events[i].type == sf::Event::KeyPressed) {
             bool up = controller.pressing(GameController::K_UP, events[i].key.code);
             bool down = controller.pressing(GameController::K_DOWN, events[i].key.code);
@@ -428,8 +491,14 @@ void GameGUI::processInput(const std::vector<sf::Event> &events)
                 if (enter) forwardLevelEndSequence();
             }
             else if (getAppState() == SELECTLEVEL) {
-                if (down) selectSelectChoice(m_select_choice - 1);
-                else if (up) selectSelectChoice(m_select_choice + 1);
+                if (down) {
+                    m_select_downLitTime = 0.1f;
+                    selectSelectChoice(m_select_choice - 1);
+                }
+                else if (up) {
+                    m_select_upLitTime = 0.1f;
+                    selectSelectChoice(m_select_choice + 1);
+                }
                 else if (enter) processSelectChoice();
             }
             else if (getAppState() == PAUSED) {

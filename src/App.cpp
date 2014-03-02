@@ -143,8 +143,7 @@ std::vector<sf::Event> processEvents()
             while (appStates.back() == NOFOCUS) appStates.pop_back();
             if (getAppState() == GAME) pauseGame();
         }
-        else if (event.type == sf::Event::KeyPressed || event.type == sf::Event::MouseButtonPressed)
-            inputEvents.push_back(event);
+        else inputEvents.push_back(event);
     }
     return inputEvents;
 }
@@ -154,10 +153,12 @@ void appStart()
     guiAgent.transitionAppState();
     //Game loop
     while (window.isOpen()) {
+        sf::Time elapsed = gameClock.restart();
+
         guiAgent.processInput(processEvents());
-        guiAgent.updateAppState();
+        guiAgent.updateAppState(elapsed);
         if (getAppState() == GAME || getAppState() == LEVELENDSEQUENCE) {
-            mAgent.updateGameState(window, gameClock.restart());
+            mAgent.updateGameState(window, elapsed);
             if (mAgent.isPlayerDead()) {
                 goToMain();
             }

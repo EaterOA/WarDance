@@ -11,7 +11,7 @@ class GameGUI : public sf::Drawable, public sf::Transformable
 public:
     bool init(GameMechanics* m, GameGraphics* g);
     void updateGameState(const GameState& state);
-    void updateAppState();
+    void updateAppState(const sf::Time& elapsed);
     void transitionAppState();
     void processInput(const std::vector<sf::Event> &events);
     void startLevelEndSequence(const std::map<std::string, int> levelEndStats);
@@ -20,6 +20,7 @@ public:
     bool isLevelEndSequenceDone() const;
 private:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+    unsigned translateOption(AppState state, float x, float y);
 
     GameMechanics* mAgent;
     GameGraphics* gAgent;
@@ -86,6 +87,7 @@ private:
     std::vector<sf::Vertex> m_select;
     std::vector<sf::Vertex> m_selectLit, m_selectDim;
     unsigned m_select_choice;
+    float m_select_upLitTime, m_select_downLitTime;
 };
 
 #endif

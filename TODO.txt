@@ -19,7 +19,6 @@ TODO anytime
 - MEC: Expand GameScript capability
 - GUI: Add player status list to HUD
 - GUI: Add initial splash/loading screen
-- GUI: Make menu items selectable by mouse
 
 
 TODO future
