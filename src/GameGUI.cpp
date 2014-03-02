@@ -408,41 +408,49 @@ void GameGUI::updateAppState()
     }
 }
 
-void GameGUI::processInput(const std::vector<sf::Event> &keyEvents)
+void GameGUI::processInput(const std::vector<sf::Event> &events)
 {
-    for (unsigned i = 0; i < keyEvents.size(); i++) {
+    for (unsigned i = 0; i < events.size(); i++) {
 
-        bool up = controller.pressing(GameController::K_UP, keyEvents[i].key.code);
-        bool down = controller.pressing(GameController::K_DOWN, keyEvents[i].key.code);
-        bool enter = controller.pressing(GameController::K_ENTER, keyEvents[i].key.code);
-        bool esc = controller.pressing(GameController::K_ESCAPE, keyEvents[i].key.code);
+        if (events[i].type == sf::Event::MouseButtonPressed) {
+            float x = (float)events[i].mouseMove.x;
+            float y = (float)events[i].mouseMove.y;
+        }
+        else if (events[i].type == sf::Event::MouseMoved) {
+        }
+        else if (events[i].type == sf::Event::KeyPressed) {
+            bool up = controller.pressing(GameController::K_UP, events[i].key.code);
+            bool down = controller.pressing(GameController::K_DOWN, events[i].key.code);
+            bool enter = controller.pressing(GameController::K_ENTER, events[i].key.code);
+            bool esc = controller.pressing(GameController::K_ESCAPE, events[i].key.code);
 
-        if (getAppState() == LEVELENDSEQUENCE) {
-            if (enter) forwardLevelEndSequence();
-        }
-        else if (getAppState() == SELECTLEVEL) {
-            if (down) selectSelectChoice(m_select_choice - 1);
-            else if (up) selectSelectChoice(m_select_choice + 1);
-            else if (enter) processSelectChoice();
-        }
-        else if (getAppState() == PAUSED) {
-            if (down) selectPauseChoice(m_pause_choice + 1);
-            else if (up) selectPauseChoice(m_pause_choice - 1);
-            else if (enter) processPauseChoice();
-        }
-        else if (getAppState() == SETTINGS) {
-            if (down) selectSettingsChoice(m_settings_choice + 1);
-            else if (up) selectSettingsChoice(m_settings_choice - 1);
-            else if (enter) processSettingsChoice();
-        }
-        else if (getAppState() == MAIN) {
-            if (down) selectMainChoice(m_main_choice + 1);
-            else if (up) selectMainChoice(m_main_choice - 1);
-            else if (enter) processMainChoice();
-        }
-        if (esc) {
-            if (getAppState() == GAME || getAppState() == LEVELENDSEQUENCE) pauseGame();
-            else if (getAppState() != MAIN) back();
+            if (getAppState() == LEVELENDSEQUENCE) {
+                if (enter) forwardLevelEndSequence();
+            }
+            else if (getAppState() == SELECTLEVEL) {
+                if (down) selectSelectChoice(m_select_choice - 1);
+                else if (up) selectSelectChoice(m_select_choice + 1);
+                else if (enter) processSelectChoice();
+            }
+            else if (getAppState() == PAUSED) {
+                if (down) selectPauseChoice(m_pause_choice + 1);
+                else if (up) selectPauseChoice(m_pause_choice - 1);
+                else if (enter) processPauseChoice();
+            }
+            else if (getAppState() == SETTINGS) {
+                if (down) selectSettingsChoice(m_settings_choice + 1);
+                else if (up) selectSettingsChoice(m_settings_choice - 1);
+                else if (enter) processSettingsChoice();
+            }
+            else if (getAppState() == MAIN) {
+                if (down) selectMainChoice(m_main_choice + 1);
+                else if (up) selectMainChoice(m_main_choice - 1);
+                else if (enter) processMainChoice();
+            }
+            if (esc) {
+                if (getAppState() == GAME || getAppState() == LEVELENDSEQUENCE) pauseGame();
+                else if (getAppState() != MAIN) back();
+            }
         }
     }
 }

@@ -19,7 +19,7 @@
 namespace util
 {
     //Geometry
-    enum Shape { Circle, Rectangle, Stroke };
+    enum Shape { Circle, Rectangle, Stroke, Point };
     struct ShapeVector
     {
         ShapeVector() {};
@@ -44,8 +44,12 @@ namespace util
     float getDist(sf::Vector2f p, sf::Vector2f p1, sf::Vector2f p2);
     sf::Vector2f getUnitVector(sf::Vector2f p1, sf::Vector2f p2);
 
-    //Collision physics
+    //Collision logic
     bool hasCollided(sf::Vector2f c1, util::ShapeVector s1, float dir1, sf::Vector2f c2, util::ShapeVector s2, float dir2);
+    bool hasCollided(sf::Vector2f c1, sf::Vector2f c2);
+    bool hasCollided(sf::Vector2f c1, sf::Vector2f c2, float r2);
+    bool hasCollided(sf::Vector2f c1, sf::Vector2f c2, sf::Vector2f s2, float dir2);
+    bool hasCollided(sf::Vector2f c1, sf::Vector2f c2, float r21, float r22);
     bool hasCollided(sf::Vector2f c1, float r11, float r12, sf::Vector2f c2, float r2);
     bool hasCollided(sf::Vector2f c1, float r11, float r12, sf::Vector2f c2, sf::Vector2f s2, float dir2);
     bool hasCollided(sf::Vector2f c1, float r1, sf::Vector2f c2, float r2);
@@ -53,6 +57,7 @@ namespace util
     bool hasCollided(sf::Vector2f c1, sf::Vector2f s1, float dir1, sf::Vector2f c2, sf::Vector2f s2, float dir2);
 
     //Sprite manipulation 
+    sf::Vector2f referenceToCenter(sf::Vector2f pos, sf::Vector2f size, int reference);
     void copySprite(const sf::Vertex src[4], sf::Vertex dest[4]);
     void copyTexture(const sf::Vertex src[4], sf::Vertex dest[4]);
     void translateSprite(sf::Vertex sprite[4], sf::Vector2f translation);

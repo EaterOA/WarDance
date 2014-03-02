@@ -91,16 +91,69 @@ namespace util
         return sf::Vector2f(v.x / len, v.y / len);
     }
 
+    bool hasCollided(sf::Vector2f c1, sf::Vector2f c2, float r2)
+    {
+        return getDist(c1, c2) <= r2;
+    }
+
+    bool hasCollided(sf::Vector2f c1, sf::Vector2f c2, sf::Vector2f s2, float dir2)
+    {
+        //Basic distance check
+        float dist = getDist(c1, c2);
+        if (getMaxRad(s2) < dist) return false;
+        if (getMinRad(s2) > dist) return true;
+
+        //Transforming vectors
+        float unitX2 = cos(dir2);
+        float unitY2 = sin(dir2);
+        sf::Vector2f rotWidth2(unitX2 * s2.x / 2.f, unitY2 * s2.x / 2.f);
+        sf::Vector2f rotHeight2(-unitY2 * s2.y / 2.f, unitX2 * s2.y / 2.f);
+        sf::Vector2f tr2[] = {c2 - rotWidth2 - rotHeight2,
+            c2 + rotWidth2 - rotHeight2,
+            c2 + rotWidth2 + rotHeight2,
+            c2 - rotWidth2 + rotHeight2};
+
+        //Inner check
+        float si1 = crossZ(tr2[1] - tr2[0], c1 - tr2[0]);
+        float si2 = crossZ(tr2[2] - tr2[1], c1 - tr2[1]);
+        float si3 = crossZ(tr2[3] - tr2[2], c1 - tr2[2]);
+        float si4 = crossZ(tr2[0] - tr2[3], c1 - tr2[3]);
+        if (si1 < 0 && si2 < 0 && si3 < 0 && si4 < 0) return true;
+        if (si1 > 0 && si2 > 0 && si3 > 0 && si4 > 0) return true;
+
+        return false;
+    }
+
+    bool hasCollided(sf::Vector2f c1, sf::Vector2f c2, float r21, float r22)
+    {
+        float dist = getDist(c1, c2);
+        if (dist < r21) return false;
+        if (dist > r22) return false;
+        return true;
+    }
+
+    bool hasCollided(sf::Vector2f c1, sf::Vector2f c2)
+    {
+        return c1 == c2;
+    }
+
     bool hasCollided(sf::Vector2f c1, util::ShapeVector s1, float dir1, sf::Vector2f c2, util::ShapeVector s2, float dir2)
     {
+        if (s1.s == Point && s2.s == Point) return hasCollided(c1, c2);
+        if (s1.s == Point && s2.s == Circle) return hasCollided(c1, c2, s2.x);
+        if (s1.s == Point && s2.s == Rectangle) return hasCollided(c1, c2, sf::Vector2f(s2.x, s2.y), dir2);
+        if (s1.s == Point && s2.s == Stroke) return hasCollided(c1, c2, s2.x, s2.y);
+        if (s1.s == Circle && s2.s == Point) return hasCollided(c2, c1, s1.x);
         if (s1.s == Circle && s2.s == Circle) return hasCollided(c1, s1.x, c2, s2.x);
-        if (s1.s == Rectangle && s2.s == Circle) return hasCollided(c1, sf::Vector2f(s1.x, s1.y), dir1, c2, s2.x);
         if (s1.s == Circle && s2.s == Rectangle) return hasCollided(c2, sf::Vector2f(s2.x, s2.y), dir2, c1, s1.x);
+        if (s1.s == Circle && s2.s == Stroke) return hasCollided(c2, s2.x, s2.y, c1, s1.x);
+        if (s1.s == Rectangle && s2.s == Point) return hasCollided(c2, c1, sf::Vector2f(s1.x, s1.y), dir1);
+        if (s1.s == Rectangle && s2.s == Circle) return hasCollided(c1, sf::Vector2f(s1.x, s1.y), dir1, c2, s2.x);
         if (s1.s == Rectangle && s2.s == Rectangle) return hasCollided(c1, sf::Vector2f(s1.x, s1.y), dir1, c2, sf::Vector2f(s2.x, s2.y), dir2);
+        if (s1.s == Rectangle && s2.s == Stroke) return hasCollided(c2, s2.x, s2.y, c1, sf::Vector2f(s1.x, s1.y), dir1);
+        if (s1.s == Stroke && s2.s == Point) return hasCollided(c2, c1, s1.x, s1.y);
         if (s1.s == Stroke && s2.s == Circle) return hasCollided(c1, s1.x, s1.y, c2, s2.x);
         if (s1.s == Stroke && s2.s == Rectangle) return hasCollided(c1, s1.x, s1.y, c2, sf::Vector2f(s2.x, s2.y), dir2);
-        if (s1.s == Circle && s2.s == Stroke) return hasCollided(c2, s2.x, s2.y, c1, s1.x);
-        if (s1.s == Rectangle && s2.s == Stroke) return hasCollided(c2, s2.x, s2.y, c1, sf::Vector2f(s1.x, s1.y), dir1);
         return false;
     }
 
@@ -230,6 +283,29 @@ namespace util
         return true;
     }
 
+    sf::Vector2f referenceToCenter(sf::Vector2f pos, sf::Vector2f size, int reference)
+    {
+        sf::Vector2f hSize(size.x / 2.f, size.y / 2.f);
+        sf::Vector2f realPos = pos;
+        if (reference == 1) {
+            realPos.x += hSize.x;
+            realPos.y += hSize.y;
+        }
+        else if (reference == 2) {
+            realPos.x -= hSize.x;
+            realPos.y += hSize.y;
+        }
+        else if (reference == 3) {
+            realPos.x -= hSize.x;
+            realPos.y -= hSize.y;
+        }
+        else if (reference == 4) {
+            realPos.x += hSize.x;
+            realPos.y -= hSize.y;
+        }
+        return realPos;
+    }
+
     void copySprite(const sf::Vertex src[4], sf::Vertex dest[4])
     {
         dest[0] = src[0];
@@ -283,23 +359,7 @@ namespace util
     void affixPos(sf::Vertex sprite[4], sf::Vector2f pos, sf::Vector2f size, int reference)
     {
         sf::Vector2f hSize(size.x / 2.f, size.y / 2.f);
-        sf::Vector2f realPos = pos;
-        if (reference == 1) {
-            realPos.x += hSize.x;
-            realPos.y += hSize.y;
-        }
-        else if (reference == 2) {
-            realPos.x -= hSize.x;
-            realPos.y += hSize.y;
-        }
-        else if (reference == 3) {
-            realPos.x -= hSize.x;
-            realPos.y -= hSize.y;
-        }
-        else if (reference == 4) {
-            realPos.x += hSize.x;
-            realPos.y -= hSize.y;
-        }
+        sf::Vector2f realPos = referenceToCenter(pos, size, reference);
         sprite[0].position = sf::Vector2f(realPos.x - hSize.x, realPos.y - hSize.y);
         sprite[1].position = sf::Vector2f(realPos.x + hSize.x, realPos.y - hSize.y);
         sprite[2].position = sf::Vector2f(realPos.x + hSize.x, realPos.y + hSize.y);

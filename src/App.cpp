@@ -129,7 +129,7 @@ void goToNextLevel()
 
 std::vector<sf::Event> processEvents()
 {
-    std::vector<sf::Event> keyEvents;
+    std::vector<sf::Event> inputEvents;
     sf::Event event;
     while (window.pollEvent(event)) {
         if (event.type == sf::Event::Closed) {
@@ -143,9 +143,10 @@ std::vector<sf::Event> processEvents()
             while (appStates.back() == NOFOCUS) appStates.pop_back();
             if (getAppState() == GAME) pauseGame();
         }
-        else if (event.type == sf::Event::KeyPressed) keyEvents.push_back(event);
+        else if (event.type == sf::Event::KeyPressed || event.type == sf::Event::MouseButtonPressed)
+            inputEvents.push_back(event);
     }
-    return keyEvents;
+    return inputEvents;
 }
 
 void appStart()
