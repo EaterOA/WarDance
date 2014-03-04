@@ -1,8 +1,8 @@
 #include "Actors.hpp"
 #include "GameMechanics.hpp"
 
-Medkit::Medkit(sf::Vector2f pos, float dur)
-    : Item(pos, util::ShapeVector(util::Rectangle, 10, 10), dur)
+Medkit::Medkit(sf::Vector2f pos)
+    : Item(pos, util::ShapeVector(util::Rectangle, 10, 10), 10)
 {
     m_hpRestore = 250;
 

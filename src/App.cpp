@@ -8,7 +8,6 @@
 
 sf::RenderWindow window;
 sf::View camera(sf::FloatRect(0, 0, float(APP_WIDTH), float(APP_HEIGHT)));
-sf::View hud(sf::FloatRect(0, 0, float(APP_WIDTH), float(APP_HEIGHT)));
 GameMechanics mAgent;
 GameGraphics gAgent;
 GameGUI guiAgent;
@@ -48,6 +47,7 @@ void paint()
 {
     window.setView(camera);
     if (getAppState() == PAUSED || getAppState() == GAME || getAppState() == LEVELENDSEQUENCE) window.draw(gAgent);
+sf::View hud(sf::FloatRect(0, 0, float(APP_WIDTH), float(APP_HEIGHT)));
     window.setView(hud);
     window.draw(guiAgent);
     window.setView(camera);

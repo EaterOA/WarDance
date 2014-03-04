@@ -62,8 +62,8 @@ class Player: public Fighter
 {
 public:
     //Status structures
-    enum StatusT { SHIELD, HASTE, SLOW, CONFUSE };
-    struct StatusD
+    enum StatusType { HASTE, SLOW, CONFUSION };
+    struct StatusData
     {
         float dur;
         union
@@ -76,8 +76,8 @@ public:
     virtual void act(GameState& state);
     virtual void hit(GameState& state, int damage);
     virtual void restoreHP(int amt);
-    virtual void applyStatus(StatusT s, float dur);
-    virtual bool isStatus(StatusT s) const;
+    virtual void applyStatus(StatusType s, float dur);
+    virtual bool isStatus(StatusType s) const;
     int getNumGrenades() const;
     float getShield() const;
     float getMaxShield() const;
@@ -90,16 +90,50 @@ private:
     float m_grenade_cd;
     float m_shield_cd;
     float m_shield, m_shield_regen, m_maxShield;
-    std::map<StatusT, StatusD> m_status;
+    std::map<StatusType, StatusData> m_status;
+};
+
+
+//@@@@@@@@@@@@@@@@@@@@@@@@ Items @@@@@@@@@@@@@@@@@@@@@@@@
+
+class Item: public Actor
+{
+public:
+    enum Type { None, Medkit };
+
+    Item(sf::Vector2f pos, util::ShapeVector size, float dur);
+    float getDuration() const;
+    bool isDead(const GameState &state) const;
+protected:
+    float m_duration;
+};
+
+class Medkit: public Item
+{
+public:
+    Medkit(sf::Vector2f pos);
+    virtual void act(GameState& state);
+protected:
+    int m_hpRestore;
 };
 
 
 //@@@@@@@@@@@@@@@@@@@@@@@@ Enemies @@@@@@@@@@@@@@@@@@@@@@@@
 
-class Grunt: public Fighter
+class Enemy: public Fighter
 {
 public:
-    Grunt(sf::Vector2f pos);
+    Enemy(util::ShapeVector size, sf::Vector2f pos, int hp, int faction, int bounty = 0, Item::Type drop = Item::None);
+    virtual void onDeath(GameState& state);
+private:
+    int m_bounty;
+    Item::Type m_drop;
+};
+
+class Grunt: public Enemy
+{
+public:
+    Grunt(sf::Vector2f pos, Item::Type drop = Item::None);
     virtual void act(GameState& state);
     virtual void hit(GameState& state, int damage);
 protected:
@@ -110,20 +144,20 @@ protected:
     float m_move_cd;
 };
 
-class Sprinkler: public Fighter
+class Sprinkler: public Enemy
 {
 public:
-    Sprinkler(sf::Vector2f pos);
+    Sprinkler(sf::Vector2f pos, Item::Type drop = Item::None);
     virtual void act(GameState& state);
     virtual void hit(GameState& state, int damage);
 protected:
     virtual void attack(GameState& state);
 };
 
-class Alien: public Fighter
+class Alien: public Enemy
 {
 public:
-    Alien(sf::Vector2f pos);
+    Alien(sf::Vector2f pos, Item::Type drop = Item::None);
     virtual void act(GameState& state);
     virtual void hit(GameState& state, int damage);
 protected:
@@ -219,29 +253,6 @@ protected:
     float m_time;
     float m_fadeTime;
     bool m_countHit;
-};
-
-
-
-//@@@@@@@@@@@@@@@@@@@@@@@@ Items @@@@@@@@@@@@@@@@@@@@@@@@
-
-class Item: public Actor
-{
-public:
-    Item(sf::Vector2f pos, util::ShapeVector size, float dur);
-    float getDuration() const;
-    bool isDead(const GameState &state) const;
-protected:
-    float m_duration;
-};
-
-class Medkit: public Item
-{
-public:
-    Medkit(sf::Vector2f pos, float dur);
-    virtual void act(GameState& state);
-protected:
-    int m_hpRestore;
 };
 
 #endif

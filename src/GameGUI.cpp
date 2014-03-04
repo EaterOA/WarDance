@@ -449,26 +449,32 @@ unsigned GameGUI::translateOption(float x, float y)
 
 void GameGUI::processInput(const std::vector<sf::Event> &events)
 {
+    AppState s = getAppState();
     for (unsigned i = 0; i < events.size(); i++) {
 
         //Mouse presses
         if (events[i].type == sf::Event::MouseButtonReleased) {
-            float x = (float)events[i].mouseButton.x;
-            float y = (float)events[i].mouseButton.y;
-            unsigned opt = translateOption(x, y);
-            if (!opt) continue;
-            if (getAppState() == MAIN) processMainChoice();
-            else if (getAppState() == PAUSED) processPauseChoice();
-            else if (getAppState() == SETTINGS) processSettingsChoice();
-            else if (getAppState() == SELECTLEVEL) {
-                if (opt == 1) {
-                    m_select_upLitTime = 0.1f;
-                    selectSelectChoice(m_select_choice + 1);
+            if (events[i].mouseButton.button == sf::Mouse::Left) {
+                float x = (float)events[i].mouseButton.x;
+                float y = (float)events[i].mouseButton.y;
+                unsigned opt = translateOption(x, y);
+                if (!opt) continue;
+                if (s == MAIN) processMainChoice();
+                else if (s == PAUSED) processPauseChoice();
+                else if (s == SETTINGS) processSettingsChoice();
+                else if (s == SELECTLEVEL) {
+                    if (opt == 1) {
+                        m_select_upLitTime = 0.1f;
+                        selectSelectChoice(m_select_choice + 1);
+                    }
+                    else if (opt == 2) {
+                        m_select_downLitTime = 0.1f;
+                        selectSelectChoice(m_select_choice - 1);
+                    }
                 }
-                else if (opt == 2) {
-                    m_select_downLitTime = 0.1f;
-                    selectSelectChoice(m_select_choice - 1);
-                }
+            }
+            else if (events[i].mouseButton.button == sf::Mouse::Right) {
+                if (s != GAME && s != LEVELENDSEQUENCE && s != MAIN) back();
             }
         }
         //Mouse movement
@@ -477,9 +483,9 @@ void GameGUI::processInput(const std::vector<sf::Event> &events)
             float y = (float)events[i].mouseMove.y;
             unsigned opt = translateOption(x, y);
             if (!opt) continue;
-            if (getAppState() == MAIN) selectMainChoice(opt);
-            else if (getAppState() == PAUSED) selectPauseChoice(opt);
-            else if (getAppState() == SETTINGS) selectSettingsChoice(opt);
+            if (s == MAIN) selectMainChoice(opt);
+            else if (s == PAUSED) selectPauseChoice(opt);
+            else if (s == SETTINGS) selectSettingsChoice(opt);
         }
         //Keyboard events
         else if (events[i].type == sf::Event::KeyPressed) {
@@ -488,10 +494,10 @@ void GameGUI::processInput(const std::vector<sf::Event> &events)
             bool enter = controller.pressing(GameController::K_ENTER, events[i].key.code);
             bool esc = controller.pressing(GameController::K_ESCAPE, events[i].key.code);
 
-            if (getAppState() == LEVELENDSEQUENCE) {
+            if (s == LEVELENDSEQUENCE) {
                 if (enter) forwardLevelEndSequence();
             }
-            else if (getAppState() == SELECTLEVEL) {
+            else if (s == SELECTLEVEL) {
                 if (down) {
                     m_select_downLitTime = 0.1f;
                     selectSelectChoice(m_select_choice - 1);
@@ -502,24 +508,24 @@ void GameGUI::processInput(const std::vector<sf::Event> &events)
                 }
                 else if (enter) processSelectChoice();
             }
-            else if (getAppState() == PAUSED) {
+            else if (s == PAUSED) {
                 if (down) selectPauseChoice(m_pause_choice + 1);
                 else if (up) selectPauseChoice(m_pause_choice - 1);
                 else if (enter) processPauseChoice();
             }
-            else if (getAppState() == SETTINGS) {
+            else if (s == SETTINGS) {
                 if (down) selectSettingsChoice(m_settings_choice + 1);
                 else if (up) selectSettingsChoice(m_settings_choice - 1);
                 else if (enter) processSettingsChoice();
             }
-            else if (getAppState() == MAIN) {
+            else if (s == MAIN) {
                 if (down) selectMainChoice(m_main_choice + 1);
                 else if (up) selectMainChoice(m_main_choice - 1);
                 else if (enter) processMainChoice();
             }
             if (esc) {
-                if (getAppState() == GAME || getAppState() == LEVELENDSEQUENCE) pauseGame();
-                else if (getAppState() != MAIN) back();
+                if (s == GAME || s == LEVELENDSEQUENCE) pauseGame();
+                else if (s != MAIN) back();
             }
         }
     }

@@ -1,8 +1,8 @@
 #include "Actors.hpp"
 #include "GameMechanics.hpp"
 
-Grunt::Grunt(sf::Vector2f pos)
-    : Fighter(util::ShapeVector(util::Rectangle, 50.f, 50.f), pos, 200, 1)
+Grunt::Grunt(sf::Vector2f pos, Item::Type drop)
+    : Enemy(util::ShapeVector(util::Rectangle, 50.f, 50.f), pos, 200, 1, 500, drop)
 {
     m_max_v = 50.f;
     m_move_cd = 0;
@@ -30,10 +30,7 @@ void Grunt::hit(GameState &state, int damage)
 {
     if (isDead(state)) return;
     m_hp -= damage;
-    if (isDead(state)) {
-        state.score += 500;
-        if (rand() % 15 == 0) state.items.push_back(new Medkit(m_pos, 10));
-    }
+    if (isDead(state)) onDeath(state);
 }
 
 void Grunt::act(GameState& state)

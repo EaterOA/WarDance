@@ -1,8 +1,8 @@
 #include "Actors.hpp"
 #include "GameMechanics.hpp"
 
-Sprinkler::Sprinkler(sf::Vector2f pos)
-    : Fighter(util::ShapeVector(util::Circle, 20.f), pos, 100, 1)
+Sprinkler::Sprinkler(sf::Vector2f pos, Item::Type drop)
+    : Enemy(util::ShapeVector(util::Circle, 20.f), pos, 100, 1, 700, drop)
 {
     m_attack_cd = 0;
 
@@ -13,7 +13,7 @@ void Sprinkler::hit(GameState &state, int damage)
 {
     if (isDead(state)) return;
     m_hp -= damage;
-    if (isDead(state)) state.score += 700;
+    if (isDead(state)) onDeath(state);
 }
 
 void Sprinkler::attack(GameState& state)

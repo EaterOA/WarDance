@@ -155,7 +155,10 @@ void GameMechanics::spawnEnemy(std::string name)
 {
     if (name == "grunt") {
         sf::Vector2f pos = offMapEntrance(25, 25);
-        m_state.enemies.push_back(new Grunt(pos));
+        if (RAND(1, 15) == 1)
+            m_state.enemies.push_back(new Grunt(pos, Item::Medkit));
+        else 
+            m_state.enemies.push_back(new Grunt(pos));
     }
     else if (name == "alien") {
         sf::Vector2f pos = offMapEntrance(60, 60);
@@ -170,7 +173,10 @@ void GameMechanics::spawnEnemy(std::string name)
 void GameMechanics::spawnEnemy(std::string name, sf::Vector2f pos)
 {
     if (name == "grunt") {
-        m_state.enemies.push_back(new Grunt(pos));
+        if (RAND(1, 15) == 1)
+            m_state.enemies.push_back(new Grunt(pos, Item::Medkit));
+        else 
+            m_state.enemies.push_back(new Grunt(pos));
     }
     else if (name == "alien") {
         m_state.enemies.push_back(new Alien(pos));

@@ -1,8 +1,8 @@
 #include "Actors.hpp"
 #include "GameMechanics.hpp"
 
-Alien::Alien(sf::Vector2f pos)
-    : Fighter(util::ShapeVector(util::Rectangle, 60.f, 45.f), pos, 2500, 1)
+Alien::Alien(sf::Vector2f pos, Item::Type drop)
+    : Enemy(util::ShapeVector(util::Rectangle, 60.f, 45.f), pos, 2500, 1, 4000, drop)
 {
     m_dir = 0;
     m_move_cd = 0;
@@ -16,7 +16,7 @@ void Alien::hit(GameState& state, int damage)
 {
     if (isDead(state)) return;
     m_hp -= damage;
-    if (isDead(state)) state.score += 4000;
+    if (isDead(state)) onDeath(state);
 }
 
 void Alien::cooldown(GameState& state)
