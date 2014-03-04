@@ -4,8 +4,6 @@
 #include "GameMechanics.hpp"
 #include "GameGraphics.hpp"
 
-enum AppState;
-
 class GameGUI : public sf::Drawable, public sf::Transformable
 {
 public:
@@ -20,7 +18,7 @@ public:
     bool isLevelEndSequenceDone() const;
 private:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
-    unsigned translateOption(AppState state, float x, float y);
+    unsigned translateOption(float x, float y);
 
     GameMechanics* mAgent;
     GameGraphics* gAgent;

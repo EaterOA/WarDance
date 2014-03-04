@@ -409,8 +409,9 @@ void GameGUI::updateAppState(const sf::Time &elapsed)
     }
 }
 
-unsigned GameGUI::translateOption(AppState state, float x, float y)
+unsigned GameGUI::translateOption(float x, float y)
 {
+    AppState state = getAppState();
     sf::Vector2f m(x, y);
     if (state == MAIN) {
         for (unsigned i = 0; i < m_main_numChoices; i++) {
@@ -454,7 +455,7 @@ void GameGUI::processInput(const std::vector<sf::Event> &events)
         if (events[i].type == sf::Event::MouseButtonReleased) {
             float x = (float)events[i].mouseButton.x;
             float y = (float)events[i].mouseButton.y;
-            unsigned opt = translateOption(getAppState(), x, y);
+            unsigned opt = translateOption(x, y);
             if (!opt) continue;
             if (getAppState() == MAIN) processMainChoice();
             else if (getAppState() == PAUSED) processPauseChoice();
@@ -474,7 +475,7 @@ void GameGUI::processInput(const std::vector<sf::Event> &events)
         else if (events[i].type == sf::Event::MouseMoved) {
             float x = (float)events[i].mouseMove.x;
             float y = (float)events[i].mouseMove.y;
-            unsigned opt = translateOption(getAppState(), x, y);
+            unsigned opt = translateOption(x, y);
             if (!opt) continue;
             if (getAppState() == MAIN) selectMainChoice(opt);
             else if (getAppState() == PAUSED) selectPauseChoice(opt);
