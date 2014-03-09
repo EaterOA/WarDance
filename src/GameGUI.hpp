@@ -1,5 +1,5 @@
-#ifndef GAME_GUI_HPP
-#define GAME_GUI_HPP
+#ifndef GAMEGUI_HPP
+#define GAMEGUI_HPP
 
 #include "GameMechanics.hpp"
 #include "GameGraphics.hpp"
@@ -62,8 +62,9 @@ private:
     sf::Text m_score;
     sf::Vertex *m_hpBar, *m_shieldBar, *m_levelDisplay;
     std::vector<std::vector<sf::Vertex> > m_levelIcons;
-    sf::Vertex m_grenade[4];
+    sf::Vertex m_grenadeBase[4];
     std::vector<sf::Vertex> m_grenadeDisplay;
+    std::map<Player::StatusType, std::vector<sf::Vertex> > m_statusIcons;
     std::vector<sf::Vertex> m_statusDisplay;
     sf::VertexArray m_hud;
 

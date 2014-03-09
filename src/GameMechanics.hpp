@@ -1,5 +1,5 @@
-#ifndef GAME_MECHANICS_HPP
-#define GAME_MECHANICS_HPP
+#ifndef GAMEMECHANICS_HPP
+#define GAMEMECHANICS_HPP
 
 #include "Actors.hpp"
 #include "GameScript.hpp"

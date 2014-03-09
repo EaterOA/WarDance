@@ -4,6 +4,7 @@
 #include "GameResourceManager.hpp"
 #include "GameController.hpp"
 #include "App.hpp"
+#include <math.h>
 
 bool GameGUI::init(GameMechanics* m, GameGraphics* g)
 {
@@ -15,6 +16,7 @@ bool GameGUI::init(GameMechanics* m, GameGraphics* g)
     m_settings_numChoices = 1;
     m_main_numChoices = 5;
     unsigned num_level_icons = 10,
+             num_status_icons = 3,
              num_p = 1,
              num_s = 0,
              num_m = 1,
@@ -32,13 +34,21 @@ bool GameGUI::init(GameMechanics* m, GameGraphics* g)
     //Reading HUD objects
     //- Grenades
     if (!util::read3v2f(fin, texCoord, size, pos, true)) return false;
-    util::affixTexture(m_grenade, texCoord, size);
-    util::affixPos(m_grenade, pos, size, 0);
+    util::affixTexture(m_grenadeBase, texCoord, size);
+    util::affixPos(m_grenadeBase, pos, size, 0);
     //- Bars
     m_hud = sf::VertexArray(sf::Quads, 5*4);
     for (unsigned i = 0; i < 4 && util::read3v2f(fin, texCoord, size, pos, true); i++) {
         util::affixTexture(&m_hud[i*4], texCoord, size);
         util::affixPos(&m_hud[i*4], pos, size, 0);
+    }
+    //- Statuses
+    Player::StatusType statusList[] = {Player::HASTE, Player::SLOW, Player::CONFUSION};
+    for (unsigned i = 0; i < num_status_icons && util::read3v2f(fin, texCoord, size, pos, true); i++) {
+        std::vector<sf::Vertex> img(4);
+        util::affixTexture(&img[0], texCoord, size);
+        util::affixPos(&img[0], pos, size, 0);
+        m_statusIcons[statusList[i]] = img;
     }
     //- Level icons
     m_levelIcons = std::vector<std::vector<sf::Vertex> >(num_level_icons, std::vector<sf::Vertex>(4));
@@ -46,6 +56,7 @@ bool GameGUI::init(GameMechanics* m, GameGraphics* g)
         util::affixTexture(&m_levelIcons[i][0], texCoord, size);
         util::affixPos(&m_levelIcons[i][0], pos, size, 0);
     }
+    
     m_hpBar = &m_hud[1*4];
     m_shieldBar = &m_hud[2*4];
     m_levelDisplay = &m_hud[4*4];
@@ -290,12 +301,26 @@ void GameGUI::updateHUD(const GameState& state)
     m_grenadeDisplay = std::vector<sf::Vertex>();
     for (int i = 0; i < state.player->getNumGrenades(); i++) {
         sf::Vertex grenadeSprite[4];
-        util::copySprite(m_grenade, grenadeSprite);
+        util::copySprite(m_grenadeBase, grenadeSprite);
         util::translateSprite(grenadeSprite, sf::Vector2f(-25.f * i, 0));
         m_grenadeDisplay.insert(m_grenadeDisplay.end(), grenadeSprite, grenadeSprite+4);    
     }
 
+    //Updating status display
     m_statusDisplay = std::vector<sf::Vertex>();
+    std::list<Player::Status> sList = state.player->getStatuses();
+    float offset = 0;
+    for (std::list<Player::Status>::iterator iter = sList.begin(); iter != sList.end(); iter++) {
+        sf::Vertex icon[4];
+        util::copySprite(&m_statusIcons[iter->type][0], icon);
+        util::translateSprite(icon, sf::Vector2f(offset, 0));
+        unsigned char alpha = 255;
+        if (iter->dur < 5.f)
+            alpha = (unsigned char)(fmod(iter->dur, 1.f) * 255);
+        util::setAlpha(icon, alpha);
+        m_statusDisplay.insert(m_statusDisplay.end(), icon, icon+4);
+        offset += 30;
+    }
 
 }
 
@@ -578,6 +603,8 @@ void GameGUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
                 target.draw(m_hud, s);
                 if (!m_grenadeDisplay.empty())
                     target.draw(&m_grenadeDisplay[0], m_grenadeDisplay.size(), sf::Quads, s);
+                if (!m_statusDisplay.empty())
+                    target.draw(&m_statusDisplay[0], m_statusDisplay.size(), sf::Quads, s);
             }
             else if (appStates[i] == LEVELENDSEQUENCE) {
                 if (m_levelEndSequence_timing_stage == 1 || m_levelEndSequence_timing_stage == 2) {

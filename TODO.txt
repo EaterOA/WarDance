@@ -17,7 +17,6 @@ TODO anytime
 - MEC: Balance game
     * Program sprinkler to forewarn its appearance
 - MEC: Expand GameScript capability
-- GUI: Add player status list to HUD
 - GUI: Add initial splash/loading screen
 
 
