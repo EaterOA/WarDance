@@ -25,26 +25,27 @@ void Player::act(GameState &state)
         if (m_shield > m_maxShield) m_shield = m_maxShield;
     }
 
-    //Progress statuses
-    for (std::map<StatusType, StatusData>::iterator iter = m_status.begin(); iter != m_status.end();) {
-        iter->second.dur -= state.elapsed.asSeconds();
-        if (iter->second.dur <= 0) {
+    //Progress and apply statuses
+    bool confused = false;
+    float extra_v = 0;
+    for (std::list<Status>::iterator iter = m_status.begin(); iter != m_status.end();) {
+        iter->dur -= state.elapsed.asSeconds();
+        if (iter->dur <= 0)
             m_status.erase(iter++);
-        }
         else {
+            if (iter->type == HASTE) extra_v += 75.f;
+            else if (iter->type == SLOW) extra_v -= 60.f;
+            else if (iter->type == CONFUSION) confused = true;
             iter++;
         }
     }
 
     //Compute velocity based on player activity
-    bool confuse = isStatus(CONFUSION);
-    bool up = controller.pressing(GameController::K_UP) ^ confuse,
-         left = controller.pressing(GameController::K_LEFT) ^ confuse,
-         down = controller.pressing(GameController::K_DOWN) ^ confuse,
-         right = controller.pressing(GameController::K_RIGHT) ^ confuse;
-    float final_v = m_base_v
-                    + (isStatus(HASTE) ? 75.f : 0.f)
-                    - (isStatus(SLOW) ? 60.f : 0.f);
+    bool up = controller.pressing(GameController::K_UP) ^ confused,
+         left = controller.pressing(GameController::K_LEFT) ^ confused,
+         down = controller.pressing(GameController::K_DOWN) ^ confused,
+         right = controller.pressing(GameController::K_RIGHT) ^ confused;
+    float final_v = m_base_v + extra_v;
     m_vel.x = m_vel.y = 0;
     if (up && !down) m_vel.y = -final_v;
     else if (!up && down) m_vel.y = final_v;
@@ -128,20 +129,27 @@ void Player::restoreHP(int amt)
     if (m_hp > m_maxHp) m_hp = m_maxHp;
 }
 
-void Player::applyStatus(StatusType s, float dur)
+std::list<Player::Status> Player::getStatuses() const
 {
-    if (s == HASTE) {
-        m_status[s].dur = dur;
-    }
-    else if (s == SLOW) {
-        m_status[s].dur = dur;
-    }
-    else if (s == CONFUSION) {
-        m_status[s].dur = dur;
-    }
+    return m_status;
 }
 
-bool Player::isStatus(StatusType s) const
+void Player::applyStatus(StatusType s)
 {
-    return m_status.find(s) != m_status.end();
+    Status st;
+    st.type = s;
+    if (s == HASTE)
+        st.dur = 30;
+    else if (s == SLOW)
+        st.dur = 30;
+    else if (s == CONFUSION)
+        st.dur = 30;
+
+    for (std::list<Status>::iterator iter = m_status.begin(); iter != m_status.end(); iter++) {
+        if (iter->type == s) {
+            *iter = st;
+            return;
+        }
+    }
+    m_status.push_back(st);
 }

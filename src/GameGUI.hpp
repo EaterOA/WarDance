@@ -64,6 +64,7 @@ private:
     std::vector<std::vector<sf::Vertex> > m_levelIcons;
     sf::Vertex m_grenade[4];
     std::vector<sf::Vertex> m_grenadeDisplay;
+    std::vector<sf::Vertex> m_statusDisplay;
     sf::VertexArray m_hud;
 
     //Level end sequence

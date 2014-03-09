@@ -63,12 +63,12 @@ class Player: public Fighter
 public:
     //Status structures
     enum StatusType { HASTE, SLOW, CONFUSION };
-    struct StatusData
+    struct Status
     {
+        StatusType type;
         float dur;
         union
         {
-            int shield;
         } data;
     };
 
@@ -76,8 +76,8 @@ public:
     virtual void act(GameState& state);
     virtual void hit(GameState& state, int damage);
     virtual void restoreHP(int amt);
-    virtual void applyStatus(StatusType s, float dur);
-    virtual bool isStatus(StatusType s) const;
+    virtual void applyStatus(StatusType s);
+    std::list<Status> getStatuses() const;
     int getNumGrenades() const;
     float getShield() const;
     float getMaxShield() const;
@@ -85,12 +85,12 @@ private:
     virtual void cooldown(GameState& state);
     virtual void attack(GameState& state);
     virtual void throwGrenade(GameState& state);
+
     float m_base_v;
     int m_numGrenades;
     float m_grenade_cd;
-    float m_shield_cd;
-    float m_shield, m_shield_regen, m_maxShield;
-    std::map<StatusType, StatusData> m_status;
+    float m_shield, m_shield_cd, m_shield_regen, m_maxShield;
+    std::list<Status> m_status;
 };
 
 

@@ -294,6 +294,9 @@ void GameGUI::updateHUD(const GameState& state)
         util::translateSprite(grenadeSprite, sf::Vector2f(-25.f * i, 0));
         m_grenadeDisplay.insert(m_grenadeDisplay.end(), grenadeSprite, grenadeSprite+4);    
     }
+
+    m_statusDisplay = std::vector<sf::Vertex>();
+
 }
 
 void GameGUI::updateGameState(const GameState& state)
