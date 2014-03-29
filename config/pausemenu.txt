@@ -1,0 +1,7 @@
+7.0 66.0 232.0 60.0     405.0 120.0     # Pause title
+8.1 127.8 165.7 44.4    400.0 180.0     # Pause resume lit
+8.1 177.8 165.7 44.4    400.0 180.0     # Pause resume dim
+5.9 327.8 198.3 44.4    400.0 230.0     # Pause settings lit
+5.9 377.8 193.3 44.4    400.0 230.0     # Pause settings dim
+5.9 227.8 102.3 44.4    400.0 280.0     # Pause quit lit
+5.9 277.8 102.3 44.4    400.0 280.0     # Pause quit dim

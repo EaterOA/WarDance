@@ -6,6 +6,7 @@
 
 bool MainMenu::init()
 {
+    m_type = MAIN;
     m_numChoices = 5;
     unsigned num_m = 1;
 
@@ -33,7 +34,6 @@ bool MainMenu::init()
     fin.close();
 
     m_bg.setTexture(resource.getTexture("main_bg"));
-    m_choice = 1;
     m_blinkerBaseLoc = m_blinker[0].position;
     m_blinkerAlphaChg = 5;
     m_info.setFont(resource.getFont("liberation"));
@@ -41,6 +41,9 @@ bool MainMenu::init()
     m_info.setCharacterSize(25);
     m_info.setColor(sf::Color(30, 16, 8));
     for (unsigned i = 0; i < m_numChoices; i++) util::copySprite(&m_mainDim[i*4], &m_main[(num_m+i)*4]);
+
+    m_choice = 1;
+    selectChoice(1);
 
     return true;
 }
@@ -95,14 +98,17 @@ AppLayer::Status MainMenu::tick(std::vector<sf::Event> &e, const sf::Time &t)
     return AppLayer::HALT; //Main menu should be base layer
 }
 
-AppLayer::Status MainMenu::draw(sf::RenderWindow &w)
+AppLayer::Status MainMenu::drawStatus() const
+{
+    return AppLayer::HALT; //Nothing can be seen under main menu
+}
+
+void MainMenu::draw(sf::RenderWindow &w) const
 {
     sf::RenderStates s(&resource.getTexture("guisheet"));
     w.draw(m_bg);
     w.draw(&m_main[0], m_main.size(), sf::Quads, s);
     w.draw(m_info);
-    
-    return AppLayer::HALT; //Main menu should be base layer
 }
 
 void MainMenu::selectChoice(unsigned choice)
@@ -118,12 +124,10 @@ void MainMenu::selectChoice(unsigned choice)
 
 void MainMenu::processChoice()
 {
-    /*
-    if (m_choice == 1) startGame();
-    else if (m_choice == 2) goToSelectLevel();
-    else if (m_choice == 3) goToSettings();
-    else if (m_choice == 5) endGame();
-    */
+    //if (m_choice == 1) startGame();
+    if (m_choice == 2) Layer::goToSelectLevel();
+    //else if (m_choice == 3) goToSettings();
+    else if (m_choice == 5) Layer::back();
 }
 
 unsigned MainMenu::translateOption(float x, float y)

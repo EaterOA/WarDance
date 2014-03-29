@@ -54,3 +54,11 @@ void Layer::goToMain()
     layer.push_back(new MainMenu());
     layer.back()->init();
 }
+
+void Layer::goToSelectLevel()
+{
+    if (getTopLayer() == GameLayer::SELECTLEVEL) return;
+    
+    layer.push_back(new SelectLevelDialog());
+    layer.back()->init();
+}

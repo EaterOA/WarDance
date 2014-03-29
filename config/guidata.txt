@@ -6,27 +6,6 @@
 289.0 432.0 30.0 30.0   80.0 80.0       # Status haste
 322.0 432.0 30.0 30.0   80.0 80.0       # Status slow
 356.0 432.0 30.0 30.0   80.0 80.0       # Status confusion
-8.6 5.0 82.1 31.2       39.0 42.0       # Level I
-8.6 37.0 82.1 31.2      39.0 42.0       # Level II
-86.6 5.0 82.1 31.2      39.0 42.0       # Level III
-86.6 37.0 82.1 31.2     39.0 42.0       # Level IV
-158.6 5.0 82.1 31.2     39.0 42.0       # Level V
-158.6 37.0 82.1 31.2    39.0 42.0       # Level VI
-231.6 5.0 82.1 31.2     39.0 42.0       # Level VII
-231.6 37.0 82.1 31.2    39.0 42.0       # Level VIII
-306.6 5.0 82.1 31.2     39.0 42.0       # Level IX
-306.6 37.0 82.1 31.2    39.0 42.0       # Level X
-7.0 66.0 232.0 60.0     405.0 120.0     # Pause title
-8.1 127.8 165.7 44.4    400.0 180.0     # Pause resume lit
-8.1 177.8 165.7 44.4    400.0 180.0     # Pause resume dim
-5.9 327.8 198.3 44.4    400.0 230.0     # Pause settings lit
-5.9 377.8 193.3 44.4    400.0 230.0     # Pause settings dim
-5.9 227.8 102.3 44.4    400.0 280.0     # Pause quit lit
-5.9 277.8 102.3 44.4    400.0 280.0     # Pause quit dim
-198.7 127.3 120.7 45.2  150.0 200.0     # Settings hitbox lit
-198.7 177.3 120.7 45.2  150.0 200.0     # Settings hitbox dim
-303.7 87.7 26.7 22.6    250.0 200.0     # Settings hitbox on
-255.6 87.7 34.8 22.6    250.0 200.0     # Settings hitbox off
 0.0 0.0 0.0 0.0         200.0 180.0     # End level sequence accuracy
 0.0 0.0 0.0 0.0         200.0 250.0     # End level sequence something
 0.0 0.0 0.0 0.0         200.0 320.0     # End level sequence something
@@ -34,9 +13,3 @@
 0.0 0.0 0.0 0.0         200.0 460.0     # End level sequence something
 0.0 0.0 0.0 0.0         512.0 250.0     # End level sequence bonus
 0.0 0.0 82.1 31.2       100.0 90.0      # End level level icon
-5.0 545.0 282.0 172.0   300.0 300.0     # Select level slab
-0.0 0.0 82.1 31.2       330.0 290.0     # Select level choice
-350.6 335.0 20.9 19.5   220.0 280.0     # Select level up lit
-320.6 335.0 20.9 19.5   220.0 280.0     # Select level up dim
-350.6 361.0 20.9 19.5   220.0 310.0     # Select level down lit
-320.6 361.0 20.9 19.5   220.0 310.0     # Select level down dim

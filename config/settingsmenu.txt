@@ -1,0 +1,4 @@
+198.7 127.3 120.7 45.2  150.0 200.0     # Settings hitbox lit
+198.7 177.3 120.7 45.2  150.0 200.0     # Settings hitbox dim
+303.7 87.7 26.7 22.6    250.0 200.0     # Settings hitbox on
+255.6 87.7 34.8 22.6    250.0 200.0     # Settings hitbox off

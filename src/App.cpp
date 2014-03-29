@@ -110,15 +110,27 @@ void appStart()
         sf::Time elapsed = gameClock.restart();
         std::vector<sf::Event> events = processEvents();
 
+        //Update from up to bottom
         for (int i = (int)layer.size() - 1; i >= 0; i--) {
             AppLayer::Status s = layer[i]->tick(events, elapsed);
             while (i+1 > (int)layer.size()) i--;
             if (s == AppLayer::HALT) break;
         }
-        for (int i = (int)layer.size() - 1; i >= 0; i--) {
-            AppLayer::Status s = layer[i]->draw(window);
-            if (s == AppLayer::HALT) break;
+        if (layer.empty()) {
+            window.close();
+            break;
         }
+
+        //Reverse draw order from bottom to up
+        std::vector<unsigned> drawIdx;
+        for (unsigned i = layer.size(); i > 0; i--) {
+            drawIdx.push_back(i-1);
+            if (layer[i-1]->drawStatus() == AppLayer::HALT) break;
+        }
+        for (unsigned i = drawIdx.size(); i > 0; i--) {
+            layer[drawIdx[i-1]]->draw(window);
+        }
+
         window.display();
     }
 }

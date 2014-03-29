@@ -31,6 +31,7 @@ namespace Layer {
     void refocus();
     void pauseGame();
     void goToMain();
+    void goToSelectLevel();
 };
 
 
@@ -42,7 +43,8 @@ class NoFocus: public GameLayer
 public:
     virtual bool init();
     virtual Status tick(std::vector<sf::Event> &e, const sf::Time &t);
-    virtual Status draw(sf::RenderWindow &w);
+    virtual Status drawStatus() const;
+    virtual void draw(sf::RenderWindow &w) const;
 };
 
 class MainMenu: public GameLayer
@@ -50,7 +52,8 @@ class MainMenu: public GameLayer
 public:
     virtual bool init();
     virtual Status tick(std::vector<sf::Event> &e, const sf::Time &t);
-    virtual Status draw(sf::RenderWindow &w);
+    virtual Status drawStatus() const;
+    virtual void draw(sf::RenderWindow &w) const;
 private:
     void selectChoice(unsigned choice);
     void processChoice();
@@ -72,12 +75,14 @@ class SelectLevelDialog: public GameLayer
 public:
     virtual bool init();
     virtual Status tick(std::vector<sf::Event> &e, const sf::Time &t);
-    virtual Status draw(sf::RenderWindow &w);
+    virtual Status drawStatus() const;
+    virtual void draw(sf::RenderWindow &w) const;
 private:
     void selectChoice(unsigned choice);
     void processChoice();
     unsigned translateOption(float x, float y);
-
+    
+    std::vector<std::vector<sf::Vertex> > m_levelIcons;
     sf::Vertex* m_buttons;
     std::vector<sf::Vertex> m_select;
     std::vector<sf::Vertex> m_selectLit, m_selectDim;
@@ -90,7 +95,8 @@ class SettingsMenu: public GameLayer
 public:
     virtual bool init();
     virtual Status tick(std::vector<sf::Event> &e, const sf::Time &t);
-    virtual Status draw(sf::RenderWindow &w);
+    virtual Status drawStatus() const;
+    virtual void draw(sf::RenderWindow &w) const;
 private:
     void selectChoice(unsigned choice);
     void processChoice();
@@ -111,7 +117,8 @@ class PauseMenu: public GameLayer
 public:
     virtual bool init();
     virtual Status tick(std::vector<sf::Event> &e, const sf::Time &t);
-    virtual Status draw(sf::RenderWindow &w);
+    virtual Status drawStatus() const;
+    virtual void draw(sf::RenderWindow &w) const;
 private:
     void selectChoice(unsigned choice);
     void processChoice();

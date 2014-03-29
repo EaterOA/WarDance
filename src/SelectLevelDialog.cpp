@@ -6,11 +6,13 @@
 
 bool SelectLevelDialog::init()
 {
+    m_type = SELECTLEVEL;
     unsigned num_l = 2, num_ll = 2;
+    unsigned num_level_icons = 10;
 
     sf::Vector2f texCoord, size, pos;
     std::ifstream fin;
-    fin.open("config/guidata.txt");
+    fin.open("config/selectleveldialog.txt");
     if (!fin) return false;
 
     m_select = std::vector<sf::Vertex>((num_l + num_ll)*4, sf::Vertex());
@@ -28,11 +30,20 @@ bool SelectLevelDialog::init()
     }
 
     fin.close();
+    fin.open("config/levelicon.txt");
+    if (!fin) return false;
+    
+    m_levelIcons = std::vector<std::vector<sf::Vertex> >(num_level_icons, std::vector<sf::Vertex>(4));
+    for (unsigned i = 0; i < num_level_icons && util::read3v2f(fin, texCoord, size, pos, true); i++) {
+        util::affixTexture(&m_levelIcons[i][0], texCoord, size);
+        util::affixPos(&m_levelIcons[i][0], pos, size, 0);
+    }
 
-    m_choice = (unsigned)config.getInt("level");
     m_upLitTime = m_downLitTime = 0.f;
-    //util::copyTexture(&m_levelIcons[0][0], &m_select[1*4]);
+    util::copyTexture(&m_levelIcons[0][0], &m_select[1*4]);
     for (unsigned i = 0; i < num_ll; i++) util::copySprite(&m_selectDim[i*4], &m_select[(num_l+i)*4]);
+
+    selectChoice((unsigned)config.getInt("level"));
 
     return true;
 }
@@ -48,7 +59,6 @@ AppLayer::Status SelectLevelDialog::tick(std::vector<sf::Event> &e, const sf::Ti
     else util::copyTexture(&m_selectDim[1*4], &m_select[3*4]);
 
     for (unsigned i = 0; i < e.size(); i++) {
-
         //Mouse presses
         if (e[i].type == sf::Event::MouseButtonReleased) {
             if (e[i].mouseButton.button == sf::Mouse::Left) {
@@ -97,7 +107,12 @@ AppLayer::Status SelectLevelDialog::tick(std::vector<sf::Event> &e, const sf::Ti
     return AppLayer::PASS;
 }
 
-AppLayer::Status SelectLevelDialog::draw(sf::RenderWindow &w)
+AppLayer::Status SelectLevelDialog::drawStatus() const
+{
+    return AppLayer::PASS;
+}
+
+void SelectLevelDialog::draw(sf::RenderWindow &w) const
 {
     sf::RenderStates s(&resource.getTexture("guisheet"));
     sf::RectangleShape fade;
@@ -106,15 +121,13 @@ AppLayer::Status SelectLevelDialog::draw(sf::RenderWindow &w)
     fade.setSize(sf::Vector2f((float)w.getSize().x, (float)w.getSize().y));
     w.draw(fade);
     w.draw(&m_select[0], m_select.size(), sf::Quads, s);
-
-    return AppLayer::PASS;
 }
 
 void SelectLevelDialog::selectChoice(unsigned choice)
 {
     if (choice == 0 || choice > (unsigned)config.getInt("num_levels")) return;
     m_choice = choice;
-    //util::copyTexture(&m_levelIcons[choice-1][0], &m_select[1*4]);
+    util::copyTexture(&m_levelIcons[choice-1][0], &m_select[1*4]);
 }
 
 void SelectLevelDialog::processChoice()

@@ -1,0 +1,6 @@
+5.0 545.0 282.0 172.0   300.0 300.0     # Select level slab
+0.0 0.0 82.1 31.2       330.0 290.0     # Select level choice
+350.6 335.0 20.9 19.5   220.0 280.0     # Select level up lit
+320.6 335.0 20.9 19.5   220.0 280.0     # Select level up dim
+350.6 361.0 20.9 19.5   220.0 310.0     # Select level down lit
+320.6 361.0 20.9 19.5   220.0 310.0     # Select level down dim

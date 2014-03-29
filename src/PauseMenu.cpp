@@ -6,6 +6,7 @@
 
 bool PauseMenu::init()
 {
+    m_type = PAUSE;
     m_numChoices = 3;
     unsigned num_p = 1;
 
@@ -79,7 +80,12 @@ AppLayer::Status PauseMenu::tick(std::vector<sf::Event> &e, const sf::Time &t)
     return AppLayer::HALT;
 }
 
-AppLayer::Status PauseMenu::draw(sf::RenderWindow &w)
+AppLayer::Status PauseMenu::drawStatus() const
+{
+    return AppLayer::PASS;
+}
+
+void PauseMenu::draw(sf::RenderWindow &w) const
 {
     sf::RenderStates s(&resource.getTexture("guisheet"));
     sf::RectangleShape fade;
@@ -88,8 +94,6 @@ AppLayer::Status PauseMenu::draw(sf::RenderWindow &w)
     fade.setSize(sf::Vector2f((float)w.getSize().x, (float)w.getSize().y));
     w.draw(fade);
     w.draw(&m_pause[0], m_pause.size(), sf::Quads, s);
-
-    return AppLayer::PASS;
 }
 
 void PauseMenu::selectChoice(unsigned choice)

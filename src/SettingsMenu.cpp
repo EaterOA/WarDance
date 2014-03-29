@@ -6,6 +6,7 @@
 
 bool SettingsMenu::init()
 {
+    m_type = SETTINGS;
     m_numChoices = 1;
 
     sf::Vector2f texCoord, size, pos;
@@ -87,14 +88,16 @@ AppLayer::Status SettingsMenu::tick(std::vector<sf::Event> &e, const sf::Time &t
     return AppLayer::HALT;
 }
 
+AppLayer::Status SettingsMenu::drawStatus() const
+{
+    return AppLayer::HALT;
+}
 
-AppLayer::Status SettingsMenu::draw(sf::RenderWindow &w)
+void SettingsMenu::draw(sf::RenderWindow &w) const
 {
     sf::RenderStates s(&resource.getTexture("guisheet"));
     w.draw(m_bg);
     w.draw(&m_settings[0], m_settings.size(), sf::Quads, s);
-
-    return AppLayer::HALT;
 }
 
 void SettingsMenu::selectChoice(unsigned choice)
