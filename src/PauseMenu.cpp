@@ -1,4 +1,4 @@
-#include "GameLayers.hpp"
+#include "GameLayer.hpp"
 #include "GameResourceManager.hpp"
 #include "GameConfig.hpp"
 #include "GameController.hpp"
@@ -50,7 +50,7 @@ AppLayer::Status PauseMenu::tick(std::vector<sf::Event> &e, const sf::Time &t)
                 processChoice();
             }
             else if (e[i].mouseButton.button == sf::Mouse::Right) {
-                //back();
+                Layer::back();
             }
         }
         //Mouse movement
@@ -71,9 +71,8 @@ AppLayer::Status PauseMenu::tick(std::vector<sf::Event> &e, const sf::Time &t)
             if (down) selectChoice(m_choice + 1);
             else if (up) selectChoice(m_choice - 1);
             else if (enter) processChoice();
-            else if (esc) {
-                //back();
-            }
+            else if (esc) Layer::back();
+            
         }
     }
 
@@ -106,9 +105,9 @@ void PauseMenu::selectChoice(unsigned choice)
 
 void PauseMenu::processChoice()
 {
-    /*
-    if (m_choice == 1) back();
-    else if (m_choice == 2) goToSettings();
+    
+    if (m_choice == 1) Layer::back();
+    /*else if (m_choice == 2) goToSettings();
     else if (m_choice == 3) goToMain();
     */
 }
@@ -122,4 +121,5 @@ unsigned PauseMenu::translateOption(float x, float y)
         sf::Vector2f pos = util::referenceToCenter(m_pause[idx].position, size, 1);
         if (util::hasCollided(m, pos, size, 0)) return i+1;
     }
+    return 0;
 }

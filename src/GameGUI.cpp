@@ -3,8 +3,9 @@
 #include "GameConfig.hpp"
 #include "GameResourceManager.hpp"
 #include "GameController.hpp"
-#include "App.hpp"
+#include "GameLayer.hpp"
 #include <math.h>
+
 
 bool GameGUI::init(GameMechanics* m, GameGraphics* g)
 {
@@ -81,7 +82,7 @@ bool GameGUI::init(GameMechanics* m, GameGraphics* g)
 
     return true;
 }
-
+/*
 void GameGUI::startLevelEndSequence(const std::map<std::string, int> levelEndStats)
 {
     std::string dataList[] = {"accuracy", "time", "", "", "", "bonus"};
@@ -264,21 +265,21 @@ void GameGUI::processInput(const std::vector<sf::Event> &events)
 void GameGUI::transitionAppState()
 {
 }
-
+*/
 void GameGUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     sf::RenderStates s(&resource.getTexture("guisheet"));
     //Draw all relevant appStates
-    for (unsigned i = 0; i < appStates.size(); i++) {
-        if (appStates[i] == GAME) {
+    //for (unsigned i = 0; i < appStates.size(); i++) {
+        //if (appStates[i] == GAME) {
             target.draw(m_score);
             target.draw(m_hud, s);
             if (!m_grenadeDisplay.empty())
                 target.draw(&m_grenadeDisplay[0], m_grenadeDisplay.size(), sf::Quads, s);
             if (!m_statusDisplay.empty())
                 target.draw(&m_statusDisplay[0], m_statusDisplay.size(), sf::Quads, s);
-        }
-        else if (appStates[i] == LEVELENDSEQUENCE) {
+       // }
+        //else if (appStates[i] == LEVELENDSEQUENCE) {
             if (m_levelEndSequence_timing_stage == 1 || m_levelEndSequence_timing_stage == 2) {
                 target.draw(m_scoringScreen);
                 target.draw(m_scoringLevelDisplay, 4, sf::Quads, s);
@@ -289,6 +290,6 @@ void GameGUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
             else if (m_levelEndSequence_timing_stage >= 4) {
                 target.draw(m_nextLevelDisplay, 4, sf::Quads, s);
             }
-        }
-    }
+        //}
+  //  }
 }

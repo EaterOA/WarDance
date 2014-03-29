@@ -1,4 +1,4 @@
-#include "GameLayers.hpp"
+#include "GameLayer.hpp"
 #include "GameResourceManager.hpp"
 #include "GameConfig.hpp"
 #include "GameController.hpp"
@@ -11,7 +11,7 @@ bool MainMenu::init()
 
     sf::Vector2f texCoord, size, pos;
     std::ifstream fin;
-    fin.open("config/guidata.txt");
+    fin.open("config/mainmenu.txt");
     if (!fin) return false;
 
     m_main = std::vector<sf::Vertex>((num_m + m_numChoices)*4, sf::Vertex());

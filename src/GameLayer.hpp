@@ -1,9 +1,51 @@
-#ifndef GAMELAYERS_HPP
-#define GAMELAYERS_HPP
+/*
+--------------------------------------------------------------------------------
+GameLayer
+- Adds layer-management functions specific to WarDance
+- Defines WarDance-specific layer types
+--------------------------------------------------------------------------------
+*/
+
+#ifndef GAMELAYER_HPP
+#define GAMELAYER_HPP
 
 #include "AppLayer.hpp"
 
-class MainMenu: public AppLayer
+class GameLayer: public AppLayer
+{
+public:  
+    enum Type {
+        SPLASH, MAIN, SELECTLEVEL, SETTINGS, GAME, PAUSE, LEVELENDSEQUENCE, NOFOCUS, CLOSE, NONE
+    };
+    Type getType() const;
+protected:
+    Type m_type;
+};
+
+extern std::vector<GameLayer*> layer;
+
+namespace Layer {
+    GameLayer::Type getTopLayer();
+    void back();
+    void unfocus();
+    void refocus();
+    void pauseGame();
+    void goToMain();
+};
+
+
+//@@@@@@@@@@@@@@@@@@@@ Layers @@@@@@@@@@@@@@@@@@@@
+
+
+class NoFocus: public GameLayer
+{
+public:
+    virtual bool init();
+    virtual Status tick(std::vector<sf::Event> &e, const sf::Time &t);
+    virtual Status draw(sf::RenderWindow &w);
+};
+
+class MainMenu: public GameLayer
 {
 public:
     virtual bool init();
@@ -25,7 +67,7 @@ private:
     sf::Text m_info;
 };
 
-class SelectLevelDialog: public AppLayer
+class SelectLevelDialog: public GameLayer
 {
 public:
     virtual bool init();
@@ -43,7 +85,7 @@ private:
     float m_upLitTime, m_downLitTime;
 };
 
-class SettingsMenu: public AppLayer
+class SettingsMenu: public GameLayer
 {
 public:
     virtual bool init();
@@ -64,7 +106,7 @@ private:
     std::vector<sf::Vertex> m_settingsOn, m_settingsOff;
 };
 
-class PauseMenu: public AppLayer
+class PauseMenu: public GameLayer
 {
 public:
     virtual bool init();
@@ -81,5 +123,6 @@ private:
     std::vector<sf::Vertex> m_pause;
     std::vector<sf::Vertex> m_pauseLit, m_pauseDim;
 };
+
 
 #endif

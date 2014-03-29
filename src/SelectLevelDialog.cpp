@@ -1,4 +1,4 @@
-#include "GameLayers.hpp"
+#include "GameLayer.hpp"
 #include "GameResourceManager.hpp"
 #include "GameConfig.hpp"
 #include "GameController.hpp"
@@ -66,7 +66,7 @@ AppLayer::Status SelectLevelDialog::tick(std::vector<sf::Event> &e, const sf::Ti
                 }
             }
             else if (e[i].mouseButton.button == sf::Mouse::Right) {
-                //back();
+                Layer::back();
             }
         }
         //Keyboard events
@@ -88,7 +88,7 @@ AppLayer::Status SelectLevelDialog::tick(std::vector<sf::Event> &e, const sf::Ti
                 processChoice();
             }
             else if (esc) {
-                //back();
+                Layer::back();
             }
         }
     }
@@ -120,7 +120,7 @@ void SelectLevelDialog::selectChoice(unsigned choice)
 void SelectLevelDialog::processChoice()
 {
     config.setInt("level", (int)m_choice);
-    //goToMain();
+    Layer::back();
 }
 
 unsigned SelectLevelDialog::translateOption(float x, float y)

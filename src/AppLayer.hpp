@@ -1,3 +1,11 @@
+/*
+--------------------------------------------------------------------------------
+AppLayer
+- Defines a generic app layer
+- Applications that use this assumes a layer-based structure
+--------------------------------------------------------------------------------
+*/
+
 #ifndef APPLAYER_HPP
 #define APPLAYER_HPP
 

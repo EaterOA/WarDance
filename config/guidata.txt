@@ -27,17 +27,6 @@
 198.7 177.3 120.7 45.2  150.0 200.0     # Settings hitbox dim
 303.7 87.7 26.7 22.6    250.0 200.0     # Settings hitbox on
 255.6 87.7 34.8 22.6    250.0 200.0     # Settings hitbox off
-164.0 257.0 246.0 49.0  610.0 250.0     # Main blinker
-488.0 24.4 92.3 49.2    600.0 250.0     # Main start lit
-501.2 275.0 79.2 43.6   600.0 250.0     # Main start dim
-371.0 74.4 209.3 49.2   600.0 300.0     # Main select level lit
-391.0 325.0 189.3 43.6  600.0 300.0     # Main select level dim
-432.0 124.4 148.3 49.2  600.0 350.0     # Main settings lit
-454.8 375.0 125.5 43.6  600.0 350.0     # Main settings dim
-453.2 174.4 127.2 49.2  600.0 400.0     # Main credits lit
-457.5 425.0 122.8 43.6  600.0 400.0     # Main credits dim
-496.1 224.4 84.2 49.2   600.0 450.0     # Main quit lit
-499.5 475.0 80.8 43.6   600.0 450.0     # Main quit dim
 0.0 0.0 0.0 0.0         200.0 180.0     # End level sequence accuracy
 0.0 0.0 0.0 0.0         200.0 250.0     # End level sequence something
 0.0 0.0 0.0 0.0         200.0 320.0     # End level sequence something

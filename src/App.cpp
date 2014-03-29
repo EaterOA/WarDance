@@ -1,25 +1,25 @@
-#include "App.hpp"
+#include "GameLayer.hpp"
 #include "GameConfig.hpp"
 #include "GameResourceManager.hpp"
 #include "GameController.hpp"
 #include "GameMechanics.hpp"
 #include "GameGraphics.hpp"
 #include "GameGUI.hpp"
+#include <SFML/System.hpp>
 
 sf::RenderWindow window;
-sf::View camera(sf::FloatRect(0, 0, float(APP_WIDTH), float(APP_HEIGHT)));
+sf::View camera(sf::FloatRect(0, 0, 800.f, 600.f));
 GameMechanics mAgent;
 GameGraphics gAgent;
 GameGUI guiAgent;
 sf::Clock gameClock;
-std::vector<AppState> appStates;
 
 bool appInit()
 {
     srand(unsigned(time(0)));
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
-    window.create(sf::VideoMode(APP_WIDTH, APP_HEIGHT), "War Dance", sf::Style::Close, settings);
+    window.create(sf::VideoMode(800, 600), "War Dance", sf::Style::Close, settings);
     window.setFramerateLimit(60);
     window.setView(camera);
     if (!config.init()) return false;
@@ -29,11 +29,11 @@ bool appInit()
     if (!gAgent.init()) return false;
     if (!guiAgent.init(&mAgent, &gAgent)) return false;
 
-    appStates.push_back(MAIN);
+    Layer::goToMain();
 
     return true;
 }
-
+/*
 void updateView(sf::Vector2f pos)
 {
     if (pos.x < APP_WIDTH/2) pos.x = APP_WIDTH/2;
@@ -42,6 +42,7 @@ void updateView(sf::Vector2f pos)
     else if (pos.y > mAgent.getGameState().map.y - APP_HEIGHT/2) pos.y = mAgent.getGameState().map.y - APP_HEIGHT/2;
     camera.setCenter(pos);
 }
+
 
 void paint()
 {
@@ -54,27 +55,6 @@ sf::View hud(sf::FloatRect(0, 0, float(APP_WIDTH), float(APP_HEIGHT)));
     window.display();
 }
 
-void back()
-{
-    if (!appStates.empty()) appStates.pop_back();
-    if (getAppState() == GAME || getAppState() == LEVELENDSEQUENCE) {
-        gameClock.restart();
-    }
-    guiAgent.transitionAppState();
-}
-
-AppState getAppState()
-{
-    if (!appStates.empty()) return appStates.back();
-    return NONE;
-}
-
-void goToMain()
-{
-    while (appStates.back() != MAIN) back();
-    guiAgent.transitionAppState();
-}
-
 void startGame()
 {
     appStates.push_back(GAME);
@@ -82,31 +62,6 @@ void startGame()
     gameClock.restart();
     mAgent.initLevel();
     mAgent.startLevel();
-}
-
-void endGame()
-{
-    while (!appStates.empty()) appStates.pop_back();
-    appStates.push_back(CLOSED);
-    window.close();
-}
-
-void pauseGame()
-{
-    appStates.push_back(PAUSED);
-    guiAgent.transitionAppState();
-}
-
-void goToSettings()
-{
-    appStates.push_back(SETTINGS);
-    guiAgent.transitionAppState();
-}
-
-void goToSelectLevel()
-{
-    appStates.push_back(SELECTLEVEL);
-    guiAgent.transitionAppState();
 }
 
 void goToLevelEndSequence()
@@ -125,7 +80,8 @@ void goToNextLevel()
     mAgent.clearPlayerProjectiles();
     mAgent.startLevel();
     guiAgent.transitionAppState();
-}
+}*/
+
 
 std::vector<sf::Event> processEvents()
 {
@@ -133,15 +89,14 @@ std::vector<sf::Event> processEvents()
     sf::Event event;
     while (window.pollEvent(event)) {
         if (event.type == sf::Event::Closed) {
-            endGame();
+            window.close();
             break;
         }
         else if (event.type == sf::Event::LostFocus) {
-            if (getAppState() != NOFOCUS) appStates.push_back(NOFOCUS);
+            Layer::unfocus();
         }
         else if (event.type == sf::Event::GainedFocus) {
-            while (appStates.back() == NOFOCUS) appStates.pop_back();
-            if (getAppState() == GAME) pauseGame();
+            Layer::refocus();
         }
         else inputEvents.push_back(event);
     }
@@ -150,32 +105,21 @@ std::vector<sf::Event> processEvents()
 
 void appStart()
 {
-    guiAgent.transitionAppState();
     //Game loop
     while (window.isOpen()) {
         sf::Time elapsed = gameClock.restart();
+        std::vector<sf::Event> events = processEvents();
 
-        guiAgent.processInput(processEvents());
-        guiAgent.updateAppState(elapsed);
-        if (getAppState() == GAME || getAppState() == LEVELENDSEQUENCE) {
-            mAgent.updateGameState(window, elapsed);
-            if (mAgent.isPlayerDead()) {
-                goToMain();
-            }
-            else if (mAgent.isLevelDone()) {
-                if (!guiAgent.isLevelEndSequenceStarted()) {
-                    goToLevelEndSequence();
-                }
-                else if (guiAgent.isLevelEndSequenceDone()) {
-                    goToNextLevel();
-                }
-            }
-            gAgent.updateMisc(mAgent.getGameState());
-            guiAgent.updateGameState(mAgent.getGameState());
-            gAgent.updateSprites(mAgent.getGameState());
-            updateView(mAgent.getGameState().player->getPos());
+        for (int i = (int)layer.size() - 1; i >= 0; i--) {
+            AppLayer::Status s = layer[i]->tick(events, elapsed);
+            while (i+1 > (int)layer.size()) i--;
+            if (s == AppLayer::HALT) break;
         }
-        if (getAppState() != NOFOCUS) paint();
+        for (int i = (int)layer.size() - 1; i >= 0; i--) {
+            AppLayer::Status s = layer[i]->draw(window);
+            if (s == AppLayer::HALT) break;
+        }
+        window.display();
     }
 }
 
