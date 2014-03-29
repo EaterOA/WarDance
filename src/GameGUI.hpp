@@ -23,40 +23,6 @@ private:
     GameMechanics* mAgent;
     GameGraphics* gAgent;
 
-    //Main Menu
-    void selectMainChoice(unsigned choice);
-    void processMainChoice();
-    unsigned m_main_numChoices;
-    unsigned m_main_choice;
-    sf::Vertex* m_main_blinker, *m_mainMenu;
-    int m_main_blinkerAlphaChg;
-    sf::Vector2f m_main_blinkerBaseLoc;
-    sf::Sprite m_main_bg;
-    std::vector<sf::Vertex> m_main;
-    std::vector<sf::Vertex> m_mainLit, m_mainDim;
-    sf::Text m_mainInfo;
-    
-    //Pause Menu
-    void selectPauseChoice(unsigned choice);
-    void processPauseChoice();
-    unsigned m_pause_numChoices;
-    unsigned m_pause_choice;
-    sf::Vertex* m_pauseMenu;
-    std::vector<sf::Vertex> m_pause;
-    std::vector<sf::Vertex> m_pauseLit, m_pauseDim;
-
-    //Settings Menu
-    void selectSettingsChoice(unsigned choice);
-    void processSettingsChoice();
-    void processSettingsSwitches();
-    unsigned m_settings_numChoices;
-    unsigned m_settings_choice;
-    sf::Sprite m_settings_bg;
-    sf::Vertex* m_settingsMenu, *m_settingsSwitches;
-    std::vector<sf::Vertex> m_settings;
-    std::vector<sf::Vertex> m_settingsLit, m_settingsDim;
-    std::vector<sf::Vertex> m_settingsOn, m_settingsOff;
-
     //HUD
     void updateHUD(const GameState& state);
     sf::Text m_score;
@@ -79,15 +45,6 @@ private:
     int m_levelEndSequence_timing_stage;
     float m_scoring_timing;
     int m_scoring_timing_stage;
-
-    //Select level
-    void selectSelectChoice(unsigned choice);
-    void processSelectChoice();
-    sf::Vertex* m_selectButtons;
-    std::vector<sf::Vertex> m_select;
-    std::vector<sf::Vertex> m_selectLit, m_selectDim;
-    unsigned m_select_choice;
-    float m_select_upLitTime, m_select_downLitTime;
 };
 
 #endif
