@@ -1,5 +1,5 @@
 #include "Actors.hpp"
-#include "GameMechanics.hpp"
+#include "BattleMechanics.hpp"
 
 Actor::Image::Image()
 {

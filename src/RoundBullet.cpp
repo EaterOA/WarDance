@@ -1,5 +1,5 @@
 #include "Actors.hpp"
-#include "GameMechanics.hpp"
+#include "BattleMechanics.hpp"
 
 RoundBullet::RoundBullet(sf::Vector2f pos, float dir, int faction)
     : Projectile(pos, util::ShapeVector(util::Circle, 11), 1, 50, faction)

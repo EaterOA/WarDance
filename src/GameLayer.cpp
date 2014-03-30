@@ -29,6 +29,7 @@ void Layer::unfocus()
     if (getTopLayer() == GameLayer::NOFOCUS) return;
 
     layer.push_back(new NoFocus());
+    layer.back()->init();
 }
 
 void Layer::refocus()
@@ -36,10 +37,10 @@ void Layer::refocus()
     if (getTopLayer() != GameLayer::NOFOCUS) return;
 
     back();
-    if (getTopLayer() == GameLayer::GAME) pauseGame();
+    if (getTopLayer() == GameLayer::BATTLE) pauseBattle();
 }
 
-void Layer::pauseGame()
+void Layer::pauseBattle()
 {
     if (getTopLayer() == GameLayer::PAUSE) return;
 
@@ -61,4 +62,36 @@ void Layer::goToSelectLevel()
     
     layer.push_back(new SelectLevelDialog());
     layer.back()->init();
+}
+
+void Layer::goToSettings()
+{
+    if (getTopLayer() == GameLayer::SETTINGS) return;
+    
+    layer.push_back(new SettingsMenu());
+    layer.back()->init();
+}
+
+void Layer::endGame()
+{
+    while (!layer.empty()) {
+        delete layer.back();
+        layer.pop_back();
+    }
+}
+
+void Layer::startBattle()
+{
+    if (getTopLayer() == GameLayer::BATTLE) return;
+    
+    layer.push_back(new Battle());
+    layer.back()->init();
+}
+
+void Layer::backToMain()
+{
+    while (!layer.empty() && layer.back()->getType() != GameLayer::MAIN) {
+        delete layer.back();
+        layer.pop_back();
+    }
 }

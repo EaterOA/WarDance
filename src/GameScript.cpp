@@ -1,5 +1,5 @@
 #include "GameScript.hpp"
-#include "GameMechanics.hpp"
+#include "BattleMechanics.hpp"
 #include "Util.hpp"
 #include <string>
 #include <sstream>
@@ -20,7 +20,7 @@ Event::Event(float t, std::string n)
     random = true;
 }
 
-GameScript::GameScript(GameMechanics* origin)
+GameScript::GameScript(BattleMechanics* origin)
 {
     m_origin = origin;
 }

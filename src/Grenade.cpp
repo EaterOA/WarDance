@@ -1,5 +1,5 @@
 #include "Actors.hpp"
-#include "GameMechanics.hpp"
+#include "BattleMechanics.hpp"
 
 Grenade::Grenade(sf::Vector2f pos, sf::Vector2f dest)
     : Projectile(pos, util::ShapeVector(util::Circle, 90), 1, 1000, 0)

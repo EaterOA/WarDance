@@ -1,5 +1,5 @@
 #include "Actors.hpp"
-#include "GameMechanics.hpp"
+#include "BattleMechanics.hpp"
 
 SplittingBullet::SplittingBullet(sf::Vector2f pos, float dir, int faction)
     : Projectile(pos, util::ShapeVector(util::Circle, 10.f), 1, 75, faction)

@@ -11,7 +11,7 @@ bool SettingsMenu::init()
 
     sf::Vector2f texCoord, size, pos;
     std::ifstream fin;
-    fin.open("config/guidata.txt");
+    fin.open("config/settingsmenu.txt");
     if (!fin) return false;
     
     m_settings = std::vector<sf::Vertex>(m_numChoices*2*4, sf::Vertex());
@@ -39,13 +39,15 @@ bool SettingsMenu::init()
     fin.close();
 
     m_bg.setTexture(resource.getTexture("settings_bg"));
-    m_choice = 1;
     for (unsigned i = 0; i < m_numChoices; i++) util::copySprite(&m_settingsDim[i*4], &m_settings[i*4]);
+
+    m_choice = 1;
+    selectChoice(1);
 
     return true;
 }
 
-AppLayer::Status SettingsMenu::tick(std::vector<sf::Event> &e, const sf::Time &t)
+AppLayer::Status SettingsMenu::tick(std::vector<sf::Event> &e, const sf::Time &t, const sf::Vector2f &m)
 {
     processSwitches();
 
@@ -61,6 +63,7 @@ AppLayer::Status SettingsMenu::tick(std::vector<sf::Event> &e, const sf::Time &t
             }
             else if (e[i].mouseButton.button == sf::Mouse::Right) {
                 Layer::back();
+                break;
             }
         }
         //Mouse movement
@@ -81,7 +84,10 @@ AppLayer::Status SettingsMenu::tick(std::vector<sf::Event> &e, const sf::Time &t
             if (down) selectChoice(m_choice + 1);
             else if (up) selectChoice(m_choice - 1);
             else if (enter) processChoice();
-            else if (esc) Layer::back();
+            else if (esc) {
+                Layer::back();
+                break;
+            }
         }
     }
 

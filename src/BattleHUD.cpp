@@ -1,4 +1,4 @@
-#include "GameGUI.hpp"
+#include "BattleHUD.hpp"
 #include "Util.hpp"
 #include "GameConfig.hpp"
 #include "GameResourceManager.hpp"
@@ -7,34 +7,31 @@
 #include <math.h>
 
 
-bool GameGUI::init(GameMechanics* m, GameGraphics* g)
+bool BattleHUD::init()
 {
-    mAgent = m;
-    gAgent = g;
-
     //Initializing object counts
     unsigned num_level_icons = 10,
-             num_status_icons = 3,
-             num_e = 6;
+             num_status_icons = 3;
 
     //Preparing to load gui object data
     //Data format: 2 base texture coordinates, 2 texture size, 2 (center) position coordinates
     sf::Vector2f texCoord, size, pos;
     std::ifstream fin;
-    fin.open("config/guidata.txt");
+    fin.open("config/hud.txt");
     if (!fin) return false;
 
-    //Reading HUD objects
     //- Grenades
     if (!util::read3v2f(fin, texCoord, size, pos, true)) return false;
     util::affixTexture(m_grenadeBase, texCoord, size);
     util::affixPos(m_grenadeBase, pos, size, 0);
+
     //- Bars
     m_hud = sf::VertexArray(sf::Quads, 5*4);
     for (unsigned i = 0; i < 4 && util::read3v2f(fin, texCoord, size, pos, true); i++) {
         util::affixTexture(&m_hud[i*4], texCoord, size);
         util::affixPos(&m_hud[i*4], pos, size, 0);
     }
+
     //- Statuses
     Player::StatusType statusList[] = {Player::HASTE, Player::SLOW, Player::CONFUSION};
     for (unsigned i = 0; i < num_status_icons && util::read3v2f(fin, texCoord, size, pos, true); i++) {
@@ -43,12 +40,18 @@ bool GameGUI::init(GameMechanics* m, GameGraphics* g)
         util::affixPos(&img[0], pos, size, 0);
         m_statusIcons[statusList[i]] = img;
     }
+
+    fin.close();
+    fin.open("config/levelicons.txt");
+
     //- Level icons
     m_levelIcons = std::vector<std::vector<sf::Vertex> >(num_level_icons, std::vector<sf::Vertex>(4));
     for (unsigned i = 0; i < num_level_icons && util::read3v2f(fin, texCoord, size, pos, true); i++) {
         util::affixTexture(&m_levelIcons[i][0], texCoord, size);
         util::affixPos(&m_levelIcons[i][0], pos, size, 0);
     }
+
+    fin.close();
     
     m_hpBar = &m_hud[1*4];
     m_shieldBar = &m_hud[2*4];
@@ -57,26 +60,9 @@ bool GameGUI::init(GameMechanics* m, GameGraphics* g)
     m_score.setPosition(22, 560);
     m_score.setCharacterSize(24);
 
-    //Reading level end sequence text positions
-    m_scoring_numbers = std::vector<sf::Text>(6, sf::Text());
-    for (unsigned i = 0; i < num_e && util::read3v2f(fin, texCoord, size, pos, true); i++) {
-        m_scoring_numbers[i].setPosition(pos);
-        m_scoring_numbers[i].setFont(resource.getFont("stencil"));
-        if (i+1 < num_e) {
-            m_scoring_numbers[i].setColor(sf::Color::White);
-        }
-        else {
-            m_scoring_numbers[i].setColor(sf::Color::Green);
-            m_scoring_numbers[i].setCharacterSize(40);
-        }
-    }
-    util::read3v2f(fin, texCoord, size, pos, true);
-    util::affixPos(m_scoringLevelDisplay, pos, size, 0);
-
     fin.close();
 
     //Initializing appearance and configuration of objects
-    m_scoringScreen.setTexture(resource.getTexture("scoring"));
     util::copySprite(&m_levelIcons[0][0], m_levelDisplay);
     util::copySprite(&m_levelIcons[0][0], m_nextLevelDisplay);
 
@@ -103,63 +89,8 @@ void GameGUI::startLevelEndSequence(const std::map<std::string, int> levelEndSta
     m_levelEndSequence_timing = 2.5f;
 }
 
-bool GameGUI::isLevelEndSequenceStarted() const
-{
-    for (std::vector<AppState>::reverse_iterator iter = appStates.rbegin(); iter != appStates.rend(); iter++)
-        if (*iter == LEVELENDSEQUENCE)
-            return true;
-    return false;
-}
-
-bool GameGUI::isLevelEndSequenceDone() const
-{
-    return m_levelEndSequence_timing_stage == 5;
-}
-
-void GameGUI::forwardLevelEndSequence()
-{
-    if (m_levelEndSequence_timing_stage <= 1) {
-        m_levelEndSequence_timing_stage = 1;
-        m_scoring_timing_stage = 5;
-        m_scoring_timing = 0.f;
-    }
-    else if (m_levelEndSequence_timing_stage == 2) {
-        m_levelEndSequence_timing_stage = 3;
-        m_levelEndSequence_timing = 2.f;
-    }
-}
-
 void GameGUI::updateLevelEndSequence(const GameState& state)
 {
-    //Initial wait for scorescreen to appear
-    if (m_levelEndSequence_timing_stage == 0) {
-        m_levelEndSequence_timing -= state.elapsed.asSeconds();
-        if (m_levelEndSequence_timing <= 0) {
-            m_levelEndSequence_timing_stage++;
-        }
-    }
-    //Waiting for all the scores to be displayed
-    else if (m_levelEndSequence_timing_stage == 1) {
-        m_scoring_timing -= state.elapsed.asSeconds();
-        if (m_scoring_timing <= 0) {
-            m_scoring_timing_stage++;
-            if (m_scoring_timing_stage == 6) {
-                mAgent->getGameState().score += mAgent->getGameState().level_bonus;
-                m_levelEndSequence_timing_stage++;
-            }
-            else {
-                m_scoring_timing = 0.5f;
-            }
-        }
-    }
-    //Score screen gone, waiting for background fade to begin
-    else if (m_levelEndSequence_timing_stage == 3) {
-        m_levelEndSequence_timing -= state.elapsed.asSeconds();
-        if (m_levelEndSequence_timing <= 0) {
-            m_levelEndSequence_timing_stage++;
-            m_levelEndSequence_timing = 1.5f;
-        }
-    }
     //Background fade
     else if (m_levelEndSequence_timing_stage == 4) {
         m_levelEndSequence_timing -= state.elapsed.asSeconds();
@@ -177,8 +108,9 @@ void GameGUI::updateLevelEndSequence(const GameState& state)
         }
     }
 }
+*/
 
-void GameGUI::updateHUD(const GameState& state)
+void BattleHUD::updateGameState(const GameState& state)
 {
     //Scaling bars
     float hpPerc = float(state.player->getHP()) / state.player->getMaxHP();
@@ -221,75 +153,15 @@ void GameGUI::updateHUD(const GameState& state)
         m_statusDisplay.insert(m_statusDisplay.end(), icon, icon+4);
         offset += 30;
     }
-
 }
 
-void GameGUI::updateGameState(const GameState& state)
-{
-    GameGUI::updateHUD(state);
-    if (getAppState() == LEVELENDSEQUENCE) {
-        GameGUI::updateLevelEndSequence(state);
-    }
-}
-
-void GameGUI::updateAppState(const sf::Time &elapsed)
-{
-}
-
-unsigned GameGUI::translateOption(float x, float y)
-{
-    return 0;
-}
-
-void GameGUI::processInput(const std::vector<sf::Event> &events)
-{
-    AppState s = getAppState();
-    for (unsigned i = 0; i < events.size(); i++) {
-        //Keyboard events
-        if (events[i].type == sf::Event::KeyPressed) {
-            bool up = controller.pressing(GameController::K_UP, events[i].key.code);
-            bool down = controller.pressing(GameController::K_DOWN, events[i].key.code);
-            bool enter = controller.pressing(GameController::K_ENTER, events[i].key.code);
-            bool esc = controller.pressing(GameController::K_ESCAPE, events[i].key.code);
-
-            if (s == LEVELENDSEQUENCE) {
-                if (enter) forwardLevelEndSequence();
-            }
-            if (esc) {
-                if (s == GAME || s == LEVELENDSEQUENCE) pauseGame();
-            }
-        }
-    }
-}
-
-void GameGUI::transitionAppState()
-{
-}
-*/
-void GameGUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void BattleHUD::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     sf::RenderStates s(&resource.getTexture("guisheet"));
-    //Draw all relevant appStates
-    //for (unsigned i = 0; i < appStates.size(); i++) {
-        //if (appStates[i] == GAME) {
-            target.draw(m_score);
-            target.draw(m_hud, s);
-            if (!m_grenadeDisplay.empty())
-                target.draw(&m_grenadeDisplay[0], m_grenadeDisplay.size(), sf::Quads, s);
-            if (!m_statusDisplay.empty())
-                target.draw(&m_statusDisplay[0], m_statusDisplay.size(), sf::Quads, s);
-       // }
-        //else if (appStates[i] == LEVELENDSEQUENCE) {
-            if (m_levelEndSequence_timing_stage == 1 || m_levelEndSequence_timing_stage == 2) {
-                target.draw(m_scoringScreen);
-                target.draw(m_scoringLevelDisplay, 4, sf::Quads, s);
-                for (int j = 0; j < m_scoring_timing_stage; j++) {
-                    target.draw(m_scoring_numbers[(unsigned)j]);
-                }
-            }
-            else if (m_levelEndSequence_timing_stage >= 4) {
-                target.draw(m_nextLevelDisplay, 4, sf::Quads, s);
-            }
-        //}
-  //  }
+    target.draw(m_score);
+    target.draw(m_hud, s);
+    if (!m_grenadeDisplay.empty())
+        target.draw(&m_grenadeDisplay[0], m_grenadeDisplay.size(), sf::Quads, s);
+    if (!m_statusDisplay.empty())
+        target.draw(&m_statusDisplay[0], m_statusDisplay.size(), sf::Quads, s);
 }

@@ -2,16 +2,10 @@
 #include "GameConfig.hpp"
 #include "GameResourceManager.hpp"
 #include "GameController.hpp"
-#include "GameMechanics.hpp"
-#include "GameGraphics.hpp"
-#include "GameGUI.hpp"
-#include <SFML/System.hpp>
+#include <iostream>
 
 sf::RenderWindow window;
 sf::View camera(sf::FloatRect(0, 0, 800.f, 600.f));
-GameMechanics mAgent;
-GameGraphics gAgent;
-GameGUI guiAgent;
 sf::Clock gameClock;
 
 bool appInit()
@@ -25,9 +19,6 @@ bool appInit()
     if (!config.init()) return false;
     if (!resource.init()) return false;
     if (!controller.init()) return false;
-    if (!mAgent.init()) return false;
-    if (!gAgent.init()) return false;
-    if (!guiAgent.init(&mAgent, &gAgent)) return false;
 
     Layer::goToMain();
 
@@ -97,6 +88,7 @@ std::vector<sf::Event> processEvents()
         }
         else if (event.type == sf::Event::GainedFocus) {
             Layer::refocus();
+            std::cout << layer.size() << "\n";
         }
         else inputEvents.push_back(event);
     }
@@ -107,12 +99,17 @@ void appStart()
 {
     //Game loop
     while (window.isOpen()) {
+
+        //Collecting information
         sf::Time elapsed = gameClock.restart();
         std::vector<sf::Event> events = processEvents();
+        sf::Vector2f cursor(sf::Mouse::getPosition(window));
+        cursor.y += window.getView().getCenter().y - window.getView().getSize().y / 2;
+        cursor.x += window.getView().getCenter().x - window.getView().getSize().x / 2;
 
-        //Update from up to bottom
+        //Update from top to bottom
         for (int i = (int)layer.size() - 1; i >= 0; i--) {
-            AppLayer::Status s = layer[i]->tick(events, elapsed);
+            AppLayer::Status s = layer[i]->tick(events, elapsed, cursor);
             while (i+1 > (int)layer.size()) i--;
             if (s == AppLayer::HALT) break;
         }
@@ -120,8 +117,8 @@ void appStart()
             window.close();
             break;
         }
-
-        //Reverse draw order from bottom to up
+        
+        //Reverse draw order from bottom to top
         std::vector<unsigned> drawIdx;
         for (unsigned i = layer.size(); i > 0; i--) {
             drawIdx.push_back(i-1);

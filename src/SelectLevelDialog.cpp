@@ -39,6 +39,8 @@ bool SelectLevelDialog::init()
         util::affixPos(&m_levelIcons[i][0], pos, size, 0);
     }
 
+    fin.close();
+
     m_upLitTime = m_downLitTime = 0.f;
     util::copyTexture(&m_levelIcons[0][0], &m_select[1*4]);
     for (unsigned i = 0; i < num_ll; i++) util::copySprite(&m_selectDim[i*4], &m_select[(num_l+i)*4]);
@@ -48,7 +50,7 @@ bool SelectLevelDialog::init()
     return true;
 }
 
-AppLayer::Status SelectLevelDialog::tick(std::vector<sf::Event> &e, const sf::Time &t)
+AppLayer::Status SelectLevelDialog::tick(std::vector<sf::Event> &e, const sf::Time &t, const sf::Vector2f &m)
 {
     //Lighting or dimming select level arrows
     m_upLitTime -= t.asSeconds();
@@ -77,6 +79,7 @@ AppLayer::Status SelectLevelDialog::tick(std::vector<sf::Event> &e, const sf::Ti
             }
             else if (e[i].mouseButton.button == sf::Mouse::Right) {
                 Layer::back();
+                break;
             }
         }
         //Keyboard events
@@ -99,6 +102,7 @@ AppLayer::Status SelectLevelDialog::tick(std::vector<sf::Event> &e, const sf::Ti
             }
             else if (esc) {
                 Layer::back();
+                break;
             }
         }
     }

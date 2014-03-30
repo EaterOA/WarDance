@@ -1,5 +1,5 @@
-#ifndef GAMEGRAPHICS_HPP
-#define GAMEGRAPHICS_HPP
+#ifndef BATTLEGRAPHICS_HPP
+#define BATTLEGRAPHICS_HPP
 
 #include <SFML/Graphics.hpp>
 #include <vector>
@@ -16,7 +16,7 @@ struct FrameData
     sf::Vector2f posOffset;
 };
 
-class GameGraphics : public sf::Drawable, public sf::Transformable
+class BattleGraphics : public sf::Drawable, public sf::Transformable
 {
 public:
     bool init();

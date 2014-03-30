@@ -1,5 +1,5 @@
 #include "Actors.hpp"
-#include "GameMechanics.hpp"
+#include "BattleMechanics.hpp"
 
 Medkit::Medkit(sf::Vector2f pos)
     : Item(pos, util::ShapeVector(util::Rectangle, 10, 10), 10)

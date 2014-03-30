@@ -1,5 +1,5 @@
 #include "Actors.hpp"
-#include "GameMechanics.hpp"
+#include "BattleMechanics.hpp"
 
 Sprinkler::Sprinkler(sf::Vector2f pos, Item::Type drop)
     : Enemy(util::ShapeVector(util::Circle, 20.f), pos, 100, 1, 700, drop)

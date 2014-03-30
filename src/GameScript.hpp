@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <list>
 
-class GameMechanics;
+class BattleMechanics;
 
 struct Event
 {
@@ -24,14 +24,14 @@ struct Event
 class GameScript
 {
 public:
-    GameScript(GameMechanics* origin);
+    GameScript(BattleMechanics* origin);
     ~GameScript();
     bool parseFile(const std::string &path, float elapsed);
     bool parse(const std::string &script, float elapsed);
     void tick(float t);
     bool isDone();
 private:
-    GameMechanics* m_origin;
+    BattleMechanics* m_origin;
     std::list<Event> m_events;
     std::string m_script;
 };

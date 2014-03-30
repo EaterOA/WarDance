@@ -18,7 +18,7 @@ public:
     enum Status { PASS, HALT };
 
     virtual bool init() = 0;
-    virtual Status tick(std::vector<sf::Event> &e, const sf::Time &t) = 0;
+    virtual Status tick(std::vector<sf::Event> &e, const sf::Time &t, const sf::Vector2f &m) = 0;
     virtual Status drawStatus() const = 0;
     virtual void draw(sf::RenderWindow &w) const = 0;
 private:

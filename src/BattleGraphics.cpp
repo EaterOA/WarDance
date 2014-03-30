@@ -1,10 +1,10 @@
 #include "Util.hpp"
 #include "GameConfig.hpp"
 #include "GameResourceManager.hpp"
-#include "GameGraphics.hpp"
-#include "GameMechanics.hpp"
+#include "BattleGraphics.hpp"
+#include "BattleMechanics.hpp"
 
-bool GameGraphics::init()
+bool BattleGraphics::init()
 {
     std::ifstream fin;
     
@@ -46,11 +46,15 @@ bool GameGraphics::init()
     m_backgroundNext.setTexture(*m_lvlBackgroundTex[0]);
     m_backgroundNext.setTextureRect(sf::IntRect(0, 0, 1600, 1200));
     m_hitbox_enabled = config.getInt("hitbox_enabled");
+    m_sprites = std::vector<std::vector<sf::Vertex> >(m_spritesheet.size());
+    m_specialSprites = std::vector<sf::Vertex>();
+    if (m_hitbox_enabled)
+        m_hitboxes = std::vector<sf::Vertex>();
 
     return true;
 }
 
-void GameGraphics::setNextLevelBGOpacity(unsigned char alpha)
+void BattleGraphics::setNextLevelBGOpacity(unsigned char alpha)
 {
     if (alpha > 0) {
         int lvl = config.getInt("level");
@@ -60,7 +64,7 @@ void GameGraphics::setNextLevelBGOpacity(unsigned char alpha)
     }
 }
 
-void GameGraphics::addSprite(const Actor &actor)
+void BattleGraphics::addSprite(const Actor &actor)
 {
     const Actor::Image& img = actor.getImage();
     const FrameData& d = m_frameMap[img.frame];
@@ -127,7 +131,7 @@ void GameGraphics::addSprite(const Actor &actor)
     }
 }
 
-void GameGraphics::addHealthBar(const Fighter &fighter)
+void BattleGraphics::addHealthBar(const Fighter &fighter)
 {
     sf::Vertex bar[8];
     unsigned sheetNum = m_frameMap[fighter.getImage().frame].sheetNum;
@@ -146,7 +150,7 @@ void GameGraphics::addHealthBar(const Fighter &fighter)
     m_sprites[sheetNum].insert(m_sprites[sheetNum].end(), bar, bar+8);
 }
 
-void GameGraphics::addHitbox(const Fighter &f)
+void BattleGraphics::addHitbox(const Fighter &f)
 {
     sf::Transform tr;
     util::ShapeVector size = f.getSize();
@@ -178,22 +182,18 @@ void GameGraphics::addHitbox(const Fighter &f)
     }
 }
 
-void GameGraphics::updateMisc(const GameState &state)
+void BattleGraphics::updateSprites(const GameState &state)
 {
     //Updating settings
     m_hitbox_enabled = config.getInt("hitbox_enabled");
     unsigned idx = (unsigned)config.getInt("level") - 1;
     m_background.setTexture(*m_lvlBackgroundTex[idx]);
     m_backgroundNext.setTexture(*m_lvlBackgroundTex[idx]);
-}
 
-void GameGraphics::updateSprites(const GameState &state)
-{
     //Recalculating sprite appearance
     m_sprites = std::vector<std::vector<sf::Vertex> >(m_spritesheet.size());
     m_specialSprites = std::vector<sf::Vertex>();
-    if (m_hitbox_enabled)
-        m_hitboxes = std::vector<sf::Vertex>();
+    m_hitboxes = std::vector<sf::Vertex>();
 
     //Adding sprites. Order matters except hitboxes
     if (m_hitbox_enabled) {
@@ -214,7 +214,7 @@ void GameGraphics::updateSprites(const GameState &state)
 
 }
 
-void GameGraphics::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void BattleGraphics::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(m_background);
     if (m_backgroundNext.getTexture() != m_background.getTexture()) {
@@ -229,5 +229,5 @@ void GameGraphics::draw(sf::RenderTarget& target, sf::RenderStates states) const
     if (!m_specialSprites.empty()) {
         target.draw(&m_specialSprites[0], m_specialSprites.size(), sf::Quads);
     }
-    if (m_hitbox_enabled) target.draw(&m_hitboxes[0], m_hitboxes.size(), sf::Lines);
+    if (m_hitbox_enabled && !m_hitboxes.empty()) target.draw(&m_hitboxes[0], m_hitboxes.size(), sf::Lines);
 }

@@ -1,5 +1,5 @@
 #include "GameConfig.hpp"
-#include "GameMechanics.hpp"
+#include "BattleMechanics.hpp"
 #include "GameScript.hpp"
 
 GameState::GameState()
@@ -38,7 +38,7 @@ void GameState::cleanAll()
     player = 0;
 }
 
-bool GameMechanics::init()
+bool BattleMechanics::init()
 { 
     m_state.map = sf::Vector2f(1600.f, 1200.f);
     m_script = new GameScript(this);
@@ -46,23 +46,23 @@ bool GameMechanics::init()
     return true;
 }
 
-void GameMechanics::initLevel()
+void BattleMechanics::initLevel()
 {
     m_state.cleanAll();
     m_state.player = new Player(sf::Vector2f(100.f, 100.f));
 }
 
-void GameMechanics::clearEnemyProjectiles()
+void BattleMechanics::clearEnemyProjectiles()
 {
     m_state.projectiles.push_back(new Wiper(m_state.player->getPos(), 0));
 }
 
-void GameMechanics::clearPlayerProjectiles()
+void BattleMechanics::clearPlayerProjectiles()
 {
     m_state.projectiles.push_back(new Wiper(m_state.player->getPos(), 1));
 }
 
-const std::map<std::string, int> GameMechanics::getLevelStats()
+const std::map<std::string, int> BattleMechanics::getLevelStats()
 {
     //Calculate level end stats
     std::map<std::string, int> levelEndStats;
@@ -79,7 +79,7 @@ const std::map<std::string, int> GameMechanics::getLevelStats()
     return levelEndStats;
 }
 
-void GameMechanics::startLevel()
+void BattleMechanics::startLevel()
 {
     m_state.resetLevel();
     std::stringstream scriptName;
@@ -87,29 +87,27 @@ void GameMechanics::startLevel()
     m_script->parseFile(scriptName.str(), m_state.totalElapsed.asSeconds());
 }
 
-bool GameMechanics::isPlayerDead() const
+bool BattleMechanics::isPlayerDead() const
 {
     return m_state.player->isDead(m_state);
 }
 
-bool GameMechanics::isLevelDone() const
+bool BattleMechanics::isLevelDone() const
 {
     return m_script->isDone() && m_state.enemies.size() == 0;
 }
 
-GameState& GameMechanics::getGameState()
+GameState& BattleMechanics::getGameState()
 {
     return m_state;
 }
 
-void GameMechanics::updateGameState(const sf::RenderWindow &window, const sf::Time &elapsed)
+void BattleMechanics::updateGameState(const sf::Time &elapsed, const sf::Vector2f &mouse)
 {
     //Update application-related data
     m_state.elapsed = elapsed;
     m_state.totalElapsed += elapsed;
-    m_state.cursor = sf::Vector2f(sf::Mouse::getPosition(window));
-    m_state.cursor.y += window.getView().getCenter().y - window.getView().getSize().y / 2;
-    m_state.cursor.x += window.getView().getCenter().x - window.getView().getSize().x / 2;
+    m_state.cursor = mouse;
 
     //Advance script and actors
     m_script->tick(m_state.totalElapsed.asSeconds());
@@ -151,7 +149,7 @@ void GameMechanics::updateGameState(const sf::RenderWindow &window, const sf::Ti
     }
 }
 
-void GameMechanics::spawnEnemy(std::string name)
+void BattleMechanics::spawnEnemy(std::string name)
 {
     if (name == "grunt") {
         sf::Vector2f pos = offMapEntrance(25, 25);
@@ -170,7 +168,7 @@ void GameMechanics::spawnEnemy(std::string name)
     }
 }
 
-void GameMechanics::spawnEnemy(std::string name, sf::Vector2f pos)
+void BattleMechanics::spawnEnemy(std::string name, sf::Vector2f pos)
 {
     if (name == "grunt") {
         if (RAND(1, 15) == 1)
@@ -186,14 +184,14 @@ void GameMechanics::spawnEnemy(std::string name, sf::Vector2f pos)
     }
 }
 
-sf::Vector2f GameMechanics::inMapEntrance()
+sf::Vector2f BattleMechanics::inMapEntrance()
 {
     float x = (float)RAND(0, (int)m_state.map.x);
     float y = (float)RAND(0, (int)m_state.map.y);
     return sf::Vector2f(x, y);
 }
 
-sf::Vector2f GameMechanics::offMapEntrance(float offsetX, float offsetY)
+sf::Vector2f BattleMechanics::offMapEntrance(float offsetX, float offsetY)
 {
     int side = RAND(1, 4);
     float x = (float)RAND(0, (int)m_state.map.x);

@@ -48,7 +48,7 @@ bool MainMenu::init()
     return true;
 }
 
-AppLayer::Status MainMenu::tick(std::vector<sf::Event> &e, const sf::Time &t)
+AppLayer::Status MainMenu::tick(std::vector<sf::Event> &e, const sf::Time &t, const sf::Vector2f &m)
 {
     //Blinking highlight
     int a = (int)m_blinker[0].color.a;
@@ -73,6 +73,7 @@ AppLayer::Status MainMenu::tick(std::vector<sf::Event> &e, const sf::Time &t)
                 unsigned opt = translateOption(x, y);
                 if (!opt) continue;
                 processChoice();
+                if (layer.empty()) break;
             }
         }
         //Mouse movement
@@ -124,10 +125,10 @@ void MainMenu::selectChoice(unsigned choice)
 
 void MainMenu::processChoice()
 {
-    //if (m_choice == 1) startGame();
-    if (m_choice == 2) Layer::goToSelectLevel();
-    //else if (m_choice == 3) goToSettings();
-    else if (m_choice == 5) Layer::back();
+    if (m_choice == 1) Layer::startBattle();
+    else if (m_choice == 2) Layer::goToSelectLevel();
+    else if (m_choice == 3) Layer::goToSettings();
+    else if (m_choice == 5) Layer::endGame();
 }
 
 unsigned MainMenu::translateOption(float x, float y)

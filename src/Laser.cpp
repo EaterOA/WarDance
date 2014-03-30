@@ -1,5 +1,5 @@
 #include "Actors.hpp"
-#include "GameMechanics.hpp"
+#include "BattleMechanics.hpp"
 
 Laser::Laser(sf::Vector2f pos, float dir, int faction)
     : Projectile(pos, util::ShapeVector(util::Rectangle, 600, 12), 7, 800, faction)

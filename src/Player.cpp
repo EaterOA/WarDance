@@ -1,5 +1,5 @@
 #include "Actors.hpp"
-#include "GameMechanics.hpp"
+#include "BattleMechanics.hpp"
 #include "GameConfig.hpp"
 #include "GameController.hpp"
 

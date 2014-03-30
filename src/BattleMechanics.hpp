@@ -1,10 +1,11 @@
-#ifndef GAMEMECHANICS_HPP
-#define GAMEMECHANICS_HPP
+#ifndef BATTLEMECHANICS_HPP
+#define BATTLEMECHANICS_HPP
 
 #include "Actors.hpp"
 #include "GameScript.hpp"
 
-struct GameState {
+struct GameState
+{
     GameState();
     ~GameState();
     void cleanAll();
@@ -25,7 +26,8 @@ struct GameState {
     sf::Vector2f cursor;
 };
 
-class GameMechanics {
+class BattleMechanics
+{
 public:
     bool init();
     void initLevel();
@@ -34,7 +36,7 @@ public:
     bool isLevelDone() const;
     bool isPlayerDead() const;
     GameState& getGameState();
-    void updateGameState(const sf::RenderWindow &window, const sf::Time &elapsed);
+    void updateGameState(const sf::Time &elapsed, const sf::Vector2f &mouse);
     void spawnEnemy(std::string name);
     void spawnEnemy(std::string name, sf::Vector2f pos);
     void clearEnemyProjectiles();
@@ -45,7 +47,6 @@ private:
 
     GameState m_state;
     GameScript* m_script;
-    bool m_readFromScript;
 };
 
 #endif
