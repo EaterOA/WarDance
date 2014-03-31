@@ -45,6 +45,7 @@ bool BattleGraphics::init()
     m_background.setTextureRect(sf::IntRect(0, 0, 1600, 1200));
     m_backgroundNext.setTexture(*m_lvlBackgroundTex[0]);
     m_backgroundNext.setTextureRect(sf::IntRect(0, 0, 1600, 1200));
+    m_backgroundNext.setColor(sf::Color(255, 255, 255, 0));
     m_hitbox_enabled = config.getInt("hitbox_enabled");
     m_sprites = std::vector<std::vector<sf::Vertex> >(m_spritesheet.size());
     m_specialSprites = std::vector<sf::Vertex>();
@@ -56,12 +57,10 @@ bool BattleGraphics::init()
 
 void BattleGraphics::setTransition(float alpha)
 {
-    if (alpha > 0) {
-        int lvl = config.getInt("level");
-        unsigned nextIdx = (unsigned)(lvl < config.getInt("num_levels") ? lvl : lvl-1);
-        m_backgroundNext.setColor(sf::Color(255, 255, 255, (unsigned char)(alpha*255)));
-        m_backgroundNext.setTexture(*m_lvlBackgroundTex[nextIdx]);
-    }
+    int lvl = config.getInt("level");
+    unsigned nextIdx = (unsigned)(lvl < config.getInt("num_levels") ? lvl : lvl-1);
+    m_backgroundNext.setColor(sf::Color(255, 255, 255, (unsigned char)(alpha*255)));
+    m_backgroundNext.setTexture(*m_lvlBackgroundTex[nextIdx]);
 }
 
 void BattleGraphics::addSprite(const Actor &actor)
@@ -188,7 +187,6 @@ void BattleGraphics::updateState(const BattleState &state)
     m_hitbox_enabled = config.getInt("hitbox_enabled");
     unsigned idx = (unsigned)config.getInt("level") - 1;
     m_background.setTexture(*m_lvlBackgroundTex[idx]);
-    m_backgroundNext.setTexture(*m_lvlBackgroundTex[idx]);
 
     //Recalculating sprite appearance
     m_sprites = std::vector<std::vector<sf::Vertex> >(m_spritesheet.size());
@@ -217,7 +215,7 @@ void BattleGraphics::updateState(const BattleState &state)
 void BattleGraphics::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(m_background);
-    if (m_backgroundNext.getTexture() != m_background.getTexture()) {
+    if (m_backgroundNext.getColor().a > 0) {
         target.draw(m_backgroundNext);
     }
     for (unsigned i = 0; i < m_spritesheet.size(); i++) {

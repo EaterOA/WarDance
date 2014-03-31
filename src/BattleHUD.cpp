@@ -65,6 +65,7 @@ bool BattleHUD::init()
     //Initializing appearance and configuration of objects
     util::copySprite(&m_levelIcons[0][0], m_levelDisplay);
     util::copySprite(&m_levelIcons[0][0], m_nextLevelDisplay);
+    util::setAlpha(m_nextLevelDisplay, 0);
 
     return true;
 }
@@ -92,13 +93,11 @@ void GameGUI::startLevelEndSequence(const std::map<std::string, int> levelEndSta
 
 void BattleHUD::setTransition(float alpha)
 {
-    if (alpha > 0) {
-        int lvl = config.getInt("level");
-        unsigned nextIdx = (unsigned)(lvl < config.getInt("num_levels") ? lvl : lvl-1);
-        util::copyTexture(&m_levelIcons[nextIdx][0], m_nextLevelDisplay);
-        util::setAlpha(m_nextLevelDisplay, (unsigned char)(alpha*255));
-        util::setAlpha(m_levelDisplay, (unsigned char)((1-alpha)*255));
-    }
+    int lvl = config.getInt("level");
+    unsigned nextIdx = (unsigned)(lvl < config.getInt("num_levels") ? lvl : lvl-1);
+    util::copyTexture(&m_levelIcons[nextIdx][0], m_nextLevelDisplay);
+    util::setAlpha(m_nextLevelDisplay, (unsigned char)(alpha*255));
+    util::setAlpha(m_levelDisplay, (unsigned char)((1-alpha)*255));
 }
 
 void BattleHUD::updateState(const BattleState& state)
@@ -151,6 +150,8 @@ void BattleHUD::draw(sf::RenderTarget& target, sf::RenderStates states) const
     sf::RenderStates s(&resource.getTexture("guisheet"));
     target.draw(m_score);
     target.draw(m_hud, s);
+    if (m_nextLevelDisplay[0].color.a > 0)
+        target.draw(m_nextLevelDisplay, 4, sf::Quads, s);
     if (!m_grenadeDisplay.empty())
         target.draw(&m_grenadeDisplay[0], m_grenadeDisplay.size(), sf::Quads, s);
     if (!m_statusDisplay.empty())

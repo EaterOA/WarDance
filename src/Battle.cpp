@@ -117,9 +117,12 @@ void Battle::endLevelTransition()
     mAgent->clearPlayerProjectiles();
     m_transitioning = false;
     m_scoring = false;
+    gAgent->setTransition(0);
+    hAgent->setTransition(0);
     int lvl = config.getInt("level");
     if (lvl < config.getInt("num_levels"))
         config.setInt("level", lvl+1);
+    mAgent->startLevel();
 }
 
 void Battle::incScore(int value)
