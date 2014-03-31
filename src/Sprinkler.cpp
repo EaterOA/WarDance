@@ -9,21 +9,21 @@ Sprinkler::Sprinkler(sf::Vector2f pos, Item::Type drop)
     m_image.frame = "sprinkler";
 }
 
-void Sprinkler::hit(GameState &state, int damage)
+void Sprinkler::hit(BattleState &state, int damage)
 {
     if (isDead(state)) return;
     m_hp -= damage;
     if (isDead(state)) onDeath(state);
 }
 
-void Sprinkler::attack(GameState& state)
+void Sprinkler::attack(BattleState& state)
 {
     m_attack_cd = 0.15f;
     m_dir = util::rotateRad(m_dir, util::toRad(10.f));
     shoot(state, REGULAR, 20.f, 0);
 }
 
-void Sprinkler::act(GameState& state)
+void Sprinkler::act(BattleState& state)
 {
     Actor::act(state);
     cooldown(state);

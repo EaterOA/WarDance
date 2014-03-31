@@ -10,7 +10,7 @@ Medkit::Medkit(sf::Vector2f pos)
     m_image.rotated = false;
 }
 
-void Medkit::act(GameState &state)
+void Medkit::act(BattleState &state)
 {
     if (util::hasCollided(state.player->getPos(), state.player->getSize(), state.player->getDir(), m_pos, m_size, m_dir)) {
         state.player->restoreHP(m_hpRestore);

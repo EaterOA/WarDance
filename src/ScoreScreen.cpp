@@ -48,10 +48,9 @@ bool ScoreScreen::init()
     std::string dataList[] = {"accuracy", "time", "", "", "", "bonus"};
     for (unsigned i = 0; i < 6; i++) {
         std::wstringstream wss;
-        wss << config.getInt(dataList[i]);
+        wss << config.getInt(dataList[i], 0);
         m_numbers[i].setString(wss.str());
     }
-    m_bonus = config.getInt("bonus");
     m_scoring_timing_stage = 0;
     m_scoring_timing = 1.f;
     m_sequence_timing_stage = 0;
@@ -60,8 +59,20 @@ bool ScoreScreen::init()
     return true;
 }
 
-AppLayer::Status ScoreScreen::tick(std::vector<sf::Event> &e, const sf::Time &t, const sf::Vector2f &m)
+AppLayer::Status ScoreScreen::tick(std::vector<sf::Event> &e, const sf::Time &t, sf::Vector2f m)
 {
+    //Process events
+    for (unsigned i = 0; i < e.size(); i++) {
+        //Keyboard events
+        if (e[i].type == sf::Event::KeyPressed) {
+            bool enter = controller.pressing(GameController::K_ENTER, e[i].key.code);
+            bool esc = controller.pressing(GameController::K_ESCAPE, e[i].key.code);
+
+            if (enter) forwardSequence();
+            if (esc) Layer::pauseBattle();
+        }
+    }
+
     //Initial wait for scorescreen to appear
     if (m_sequence_timing_stage == 0) {
         m_sequence_timing -= t.asSeconds();
@@ -77,7 +88,7 @@ AppLayer::Status ScoreScreen::tick(std::vector<sf::Event> &e, const sf::Time &t,
             if (m_scoring_timing_stage == 6) {
                 for (unsigned i = 0; i < layer.size(); i++) {
                     if (layer[i]->getType() == BATTLE) {
-                        ((Battle*)layer[i])->incScore(m_bonus);
+                        ((Battle*)layer[i])->incScore(config.getInt("bonus"));
                         break;
                     }
                 }
@@ -92,18 +103,13 @@ AppLayer::Status ScoreScreen::tick(std::vector<sf::Event> &e, const sf::Time &t,
     else if (m_sequence_timing_stage == 3) {
         m_sequence_timing -= t.asSeconds();
         if (m_sequence_timing <= 0) {
-            m_sequence_timing_stage++;
-        }
-    }
-
-    for (unsigned i = 0; i < e.size(); i++) {
-        //Keyboard events
-        if (e[i].type == sf::Event::KeyPressed) {
-            bool enter = controller.pressing(GameController::K_ENTER, e[i].key.code);
-            bool esc = controller.pressing(GameController::K_ESCAPE, e[i].key.code);
-
-            if (enter) forwardSequence();
-            if (esc) Layer::pauseBattle();
+            for (int i = 0; i < (int)layer.size(); i++) {
+                if (layer[i]->getType() == BATTLE) {
+                    ((Battle*)layer[i])->startLevelTransition();
+                    Layer::back();
+                    break;
+                }
+            }
         }
     }
 

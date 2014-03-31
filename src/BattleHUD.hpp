@@ -7,8 +7,8 @@ class BattleHUD : public sf::Drawable, public sf::Transformable
 {
 public:
     bool init();
-    void updateGameState(const GameState& state);
-    void startLevelEndSequence(const std::map<std::string, int> levelEndStats);
+    void updateState(const BattleState& state);
+    void setTransition(float alpha);
 private:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 

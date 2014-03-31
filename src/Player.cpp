@@ -17,7 +17,7 @@ Player::Player(sf::Vector2f pos)
     m_image.frame = "player";
 }
 
-void Player::act(GameState &state)
+void Player::act(BattleState &state)
 {
     //Regen shield
     if (m_shield_cd <= 0 && m_shield < m_maxShield) {
@@ -66,7 +66,7 @@ void Player::act(GameState &state)
     else if (controller.clicking(GameController::B_RIGHT) && m_grenade_cd <= 0 && m_numGrenades > 0) throwGrenade(state);
 }
 
-void Player::hit(GameState &state, int damage)
+void Player::hit(BattleState &state, int damage)
 {
     state.shot++;
     m_shield_cd = 10.f;
@@ -99,7 +99,7 @@ float Player::getMaxShield() const
     return m_maxShield;
 }
 
-void Player::cooldown(GameState &state)
+void Player::cooldown(BattleState &state)
 {
     Fighter::cooldown(state);
     m_grenade_cd -= state.elapsed.asSeconds();
@@ -108,14 +108,14 @@ void Player::cooldown(GameState &state)
     if (m_shield_cd < -5) m_shield_cd = 0;
 }
 
-void Player::attack(GameState &state)
+void Player::attack(BattleState &state)
 {
     m_attack_cd = 0.15f;
     state.fired++;
     shoot(state, REGULAR, 35.f, 10.f);
 }
 
-void Player::throwGrenade(GameState &state)
+void Player::throwGrenade(BattleState &state)
 {
     m_numGrenades--;
     m_grenade_cd = 0.3f;

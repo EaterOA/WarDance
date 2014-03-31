@@ -8,7 +8,7 @@ Projectile::Projectile(sf::Vector2f pos, util::ShapeVector size, int hp, int dam
     m_faction = faction;
 }
 
-bool Projectile::isDead(const GameState &state) const
+bool Projectile::isDead(const BattleState &state) const
 {
     //No hp or out of map
     sf::Vector2f map_pos(state.map.x / 2.f, state.map.y / 2.f);
@@ -17,7 +17,7 @@ bool Projectile::isDead(const GameState &state) const
            !util::hasCollided(m_pos, m_size, m_dir, map_pos, map_size, 0.f);
 }
 
-void Projectile::attack(GameState &state)
+void Projectile::attack(BattleState &state)
 {
     if (m_faction != 0) {
         if (util::hasCollided(state.player->getPos(), state.player->getSize(), state.player->getDir(), m_pos, m_size, m_dir)) {

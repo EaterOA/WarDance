@@ -14,7 +14,7 @@ RegularBullet::RegularBullet(sf::Vector2f pos, float dir, int faction)
     else m_image.color = sf::Color(255, 172, 48);
 }
 
-void RegularBullet::act(GameState &state)
+void RegularBullet::act(BattleState &state)
 {
     Actor::act(state);
     attack(state);

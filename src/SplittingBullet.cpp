@@ -13,7 +13,7 @@ SplittingBullet::SplittingBullet(sf::Vector2f pos, float dir, int faction)
     m_image.frame = "split_bullet";
 }
 
-void SplittingBullet::act(GameState &state)
+void SplittingBullet::act(BattleState &state)
 {
     m_dur -= state.elapsed.asSeconds();
     m_angSpeed = util::PI * 8.f * (1 - m_dur / m_maxDur);

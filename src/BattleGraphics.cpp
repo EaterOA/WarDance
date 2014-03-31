@@ -54,12 +54,12 @@ bool BattleGraphics::init()
     return true;
 }
 
-void BattleGraphics::setNextLevelBGOpacity(unsigned char alpha)
+void BattleGraphics::setTransition(float alpha)
 {
     if (alpha > 0) {
         int lvl = config.getInt("level");
         unsigned nextIdx = (unsigned)(lvl < config.getInt("num_levels") ? lvl : lvl-1);
-        m_backgroundNext.setColor(sf::Color(255, 255, 255, alpha));
+        m_backgroundNext.setColor(sf::Color(255, 255, 255, (unsigned char)(alpha*255)));
         m_backgroundNext.setTexture(*m_lvlBackgroundTex[nextIdx]);
     }
 }
@@ -182,7 +182,7 @@ void BattleGraphics::addHitbox(const Fighter &f)
     }
 }
 
-void BattleGraphics::updateSprites(const GameState &state)
+void BattleGraphics::updateState(const BattleState &state)
 {
     //Updating settings
     m_hitbox_enabled = config.getInt("hitbox_enabled");

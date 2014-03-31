@@ -12,12 +12,12 @@ Wiper::Wiper(sf::Vector2f pos, int faction)
     else m_image.color = sf::Color(255, 150, 150);
 }
 
-bool Wiper::isDead(const GameState &state) const
+bool Wiper::isDead(const BattleState &state) const
 {
     return m_size.x > MAX(state.map.x, state.map.y);
 }
 
-void Wiper::act(GameState &state)
+void Wiper::act(BattleState &state)
 {
     float expand = m_expandSpeed * state.elapsed.asSeconds();
     m_size.x += expand;

@@ -20,19 +20,19 @@ bool BattleHUD::init()
     fin.open("config/hud.txt");
     if (!fin) return false;
 
-    //- Grenades
+    //Grenades
     if (!util::read3v2f(fin, texCoord, size, pos, true)) return false;
     util::affixTexture(m_grenadeBase, texCoord, size);
     util::affixPos(m_grenadeBase, pos, size, 0);
 
-    //- Bars
+    //Bars
     m_hud = sf::VertexArray(sf::Quads, 5*4);
     for (unsigned i = 0; i < 4 && util::read3v2f(fin, texCoord, size, pos, true); i++) {
         util::affixTexture(&m_hud[i*4], texCoord, size);
         util::affixPos(&m_hud[i*4], pos, size, 0);
     }
 
-    //- Statuses
+    //Statuses
     Player::StatusType statusList[] = {Player::HASTE, Player::SLOW, Player::CONFUSION};
     for (unsigned i = 0; i < num_status_icons && util::read3v2f(fin, texCoord, size, pos, true); i++) {
         std::vector<sf::Vertex> img(4);
@@ -42,7 +42,7 @@ bool BattleHUD::init()
     }
 
     fin.close();
-    fin.open("config/levelicons.txt");
+    fin.open("config/levelicon.txt");
 
     //- Level icons
     m_levelIcons = std::vector<std::vector<sf::Vertex> >(num_level_icons, std::vector<sf::Vertex>(4));
@@ -88,29 +88,20 @@ void GameGUI::startLevelEndSequence(const std::map<std::string, int> levelEndSta
     m_levelEndSequence_timing_stage = 0;
     m_levelEndSequence_timing = 2.5f;
 }
-
-void GameGUI::updateLevelEndSequence(const GameState& state)
-{
-    //Background fade
-    else if (m_levelEndSequence_timing_stage == 4) {
-        m_levelEndSequence_timing -= state.elapsed.asSeconds();
-        if (m_levelEndSequence_timing <= 0) {
-            m_levelEndSequence_timing_stage++;
-            util::setAlpha(m_levelDisplay, 255);
-        }
-        else {
-            float alphaPerc = 1.f - m_levelEndSequence_timing / 1.5f; 
-            alphaPerc *= alphaPerc*10*alphaPerc;
-            unsigned char alpha = (unsigned char)(alphaPerc * 255);
-            util::setAlpha(m_nextLevelDisplay, alpha);
-            util::setAlpha(m_levelDisplay, 255 - alpha);
-            gAgent->setNextLevelBGOpacity(alpha);
-        }
-    }
-}
 */
 
-void BattleHUD::updateGameState(const GameState& state)
+void BattleHUD::setTransition(float alpha)
+{
+    if (alpha > 0) {
+        int lvl = config.getInt("level");
+        unsigned nextIdx = (unsigned)(lvl < config.getInt("num_levels") ? lvl : lvl-1);
+        util::copyTexture(&m_levelIcons[nextIdx][0], m_nextLevelDisplay);
+        util::setAlpha(m_nextLevelDisplay, (unsigned char)(alpha*255));
+        util::setAlpha(m_levelDisplay, (unsigned char)((1-alpha)*255));
+    }
+}
+
+void BattleHUD::updateState(const BattleState& state)
 {
     //Scaling bars
     float hpPerc = float(state.player->getHP()) / state.player->getMaxHP();

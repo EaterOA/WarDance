@@ -2,17 +2,17 @@
 #include "BattleMechanics.hpp"
 #include "GameScript.hpp"
 
-GameState::GameState()
+BattleState::BattleState()
 {
     player = 0;
 }
 
-GameState::~GameState()
+BattleState::~BattleState()
 {
     cleanAll();
 }
 
-void GameState::cleanStage()
+void BattleState::cleanStage()
 {
     for (unsigned i = 0; i < enemies.size(); i++) delete enemies[i];
     for (unsigned i = 0; i < projectiles.size(); i++) delete projectiles[i];
@@ -22,14 +22,14 @@ void GameState::cleanStage()
     items = std::vector<Item*>();
 }
 
-void GameState::resetLevel()
+void BattleState::resetLevel()
 {
     totalElapsed = sf::Time();
     elapsed = sf::Time();
     shot = fired = hit = 0;
 }
 
-void GameState::cleanAll()
+void BattleState::cleanAll()
 {
     resetLevel();
     score = 0;
@@ -62,21 +62,16 @@ void BattleMechanics::clearPlayerProjectiles()
     m_state.projectiles.push_back(new Wiper(m_state.player->getPos(), 1));
 }
 
-const std::map<std::string, int> BattleMechanics::getLevelStats()
+void BattleMechanics::saveLevelStats()
 {
     //Calculate level end stats
-    std::map<std::string, int> levelEndStats;
-    levelEndStats["shot"] = m_state.shot;
-    levelEndStats["hit"] = m_state.hit;
-    levelEndStats["fired"] = m_state.fired;
-    levelEndStats["time"] = (int)m_state.totalElapsed.asSeconds();
-    if (m_state.hit >= m_state.fired) levelEndStats["accuracy"] = 100;
-    else levelEndStats["accuracy"] = (int)(100.f * m_state.hit / m_state.fired);
-    levelEndStats["bonus"] = 200*levelEndStats["accuracy"];
-
-    m_state.level_bonus = levelEndStats["bonus"];
-
-    return levelEndStats;
+    config.setInt("shot", m_state.shot);
+    config.setInt("hit", m_state.hit);
+    config.setInt("fired", m_state.fired);
+    config.setInt("time", (int)m_state.totalElapsed.asSeconds());
+    if (m_state.hit >= m_state.fired) config.setInt("accuracy", 100);
+    else config.setInt("accuracy", (int)(100.f * m_state.hit / m_state.fired));
+    config.setInt("bonus", 200 * config.getInt("accuracy"));
 }
 
 void BattleMechanics::startLevel()
@@ -97,12 +92,12 @@ bool BattleMechanics::isLevelDone() const
     return m_script->isDone() && m_state.enemies.size() == 0;
 }
 
-GameState& BattleMechanics::getGameState()
+BattleState& BattleMechanics::getBattleState()
 {
     return m_state;
 }
 
-void BattleMechanics::updateGameState(const sf::Time &elapsed, const sf::Vector2f &mouse)
+void BattleMechanics::updateState(const sf::Time &elapsed, sf::Vector2f mouse)
 {
     //Update application-related data
     m_state.elapsed = elapsed;

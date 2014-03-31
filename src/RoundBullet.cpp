@@ -13,7 +13,7 @@ RoundBullet::RoundBullet(sf::Vector2f pos, float dir, int faction)
     m_image.rotated = false;
 }
 
-void RoundBullet::act(GameState &state)
+void RoundBullet::act(BattleState &state)
 {
     Actor::act(state);
     attack(state);

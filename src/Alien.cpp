@@ -12,21 +12,21 @@ Alien::Alien(sf::Vector2f pos, Item::Type drop)
     m_image.frame = "alien"; 
 }
 
-void Alien::hit(GameState& state, int damage)
+void Alien::hit(BattleState& state, int damage)
 {
     if (isDead(state)) return;
     m_hp -= damage;
     if (isDead(state)) onDeath(state);
 }
 
-void Alien::cooldown(GameState& state)
+void Alien::cooldown(BattleState& state)
 {
     Fighter::cooldown(state);
     m_move_cd -= state.elapsed.asSeconds();
     if (m_move_cd < -5) m_move_cd = 0;
 }
 
-void Alien::attack(GameState& state)
+void Alien::attack(BattleState& state)
 {
     m_attack_cd = 0.1f;
     m_gunDir1 = util::rotateRad(m_gunDir1, util::toRad(17.f));
@@ -37,7 +37,7 @@ void Alien::attack(GameState& state)
     shoot(state, REGULAR, gunPos2, m_dir + m_gunDir2);
 }
 
-void Alien::act(GameState& state)
+void Alien::act(BattleState& state)
 {
     Actor::act(state);
     cooldown(state);

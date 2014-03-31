@@ -35,7 +35,7 @@ void Layer::unfocus()
 void Layer::refocus()
 {
     if (getTopLayer() != GameLayer::NOFOCUS) return;
-
+    
     back();
     if (getTopLayer() == GameLayer::BATTLE) pauseBattle();
 }
@@ -94,4 +94,12 @@ void Layer::backToMain()
         delete layer.back();
         layer.pop_back();
     }
+}
+
+void Layer::goToScoreScreen()
+{
+    if (getTopLayer() == GameLayer::SCORE) return;
+    
+    layer.push_back(new ScoreScreen());
+    layer.back()->init();
 }

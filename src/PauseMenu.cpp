@@ -39,7 +39,7 @@ bool PauseMenu::init()
     return true;
 }
 
-AppLayer::Status PauseMenu::tick(std::vector<sf::Event> &e, const sf::Time &t, const sf::Vector2f &m)
+AppLayer::Status PauseMenu::tick(std::vector<sf::Event> &e, const sf::Time &t, sf::Vector2f m)
 {
     for (unsigned i = 0; i < e.size(); i++) {
         //Mouse presses

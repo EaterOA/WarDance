@@ -4,10 +4,10 @@
 #include "Actors.hpp"
 #include "GameScript.hpp"
 
-struct GameState
+struct BattleState
 {
-    GameState();
-    ~GameState();
+    BattleState();
+    ~BattleState();
     void cleanAll();
     void cleanStage();
     void resetLevel();
@@ -32,11 +32,11 @@ public:
     bool init();
     void initLevel();
     void startLevel();
-    const std::map<std::string, int> getLevelStats();
+    void saveLevelStats();
     bool isLevelDone() const;
     bool isPlayerDead() const;
-    GameState& getGameState();
-    void updateGameState(const sf::Time &elapsed, const sf::Vector2f &mouse);
+    BattleState& getBattleState();
+    void updateState(const sf::Time &elapsed, sf::Vector2f mouse);
     void spawnEnemy(std::string name);
     void spawnEnemy(std::string name, sf::Vector2f pos);
     void clearEnemyProjectiles();
@@ -45,7 +45,7 @@ private:
     sf::Vector2f inMapEntrance();
     sf::Vector2f offMapEntrance(float offsetX, float offsetY);
 
-    GameState m_state;
+    BattleState m_state;
     GameScript* m_script;
 };
 

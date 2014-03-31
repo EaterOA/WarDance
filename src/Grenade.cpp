@@ -15,12 +15,12 @@ Grenade::Grenade(sf::Vector2f pos, sf::Vector2f dest)
     m_image.frame = "grenade";
 }
 
-bool Grenade::isDead(const GameState &state) const
+bool Grenade::isDead(const BattleState &state) const
 {
     return m_animationTime <= 0;
 }
 
-void Grenade::attack(GameState &state)
+void Grenade::attack(BattleState &state)
 {
     for (unsigned i = 0; i < state.enemies.size(); i++) {
         if (util::hasCollided(m_pos, m_size.x, state.enemies[i]->getPos(), 0)) {
@@ -30,7 +30,7 @@ void Grenade::attack(GameState &state)
     state.projectiles.push_back(new GrenadeWiper(m_pos));
 }
 
-void Grenade::act(GameState &state)
+void Grenade::act(BattleState &state)
 {
     if (m_time <= 0) {
         if (!m_attacked) {

@@ -6,7 +6,7 @@
 
 class Actor;
 class Fighter;
-struct GameState;
+struct BattleState;
 
 struct FrameData
 {
@@ -20,12 +20,10 @@ class BattleGraphics : public sf::Drawable, public sf::Transformable
 {
 public:
     bool init();
-    void updateMisc(const GameState &state);
-    void updateSprites(const GameState&);
-    void setNextLevelBGOpacity(unsigned char alpha);
+    void updateState(const BattleState& state);
+    void setTransition(float alpha);
 private:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
-
     void addHealthBar(const Fighter &fighter);
     void addSprite(const Actor &actor);
     void addHitbox(const Fighter &fighter);

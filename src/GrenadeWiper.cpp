@@ -15,12 +15,12 @@ GrenadeWiper::GrenadeWiper(sf::Vector2f pos)
     m_image.color = sf::Color(255, 102, 0);
 }
 
-bool GrenadeWiper::isDead(const GameState& state) const
+bool GrenadeWiper::isDead(const BattleState& state) const
 {
     return m_size.y >= m_range;
 }
 
-void GrenadeWiper::attack(GameState &state)
+void GrenadeWiper::attack(BattleState &state)
 {
     //Min damage: 100, max damage: 350
     m_damage = (int)(350 - 250 * m_size.y / m_range);
@@ -34,7 +34,7 @@ void GrenadeWiper::attack(GameState &state)
     }
 }
 
-void GrenadeWiper::act(GameState &state)
+void GrenadeWiper::act(BattleState &state)
 {
     attack(state);
     m_expandSpeed += m_expandAccel * state.elapsed.asSeconds();

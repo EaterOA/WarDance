@@ -50,7 +50,7 @@ bool SelectLevelDialog::init()
     return true;
 }
 
-AppLayer::Status SelectLevelDialog::tick(std::vector<sf::Event> &e, const sf::Time &t, const sf::Vector2f &m)
+AppLayer::Status SelectLevelDialog::tick(std::vector<sf::Event> &e, const sf::Time &t, sf::Vector2f m)
 {
     //Lighting or dimming select level arrows
     m_upLitTime -= t.asSeconds();

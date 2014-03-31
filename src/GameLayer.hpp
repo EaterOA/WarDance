@@ -36,6 +36,7 @@ namespace Layer {
     void endGame();
     void startBattle();
     void backToMain();
+    void goToScoreScreen();
 };
 
 
@@ -46,7 +47,7 @@ class NoFocus: public GameLayer
 {
 public:
     virtual bool init();
-    virtual Status tick(std::vector<sf::Event> &e, const sf::Time &t, const sf::Vector2f &m);
+    virtual Status tick(std::vector<sf::Event> &e, const sf::Time &t, sf::Vector2f m);
     virtual Status drawStatus() const;
     virtual void draw(sf::RenderWindow &w) const;
 };
@@ -55,7 +56,7 @@ class MainMenu: public GameLayer
 {
 public:
     virtual bool init();
-    virtual Status tick(std::vector<sf::Event> &e, const sf::Time &t, const sf::Vector2f &m);
+    virtual Status tick(std::vector<sf::Event> &e, const sf::Time &t, sf::Vector2f m);
     virtual Status drawStatus() const;
     virtual void draw(sf::RenderWindow &w) const;
 private:
@@ -78,7 +79,7 @@ class SelectLevelDialog: public GameLayer
 {
 public:
     virtual bool init();
-    virtual Status tick(std::vector<sf::Event> &e, const sf::Time &t, const sf::Vector2f &m);
+    virtual Status tick(std::vector<sf::Event> &e, const sf::Time &t, sf::Vector2f m);
     virtual Status drawStatus() const;
     virtual void draw(sf::RenderWindow &w) const;
 private:
@@ -98,7 +99,7 @@ class SettingsMenu: public GameLayer
 {
 public:
     virtual bool init();
-    virtual Status tick(std::vector<sf::Event> &e, const sf::Time &t, const sf::Vector2f &m);
+    virtual Status tick(std::vector<sf::Event> &e, const sf::Time &t, sf::Vector2f m);
     virtual Status drawStatus() const;
     virtual void draw(sf::RenderWindow &w) const;
 private:
@@ -120,7 +121,7 @@ class PauseMenu: public GameLayer
 {
 public:
     virtual bool init();
-    virtual Status tick(std::vector<sf::Event> &e, const sf::Time &t, const sf::Vector2f &m);
+    virtual Status tick(std::vector<sf::Event> &e, const sf::Time &t, sf::Vector2f m);
     virtual Status drawStatus() const;
     virtual void draw(sf::RenderWindow &w) const;
 private:
@@ -143,21 +144,29 @@ class Battle: public GameLayer
 {
 public:
     virtual bool init();
-    virtual Status tick(std::vector<sf::Event> &e, const sf::Time &t, const sf::Vector2f &m);
+    virtual Status tick(std::vector<sf::Event> &e, const sf::Time &t, sf::Vector2f m);
     virtual Status drawStatus() const;
     virtual void draw(sf::RenderWindow &w) const;
+    void startLevelTransition();
     void incScore(int value);
 private:
+    void endLevelTransition();
+
     BattleMechanics *mAgent;
     BattleGraphics *gAgent;
     BattleHUD *hAgent;
+    sf::View camera;
+    float m_transitionDuration;
+    bool m_transitioning;
+    bool m_scoring;
+
 };
 
 class ScoreScreen: public GameLayer
 {
 public:
     virtual bool init();
-    virtual Status tick(std::vector<sf::Event> &e, const sf::Time &t, const sf::Vector2f &m);
+    virtual Status tick(std::vector<sf::Event> &e, const sf::Time &t, sf::Vector2f m);
     virtual Status drawStatus() const;
     virtual void draw(sf::RenderWindow &w) const;
 private:
@@ -171,7 +180,6 @@ private:
     int m_sequence_timing_stage;
     float m_scoring_timing;
     int m_scoring_timing_stage;
-    int m_bonus;
 };
 
 

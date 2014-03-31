@@ -5,7 +5,6 @@
 #include <iostream>
 
 sf::RenderWindow window;
-sf::View camera(sf::FloatRect(0, 0, 800.f, 600.f));
 sf::Clock gameClock;
 
 bool appInit()
@@ -15,7 +14,6 @@ bool appInit()
     settings.antialiasingLevel = 8;
     window.create(sf::VideoMode(800, 600), "War Dance", sf::Style::Close, settings);
     window.setFramerateLimit(60);
-    window.setView(camera);
     if (!config.init()) return false;
     if (!resource.init()) return false;
     if (!controller.init()) return false;
@@ -24,37 +22,8 @@ bool appInit()
 
     return true;
 }
+
 /*
-void updateView(sf::Vector2f pos)
-{
-    if (pos.x < APP_WIDTH/2) pos.x = APP_WIDTH/2;
-    else if (pos.x > mAgent.getGameState().map.x - APP_WIDTH/2) pos.x = mAgent.getGameState().map.x - APP_WIDTH/2;
-    if (pos.y < 300) pos.y = 300;
-    else if (pos.y > mAgent.getGameState().map.y - APP_HEIGHT/2) pos.y = mAgent.getGameState().map.y - APP_HEIGHT/2;
-    camera.setCenter(pos);
-}
-
-
-void paint()
-{
-    window.setView(camera);
-    if (getAppState() == PAUSED || getAppState() == GAME || getAppState() == LEVELENDSEQUENCE) window.draw(gAgent);
-sf::View hud(sf::FloatRect(0, 0, float(APP_WIDTH), float(APP_HEIGHT)));
-    window.setView(hud);
-    window.draw(guiAgent);
-    window.setView(camera);
-    window.display();
-}
-
-void startGame()
-{
-    appStates.push_back(GAME);
-    guiAgent.transitionAppState();
-    gameClock.restart();
-    mAgent.initLevel();
-    mAgent.startLevel();
-}
-
 void goToLevelEndSequence()
 {
     appStates.push_back(LEVELENDSEQUENCE);
@@ -88,7 +57,6 @@ std::vector<sf::Event> processEvents()
         }
         else if (event.type == sf::Event::GainedFocus) {
             Layer::refocus();
-            std::cout << layer.size() << "\n";
         }
         else inputEvents.push_back(event);
     }

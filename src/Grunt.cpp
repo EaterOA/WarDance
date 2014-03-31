@@ -13,27 +13,27 @@ Grunt::Grunt(sf::Vector2f pos, Item::Type drop)
     m_image.frame = "grunt";
 }
 
-void Grunt::cooldown(GameState& state)
+void Grunt::cooldown(BattleState& state)
 {
     Fighter::cooldown(state);
     m_move_cd -= state.elapsed.asSeconds();
     if (m_move_cd < -5) m_move_cd = 0;
 }
 
-void Grunt::attack(GameState& state)
+void Grunt::attack(BattleState& state)
 {
     m_attack_cd = RAND(500, 2000) / 1000.f;
     shoot(state, REGULAR, 30.f, 7.f);
 }
 
-void Grunt::hit(GameState &state, int damage)
+void Grunt::hit(BattleState &state, int damage)
 {
     if (isDead(state)) return;
     m_hp -= damage;
     if (isDead(state)) onDeath(state);
 }
 
-void Grunt::act(GameState& state)
+void Grunt::act(BattleState& state)
 {
     cooldown(state);
 

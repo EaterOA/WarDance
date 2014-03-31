@@ -16,7 +16,7 @@ Actor::Actor(sf::Vector2f pos, util::ShapeVector size)
     m_dir = 0;
 }
 
-void Actor::act(GameState& state)
+void Actor::act(BattleState& state)
 {
     m_vel += m_acc * state.elapsed.asSeconds();
     m_pos += m_vel * state.elapsed.asSeconds();

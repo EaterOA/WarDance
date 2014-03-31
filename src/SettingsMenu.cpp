@@ -47,7 +47,7 @@ bool SettingsMenu::init()
     return true;
 }
 
-AppLayer::Status SettingsMenu::tick(std::vector<sf::Event> &e, const sf::Time &t, const sf::Vector2f &m)
+AppLayer::Status SettingsMenu::tick(std::vector<sf::Event> &e, const sf::Time &t, sf::Vector2f m)
 {
     processSwitches();
 

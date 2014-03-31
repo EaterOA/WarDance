@@ -7,7 +7,7 @@ bool NoFocus::init()
     return true;
 }
 
-GameLayer::Status NoFocus::tick(std::vector<sf::Event> &e, const sf::Time &t, const sf::Vector2f &m)
+GameLayer::Status NoFocus::tick(std::vector<sf::Event> &e, const sf::Time &t, sf::Vector2f m)
 {
     return GameLayer::HALT;
 }

@@ -8,7 +8,7 @@ Enemy::Enemy(util::ShapeVector size, sf::Vector2f pos, int hp, int faction, int 
     m_drop = drop;
 }
 
-void Enemy::onDeath(GameState& state)
+void Enemy::onDeath(BattleState& state)
 {
     state.score += m_bounty;
     if (m_drop == Item::Medkit) {

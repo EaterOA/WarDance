@@ -21,7 +21,7 @@ Laser::Laser(sf::Vector2f pos, float dir, int faction)
     else m_image.color = sf::Color(230, 138, 0);
 }
 
-void Laser::attack(GameState &state)
+void Laser::attack(BattleState &state)
 {
     int tickDmg = (int)(m_damage * state.elapsed.asSeconds());
     if (m_faction != 0) {
@@ -43,7 +43,7 @@ void Laser::attack(GameState &state)
     }
 }
 
-void Laser::act(GameState& state)
+void Laser::act(BattleState& state)
 {
     if (m_time >= 0) {
         attack(state);

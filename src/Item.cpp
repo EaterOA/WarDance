@@ -11,7 +11,7 @@ float Item::getDuration() const
     return m_duration;
 }
 
-bool Item::isDead(const GameState &state) const
+bool Item::isDead(const BattleState &state) const
 {
     return m_duration <= 0;
 }

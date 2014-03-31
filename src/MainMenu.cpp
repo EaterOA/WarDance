@@ -48,7 +48,7 @@ bool MainMenu::init()
     return true;
 }
 
-AppLayer::Status MainMenu::tick(std::vector<sf::Event> &e, const sf::Time &t, const sf::Vector2f &m)
+AppLayer::Status MainMenu::tick(std::vector<sf::Event> &e, const sf::Time &t, sf::Vector2f m)
 {
     //Blinking highlight
     int a = (int)m_blinker[0].color.a;
