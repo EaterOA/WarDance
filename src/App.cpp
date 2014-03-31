@@ -76,9 +76,9 @@ void appStart()
         cursor.x += window.getView().getCenter().x - window.getView().getSize().x / 2;
 
         //Update from top to bottom
-        for (int i = (int)layer.size() - 1; i >= 0; i--) {
-            AppLayer::Status s = layer[i]->tick(events, elapsed, cursor);
-            while (i+1 > (int)layer.size()) i--;
+        for (unsigned i = layer.size(); i > 0; i--) {
+            AppLayer::Status s = layer[i-1]->tick(events, elapsed, cursor);
+            while (i > layer.size()) i--;
             if (s == AppLayer::HALT) break;
         }
         if (layer.empty()) {

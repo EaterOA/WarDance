@@ -37,7 +37,7 @@ namespace Layer {
     void startBattle();
     void backToMain();
     void goToScoreScreen();
-};
+}
 
 
 //@@@@@@@@@@@@@@@@@@@@ Layers @@@@@@@@@@@@@@@@@@@@

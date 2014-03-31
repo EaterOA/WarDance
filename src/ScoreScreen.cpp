@@ -103,7 +103,7 @@ AppLayer::Status ScoreScreen::tick(std::vector<sf::Event> &e, const sf::Time &t,
     else if (m_sequence_timing_stage == 3) {
         m_sequence_timing -= t.asSeconds();
         if (m_sequence_timing <= 0) {
-            for (int i = 0; i < (int)layer.size(); i++) {
+            for (unsigned i = 0; i < layer.size(); i++) {
                 if (layer[i]->getType() == BATTLE) {
                     ((Battle*)layer[i])->startLevelTransition();
                     Layer::back();
