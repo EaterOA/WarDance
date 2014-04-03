@@ -1,7 +1,7 @@
 #ifndef BATTLEMECHANICS_HPP
 #define BATTLEMECHANICS_HPP
 
-#include "Actors.hpp"
+#include "Actors/Actors.hpp"
 #include "GameScript.hpp"
 
 struct BattleState

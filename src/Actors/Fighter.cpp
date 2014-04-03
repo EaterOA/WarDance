@@ -1,5 +1,5 @@
 #include "Actors.hpp"
-#include "BattleMechanics.hpp"
+#include "../BattleMechanics.hpp"
 #include <math.h>
 
 Fighter::Fighter(util::ShapeVector size, sf::Vector2f pos, int hp, int faction)

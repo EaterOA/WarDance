@@ -1,5 +1,5 @@
 #include "Actors.hpp"
-#include "BattleMechanics.hpp"
+#include "../BattleMechanics.hpp"
 
 Projectile::Projectile(sf::Vector2f pos, util::ShapeVector size, int hp, int damage, int faction)
     : Fighter(size, pos, hp, faction)

@@ -1,5 +1,5 @@
 #include "Actors.hpp"
-#include "BattleMechanics.hpp"
+#include "../BattleMechanics.hpp"
 
 GrenadeWiper::GrenadeWiper(sf::Vector2f pos)
     : Wiper(pos, 0)

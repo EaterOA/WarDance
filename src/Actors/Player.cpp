@@ -1,7 +1,7 @@
 #include "Actors.hpp"
-#include "BattleMechanics.hpp"
-#include "GameConfig.hpp"
-#include "GameController.hpp"
+#include "../BattleMechanics.hpp"
+#include "../GameConfig.hpp"
+#include "../GameController.hpp"
 
 Player::Player(sf::Vector2f pos)
     : Fighter(util::ShapeVector(util::Rectangle, 20.f, 25.f), pos, 500, 0)

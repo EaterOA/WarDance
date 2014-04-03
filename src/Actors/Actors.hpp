@@ -1,7 +1,7 @@
 #ifndef ACTORS_H
 #define ACTORS_H
 
-#include "Util.hpp"
+#include "../Util.hpp"
 #include <SFML/Graphics.hpp>
 
 struct BattleState;

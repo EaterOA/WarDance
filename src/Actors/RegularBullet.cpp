@@ -1,5 +1,5 @@
 #include "Actors.hpp"
-#include "BattleMechanics.hpp"
+#include "../BattleMechanics.hpp"
 
 RegularBullet::RegularBullet(sf::Vector2f pos, float dir, int faction)
     : Projectile(pos, util::ShapeVector(util::Rectangle, 10, 2), 1, 50, faction)

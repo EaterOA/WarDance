@@ -1,5 +1,5 @@
 #include "Actors.hpp"
-#include "BattleMechanics.hpp"
+#include "../BattleMechanics.hpp"
 
 Wiper::Wiper(sf::Vector2f pos, int faction)
     : Projectile(pos, util::ShapeVector(util::Stroke, -20, 0), 1, 99999, faction)

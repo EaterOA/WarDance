@@ -1,5 +1,5 @@
 #include "Actors.hpp"
-#include "BattleMechanics.hpp"
+#include "../BattleMechanics.hpp"
 
 Grunt::Grunt(sf::Vector2f pos, Item::Type drop)
     : Enemy(util::ShapeVector(util::Rectangle, 50.f, 50.f), pos, 200, 1, 500, drop)

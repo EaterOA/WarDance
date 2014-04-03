@@ -1,5 +1,5 @@
 #include "Actors.hpp"
-#include "BattleMechanics.hpp"
+#include "../BattleMechanics.hpp"
 
 Enemy::Enemy(util::ShapeVector size, sf::Vector2f pos, int hp, int faction, int bounty, Item::Type drop)
     : Fighter(size, pos, hp, faction)

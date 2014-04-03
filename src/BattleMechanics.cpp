@@ -78,7 +78,7 @@ void BattleMechanics::startLevel()
 {
     m_state.resetLevel();
     std::stringstream scriptName;
-    scriptName << "config/lvl" << config.getInt("level") << ".wds";
+    scriptName << "config/Levels/lvl" << config.getInt("level") << ".wds";
     m_script->parseFile(scriptName.str(), m_state.totalElapsed.asSeconds());
 }
 

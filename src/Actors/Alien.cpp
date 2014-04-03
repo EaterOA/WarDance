@@ -1,5 +1,5 @@
 #include "Actors.hpp"
-#include "BattleMechanics.hpp"
+#include "../BattleMechanics.hpp"
 
 Alien::Alien(sf::Vector2f pos, Item::Type drop)
     : Enemy(util::ShapeVector(util::Rectangle, 60.f, 45.f), pos, 2500, 1, 4000, drop)

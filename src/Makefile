@@ -1,7 +1,7 @@
 ROOTDIR = $(shell readlink -f '..')
 NAME = WarDance
-SRC = $(wildcard *.cpp)
-DEPS = $(wildcard *.hpp) 
+SRC = $(wildcard *.cpp) $(wildcard */*.cpp)
+DEPS = $(wildcard *.hpp) $(wildcard */*.hpp)
 OBJ = ${SRC:.cpp=.o}
 CFLAGS = -pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-include-dirs -Wnoexcept -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Werror -Wno-unused -Wno-long-long -pipe -fno-exceptions
 LDFLAGS = -lm -lsfml-graphics -lsfml-system -lsfml-window -Wl,-O1 -Wl,--no-undefined
