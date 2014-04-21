@@ -7,7 +7,6 @@ Each list is ordered by increasing estimated priority vs effort/time
 
 
 TODO anytime
-- GFX: Fix pause menu SETTINGS misalignment in guisheet
 - MEC: Design more enemy and projectile types
     * Chasing bullet (rocket)
     * Orbiting bullet
