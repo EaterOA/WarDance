@@ -1,9 +1,9 @@
-5.0 grunt 4 sprinkler 1
-15.0 grunt 4 sprinkler 1
-25.0 grunt 4 sprinkler 1 alien 1
-35.0 grunt 4 sprinkler 1 alien 1
-45.0 grunt 10
-55.0 grunt 4 sprinkler 2
-65.0 grunt 4 sprinkler 2
-75.0 sprinkler 5
-85.0 alien 3
+5.0     grunt|#4 sprinkler
+15.0    grunt|#4 sprinkler
+25.0    grunt|#3 grunt sprinkler alien
+35.0    grunt|#4 sprinkler alien|!medkit
+45.0    grunt|#10
+55.0    grunt|#4 sprinkler|#2
+65.0    grunt|#4 sprinkler|#2
+75.0    sprinkler|#4 sprinkler|!medkit
+85.0    alien|#3

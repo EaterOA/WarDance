@@ -37,8 +37,8 @@ public:
     bool isPlayerDead() const;
     BattleState& getBattleState();
     void updateState(const sf::Time &elapsed, sf::Vector2f mouse);
-    void spawnEnemy(std::string name);
-    void spawnEnemy(std::string name, sf::Vector2f pos);
+    void spawnEnemy(std::string &name, std::string &item);
+    void spawnEnemy(std::string &name, std::string &item, sf::Vector2f pos);
     void clearEnemyProjectiles();
     void clearPlayerProjectiles();
 private:

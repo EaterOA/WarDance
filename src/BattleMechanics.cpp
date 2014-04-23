@@ -79,7 +79,7 @@ void BattleMechanics::startLevel()
     m_state.resetLevel();
     std::stringstream scriptName;
     scriptName << "config/Levels/lvl" << config.getInt("level") << ".wds";
-    m_script->parseFile(scriptName.str(), m_state.totalElapsed.asSeconds());
+    m_script->parseFile(scriptName.str());
 }
 
 bool BattleMechanics::isPlayerDead() const
@@ -144,38 +144,38 @@ void BattleMechanics::updateState(const sf::Time &elapsed, sf::Vector2f mouse)
     }
 }
 
-void BattleMechanics::spawnEnemy(std::string name)
+void BattleMechanics::spawnEnemy(std::string &name, std::string &item)
 {
+    Item::Type i = Item::None;
+    if (item == "medkit") i = Item::Medkit;
+
     if (name == "grunt") {
         sf::Vector2f pos = offMapEntrance(25, 25);
-        if (RAND(1, 15) == 1)
-            m_state.enemies.push_back(new Grunt(pos, Item::Medkit));
-        else 
-            m_state.enemies.push_back(new Grunt(pos));
+        m_state.enemies.push_back(new Grunt(pos, i));
     }
     else if (name == "alien") {
         sf::Vector2f pos = offMapEntrance(60, 60);
-        m_state.enemies.push_back(new Alien(pos));
+        m_state.enemies.push_back(new Alien(pos, i));
     }
     else if (name == "sprinkler") {
         sf::Vector2f pos = inMapEntrance();
-        m_state.enemies.push_back(new Sprinkler(pos));
+        m_state.enemies.push_back(new Sprinkler(pos, i));
     }
 }
 
-void BattleMechanics::spawnEnemy(std::string name, sf::Vector2f pos)
+void BattleMechanics::spawnEnemy(std::string &name, std::string &item, sf::Vector2f pos)
 {
+    Item::Type i = Item::None;
+    if (item == "medkit") i = Item::Medkit;
+
     if (name == "grunt") {
-        if (RAND(1, 15) == 1)
-            m_state.enemies.push_back(new Grunt(pos, Item::Medkit));
-        else 
-            m_state.enemies.push_back(new Grunt(pos));
+        m_state.enemies.push_back(new Grunt(pos, i));
     }
     else if (name == "alien") {
-        m_state.enemies.push_back(new Alien(pos));
+        m_state.enemies.push_back(new Alien(pos, i));
     }
     else if (name == "sprinkler") {
-        m_state.enemies.push_back(new Sprinkler(pos));
+        m_state.enemies.push_back(new Sprinkler(pos, i));
     }
 }
 

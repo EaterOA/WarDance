@@ -8,13 +8,14 @@ class BattleMechanics;
 
 struct Event
 {
+    Event();
+
     float time;
     std::string name;
+    std::string item;
     sf::Vector2f pos;
     bool random;
-
-    Event(float t, std::string n, sf::Vector2f p);
-    Event(float t, std::string n);
+    int count;
 };
 
 /*
@@ -26,8 +27,8 @@ class GameScript
 public:
     GameScript(BattleMechanics* origin);
     ~GameScript();
-    bool parseFile(const std::string &path, float elapsed);
-    bool parse(const std::string &script, float elapsed);
+    bool parseFile(const std::string &path);
+    bool parse(const std::string &script);
     void tick(float t);
     bool isDone();
 private:

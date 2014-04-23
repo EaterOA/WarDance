@@ -5,18 +5,10 @@
 #include <sstream>
 #include <list>
 
-Event::Event(float t, std::string n, sf::Vector2f p)
+Event::Event()
 {
-    time = t;
-    name = n;
-    pos = p;
-    random = false;
-}
-
-Event::Event(float t, std::string n)
-{
-    time = t;
-    name = n;
+    time = 0;
+    count = 1;
     random = true;
 }
 
@@ -25,17 +17,17 @@ GameScript::GameScript(BattleMechanics* origin)
     m_origin = origin;
 }
 
-bool GameScript::parseFile(const std::string &path, float elapsed)
+bool GameScript::parseFile(const std::string &path)
 {
     std::ifstream t;
     t.open(path.c_str());
     if (!t) return false;
     std::stringstream buffer;
     buffer << t.rdbuf();
-    return parse(buffer.str(), elapsed);
+    return parse(buffer.str());
 }
 
-bool GameScript::parse(const std::string &script, float elapsed)
+bool GameScript::parse(const std::string &script)
 {
     m_events.clear();
 
@@ -43,49 +35,37 @@ bool GameScript::parse(const std::string &script, float elapsed)
     std::istringstream iss(script);
 
     std::string line;
-    float t;
-    int gruntcount;
-    int aliencount;
-    int sprinklercount;
-    while(std::getline(iss, line)) //format should be 5.0 grunt 3 alien 2 sprinkler 1
+    while(std::getline(iss, line))
     {
-        std::vector<std::string> fields = util::split(line, ' ');
-        if (fields.size() < 3 || fields.size() % 2 == 0) //must have time, and equal number of types and numbers
-        {
-            break; //error
-        }
-        t = (float)std::atof(fields[0].c_str()) + elapsed;
+        std::vector<std::string> events = util::split(line);
+        float t = (float)std::atof(events[0].c_str());
 
-        for (unsigned i = 1; i < fields.size(); i = i + 2)
+        for (unsigned i = 1; i < events.size(); i++)
         {
-            std::string word = fields[i];
-            if (word == "grunt")
+            Event e;
+            e.time = t;
+            std::vector<std::string> fields = util::split(events[i], '|');
+            e.name = fields[0];
+            for (unsigned j = 1; j < fields.size(); j++)
             {
-                gruntcount = atoi(fields[i + 1].c_str());
-                for (int j = 0; j < gruntcount; j++)
-                {
-                    Event e(t, word);
-                    m_events.push_back(e);
+                if (fields[j].empty()) continue;
+                char tag = fields[j][0];
+                std::string word = fields[j].substr(1);
+                switch (tag) {
+                    case '#':
+                        e.count = atoi(word.c_str()); break;
+                    case '!':
+                        e.item = word; break;
+                    case '@': {
+                        e.random = false;
+                        std::vector<std::string> pos = util::split(word, '-');
+                        e.pos.x = (float)std::atof(pos[0].c_str());
+                        e.pos.y = (float)std::atof(pos[1].c_str()); break;
+                    }
+                    default: break;
                 }
             }
-            else if (word == "alien")
-            {
-                aliencount = atoi(fields[i + 1].c_str());
-                for (int j = 0; j < aliencount; j++)
-                {
-                    Event e(t, word);
-                    m_events.push_back(e);
-                }
-            }
-            else if (word == "sprinkler")
-            {
-                sprinklercount = atoi(fields[i + 1].c_str());
-                for (int j = 0; j < sprinklercount; j++)
-                {
-                    Event e(t, word);
-                    m_events.push_back(e);
-                }
-            }
+            m_events.push_back(e);
         }
     }
 
@@ -105,13 +85,11 @@ void GameScript::tick(float t)
         if (it->time <= t)
         {
             Event e = *it;
-            if (e.random)
-            {
-                m_origin->spawnEnemy(e.name);
-            }
-            else
-            {
-                m_origin->spawnEnemy(e.name, e.pos);
+            for (int i = 0; i < e.count; i++) {
+                if (e.random)
+                    m_origin->spawnEnemy(e.name, e.item);
+                else
+                    m_origin->spawnEnemy(e.name, e.item, e.pos);
             }
             it = m_events.erase(it);
         }
