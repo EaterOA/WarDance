@@ -18,6 +18,7 @@ public:
         SPLASH, MAIN, SELECTLEVEL, SETTINGS, BATTLE, PAUSE, SCORE, NOFOCUS, NONE
     };
     Type getType() const;
+    virtual ~GameLayer();
 protected:
     Type m_type;
 };

@@ -7,6 +7,10 @@ GameLayer::Type GameLayer::getType() const
     return m_type;
 }
 
+GameLayer::~GameLayer()
+{
+}
+
 
 //@@@@@@@@@@@@@@@@@@@@ Layer management functions @@@@@@@@@@@@@@@@@@@@
 

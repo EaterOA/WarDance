@@ -40,12 +40,19 @@ To build on Visual Studio, simply make a new project and import all the source a
 
 ### g++ ###
 
-Building on Linux is more complicated. The actual compilation and linking steps for WarDance are all automated in the Makefile that's included in the src folder, but the problem lies in how to get SFML to work in the first place.
+Building on Linux can range from extremely easy to stupidly complicated. The actual compilation and linking for WarDance are all automated in the Makefile that's included in the src folder, and so simply running "make" or "make release" will initiate the process. But before that, you need to make sure to get the right SFML into your system first.
 
-First of all, if you're using a Debian system, *do not* apt-get install libsfml-dev. For now, that package contains SFML 1.6, which is incompatible with SFML 2.1.
-What you want to do is to download the SDK in the page linked above. After untarring it, you have two options:
+WarDance uses SFML 2.1. *If* you're on Ubuntu 14.04 or Debian Jessie or above, then aptitude will do everything for you if you just execute:
+    sudo apt-get install libsfml-dev
 
-1. Copy the include and lib files to /usr/local
+*Where the problem lies* is when you have older versions of Ubuntu or Debian (or if you're using some other distro, in which case I can't help you). By default,the libsfml-dev in those systems is version 1.6, which is completely incompatible with SFML 2.0+. 
+There are two things you can do at this point. You can find a PPA that has SFML 2.0+, and do:
+    sudo add-apt-respository ppa:<name of PPA>
+Then, after you do apt-get update, you may be able to simply apt-get install libsfml-dev and it will give you the right version. I haven't tested this so I can't guarantee it will work.
+
+If you're brave, you can also try downloading the SFML SDK in the page linked above. After untarring it, you have two options:
+
+1. Copy the include and lib files to /usr/local/
 2. Move the files somewhere, and edit the Makefile in WarDance to have gcc include/link to that location. You can add something like -I/home/you/SFML-2.1/include to INCFLAGS and -L/home/you/SFML-2.1/lib and -Wl,-rpath=/home/you/SFML-2.1/lib to LNKFLAGS, and it should work.
 
-After this, simply enter "make" inside WarDance's src directory. If you're really lucky, it will compile and link sucessfully. Most likely, gcc will complain that you're missing some libraries that SFML needs, and you'd have to look at the errors to discern exactly what. Fortunately, all of those additional libraries can be installed through apt-get.
+After this, try entering "make" inside WarDance's src directory. If you're really lucky, it will compile and link sucessfully. Most likely, g++ will complain that you're missing some libraries that SFML needs, and you'd have to look at the errors to discern exactly what. Fortunately, all of those additional libraries can be installed through apt-get.

@@ -17,13 +17,14 @@ public:
         bool rotated, resized;
         sf::Vector2f size;
     };
-
+    
     Actor(sf::Vector2f pos, util::ShapeVector size);
     virtual void act(BattleState& state);
     sf::Vector2f getPos() const;
     const Actor::Image& getImage() const;
     float getDir() const;
     util::ShapeVector getSize() const;
+    virtual ~Actor();
 protected:
     Actor::Image m_image;
     sf::Vector2f m_pos, m_vel, m_acc;

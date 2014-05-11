@@ -147,13 +147,13 @@ void BattleHUD::updateState(const BattleState& state)
 
 void BattleHUD::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    sf::RenderStates s(&resource.getTexture("guisheet"));
+    states.texture = &resource.getTexture("guisheet");
     target.draw(m_score);
-    target.draw(m_hud, s);
+    target.draw(m_hud, states);
     if (m_nextLevelDisplay[0].color.a > 0)
-        target.draw(m_nextLevelDisplay, 4, sf::Quads, s);
+        target.draw(m_nextLevelDisplay, 4, sf::Quads, states);
     if (!m_grenadeDisplay.empty())
-        target.draw(&m_grenadeDisplay[0], m_grenadeDisplay.size(), sf::Quads, s);
+        target.draw(&m_grenadeDisplay[0], m_grenadeDisplay.size(), sf::Quads, states);
     if (!m_statusDisplay.empty())
-        target.draw(&m_statusDisplay[0], m_statusDisplay.size(), sf::Quads, s);
+        target.draw(&m_statusDisplay[0], m_statusDisplay.size(), sf::Quads, states);
 }

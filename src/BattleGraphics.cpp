@@ -220,9 +220,10 @@ void BattleGraphics::draw(sf::RenderTarget& target, sf::RenderStates states) con
     }
     for (unsigned i = 0; i < m_spritesheet.size(); i++) {
         if (!m_sprites[i].empty()) {
-            sf::RenderStates spriteState(m_spritesheet[i]);
-            target.draw(&m_sprites[i][0], m_sprites[i].size(), sf::Quads, spriteState);
+            states.texture = m_spritesheet[i];
+            target.draw(&m_sprites[i][0], m_sprites[i].size(), sf::Quads, states);
         }
+        states.texture = 0;
     }
     if (!m_specialSprites.empty()) {
         target.draw(&m_specialSprites[0], m_specialSprites.size(), sf::Quads);
