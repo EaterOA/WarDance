@@ -42,12 +42,16 @@ To build on Visual Studio, simply make a new project and import all the source a
 
 Building on Linux can range from extremely easy to stupidly complicated. The actual compilation and linking for WarDance are all automated in the Makefile that's included in the src folder, and so simply running "make" or "make release" will initiate the process. But before that, you need to make sure to get the right SFML into your system first.
 
-WarDance uses SFML 2.1. *If* you're on Ubuntu 14.04 or Debian Jessie or above, then aptitude will do everything for you if you just execute:
+WarDance uses SFML 2.1. **If** you're on Ubuntu 14.04 or Debian Jessie or above, then aptitude will do everything for you if you just execute:
+
     sudo apt-get install libsfml-dev
 
-*Where the problem lies* is when you have older versions of Ubuntu or Debian (or if you're using some other distro, in which case I can't help you). By default,the libsfml-dev in those systems is version 1.6, which is completely incompatible with SFML 2.0+. 
+**Where the problem lies** is when you have older versions of Ubuntu or Debian (or if you're using some other distro, in which case I can't help you). By default,the libsfml-dev in those systems is version 1.6, which is completely incompatible with SFML 2.0+.
+
 There are two things you can do at this point. You can find a PPA that has SFML 2.0+, and do:
+
     sudo add-apt-respository ppa:<name of PPA>
+
 Then, after you do apt-get update, you may be able to simply apt-get install libsfml-dev and it will give you the right version. I haven't tested this so I can't guarantee it will work.
 
 If you're brave, you can also try downloading the SFML SDK in the page linked above. After untarring it, you have two options:
