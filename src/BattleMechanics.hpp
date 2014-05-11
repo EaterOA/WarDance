@@ -12,7 +12,7 @@ struct BattleState
     void cleanStage();
     void resetLevel();
 
-    std::vector<Fighter*> enemies;
+    std::vector<Enemy*> enemies;
     std::vector<Projectile*> projectiles;
     std::vector<Item*> items;
     Player* player;

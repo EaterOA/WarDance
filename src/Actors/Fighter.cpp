@@ -9,6 +9,12 @@ Fighter::Fighter(util::ShapeVector size, sf::Vector2f pos, int hp, int faction)
     m_hp = hp;
     m_maxHp = hp;
     m_faction = faction;
+    m_collidable = true;
+}
+
+bool Fighter::isCollidable() const
+{
+    return m_collidable;
 }
 
 int Fighter::getMaxHP() const

@@ -17,7 +17,7 @@ void BattleState::cleanStage()
     for (unsigned i = 0; i < enemies.size(); i++) delete enemies[i];
     for (unsigned i = 0; i < projectiles.size(); i++) delete projectiles[i];
     for (unsigned i = 0; i < items.size(); i++) delete items[i];
-    enemies = std::vector<Fighter*>();
+    enemies = std::vector<Enemy*>();
     projectiles = std::vector<Projectile*>();
     items = std::vector<Item*>();
 }

@@ -91,11 +91,33 @@ namespace util
         return sf::Vector2f(v.x / len, v.y / len);
     }
 
+    bool hasCollided(sf::Vector2f c1, util::ShapeVector s1, float dir1, sf::Vector2f c2, util::ShapeVector s2, float dir2)
+    {
+        if (s1.s == Point && s2.s == Point) return hasCollided(c1, c2);
+        if (s1.s == Point && s2.s == Circle) return hasCollided(c1, c2, s2.x);
+        if (s1.s == Point && s2.s == Rectangle) return hasCollided(c1, c2, sf::Vector2f(s2.x, s2.y), dir2);
+        if (s1.s == Point && s2.s == Stroke) return hasCollided(c1, c2, s2.x, s2.y);
+        if (s1.s == Circle && s2.s == Point) return hasCollided(c2, c1, s1.x);
+        if (s1.s == Circle && s2.s == Circle) return hasCollided(c1, s1.x, c2, s2.x);
+        if (s1.s == Circle && s2.s == Rectangle) return hasCollided(c2, sf::Vector2f(s2.x, s2.y), dir2, c1, s1.x);
+        if (s1.s == Circle && s2.s == Stroke) return hasCollided(c2, s2.x, s2.y, c1, s1.x);
+        if (s1.s == Rectangle && s2.s == Point) return hasCollided(c2, c1, sf::Vector2f(s1.x, s1.y), dir1);
+        if (s1.s == Rectangle && s2.s == Circle) return hasCollided(c1, sf::Vector2f(s1.x, s1.y), dir1, c2, s2.x);
+        if (s1.s == Rectangle && s2.s == Rectangle) return hasCollided(c1, sf::Vector2f(s1.x, s1.y), dir1, c2, sf::Vector2f(s2.x, s2.y), dir2);
+        if (s1.s == Rectangle && s2.s == Stroke) return hasCollided(c2, s2.x, s2.y, c1, sf::Vector2f(s1.x, s1.y), dir1);
+        if (s1.s == Stroke && s2.s == Point) return hasCollided(c2, c1, s1.x, s1.y);
+        if (s1.s == Stroke && s2.s == Circle) return hasCollided(c1, s1.x, s1.y, c2, s2.x);
+        if (s1.s == Stroke && s2.s == Rectangle) return hasCollided(c1, s1.x, s1.y, c2, sf::Vector2f(s2.x, s2.y), dir2);
+        return false;
+    }
+
+    //Point vs circle
     bool hasCollided(sf::Vector2f c1, sf::Vector2f c2, float r2)
     {
         return getDist(c1, c2) <= r2;
     }
 
+    //Point vs rectangle
     bool hasCollided(sf::Vector2f c1, sf::Vector2f c2, sf::Vector2f s2, float dir2)
     {
         //Basic distance check
@@ -124,6 +146,7 @@ namespace util
         return false;
     }
 
+    //Point vs stroke
     bool hasCollided(sf::Vector2f c1, sf::Vector2f c2, float r21, float r22)
     {
         float dist = getDist(c1, c2);
@@ -132,29 +155,10 @@ namespace util
         return true;
     }
 
+    //Point vs point
     bool hasCollided(sf::Vector2f c1, sf::Vector2f c2)
     {
         return c1 == c2;
-    }
-
-    bool hasCollided(sf::Vector2f c1, util::ShapeVector s1, float dir1, sf::Vector2f c2, util::ShapeVector s2, float dir2)
-    {
-        if (s1.s == Point && s2.s == Point) return hasCollided(c1, c2);
-        if (s1.s == Point && s2.s == Circle) return hasCollided(c1, c2, s2.x);
-        if (s1.s == Point && s2.s == Rectangle) return hasCollided(c1, c2, sf::Vector2f(s2.x, s2.y), dir2);
-        if (s1.s == Point && s2.s == Stroke) return hasCollided(c1, c2, s2.x, s2.y);
-        if (s1.s == Circle && s2.s == Point) return hasCollided(c2, c1, s1.x);
-        if (s1.s == Circle && s2.s == Circle) return hasCollided(c1, s1.x, c2, s2.x);
-        if (s1.s == Circle && s2.s == Rectangle) return hasCollided(c2, sf::Vector2f(s2.x, s2.y), dir2, c1, s1.x);
-        if (s1.s == Circle && s2.s == Stroke) return hasCollided(c2, s2.x, s2.y, c1, s1.x);
-        if (s1.s == Rectangle && s2.s == Point) return hasCollided(c2, c1, sf::Vector2f(s1.x, s1.y), dir1);
-        if (s1.s == Rectangle && s2.s == Circle) return hasCollided(c1, sf::Vector2f(s1.x, s1.y), dir1, c2, s2.x);
-        if (s1.s == Rectangle && s2.s == Rectangle) return hasCollided(c1, sf::Vector2f(s1.x, s1.y), dir1, c2, sf::Vector2f(s2.x, s2.y), dir2);
-        if (s1.s == Rectangle && s2.s == Stroke) return hasCollided(c2, s2.x, s2.y, c1, sf::Vector2f(s1.x, s1.y), dir1);
-        if (s1.s == Stroke && s2.s == Point) return hasCollided(c2, c1, s1.x, s1.y);
-        if (s1.s == Stroke && s2.s == Circle) return hasCollided(c1, s1.x, s1.y, c2, s2.x);
-        if (s1.s == Stroke && s2.s == Rectangle) return hasCollided(c1, s1.x, s1.y, c2, sf::Vector2f(s2.x, s2.y), dir2);
-        return false;
     }
 
     //Circle vs circle

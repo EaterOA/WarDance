@@ -46,7 +46,7 @@ WarDance uses SFML 2.1. **If** you're on Ubuntu 14.04 or Debian Jessie or above,
 
     sudo apt-get install libsfml-dev
 
-**Where the problem lies** is when you have older versions of Ubuntu or Debian (or if you're using some other distro, in which case I can't help you). By default,the libsfml-dev in those systems is version 1.6, which is completely incompatible with SFML 2.0+.
+**Where the problem lies** is when you have older versions of Ubuntu or Debian (or if you're using some other distro, in which case I can't help you). By default, the libsfml-dev in those systems is version 1.6, which is completely incompatible with SFML 2.0+.
 
 There are two things you can do at this point. You can find a PPA that has SFML 2.0+, and do:
 

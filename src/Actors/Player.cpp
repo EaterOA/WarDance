@@ -70,18 +70,18 @@ void Player::hit(BattleState &state, int damage)
 {
     state.shot++;
     m_shield_cd = 10.f;
-    int final = damage;
+    int finaldmg = damage;
     if (m_shield > 0) {
         if (m_shield > damage) {
-            final = 0;
+            finaldmg = 0;
             m_shield -= (float)damage;
         }
         else {
-            final = damage - (int)(m_shield + 0.5f);
+            finaldmg = damage - (int)(m_shield + 0.5f);
             m_shield = 0;
         }
     }
-    m_hp -= final;
+    m_hp -= finaldmg;
 }
 
 int Player::getNumGrenades() const

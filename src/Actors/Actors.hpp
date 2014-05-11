@@ -39,6 +39,7 @@ public:
     virtual void act(BattleState &state) = 0;
     virtual bool isDead(const BattleState &state) const;
     virtual void hit(BattleState &state, int damage);
+    virtual bool isCollidable() const;
     int getHP() const;
     int getMaxHP() const;
     int getFaction() const;
@@ -54,6 +55,7 @@ protected:
     int m_hp;
     int m_maxHp;
     int m_faction;
+    bool m_collidable;
 };
 
 
@@ -167,6 +169,16 @@ protected:
     float m_move_cd;
     float m_max_v;
     float m_gunDir1, m_gunDir2;
+};
+
+class AirstrikeTarget: public Enemy
+{
+public:
+   AirstrikeTarget(sf::Vector2f pos);
+   virtual void act(BattleState& state);
+protected:
+   float m_countdown;
+   bool m_summoned;
 };
 
 
