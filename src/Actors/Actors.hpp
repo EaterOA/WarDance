@@ -44,7 +44,7 @@ public:
     int getMaxHP() const;
     int getFaction() const;
 protected:
-    enum Bullet { REGULAR, SPLITTING, LASER, ROUND };
+    enum Bullet { REGULAR, SPLITTING, LASER, ROUND, SPLITTING_RND, CHASING };
     virtual void attack(BattleState &state) = 0;
     virtual void cooldown(BattleState &state);
     void shoot(BattleState &state, Bullet b, float offsetX, float offsetY);
@@ -230,6 +230,17 @@ class RoundBullet: public Projectile
 public:
     RoundBullet(sf::Vector2f pos, float dir, int faction);
     virtual void act(BattleState& state);
+};
+
+class SplittingBulletRound: public Projectile
+{
+public:
+    SplittingBulletRound(sf::Vector2f pos, float dir, int faction);
+    virtual void act(BattleState& state);
+protected:
+    float m_dur, m_maxDur;
+    int m_frameCounter, m_frames;
+    float m_animationTime, m_maxAnimationTime;
 };
 
 class Wiper: public Projectile

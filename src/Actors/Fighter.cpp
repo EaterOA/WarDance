@@ -74,6 +74,8 @@ void Fighter::shoot(BattleState &state, Bullet b, sf::Vector2f pos, float dir)
     Projectile* bullet;
     if (b == SPLITTING) 
         bullet = new SplittingBullet(pos, dir, m_faction);
+    if (b == SPLITTING_RND) 
+        bullet = new SplittingBulletRound(pos, dir, m_faction);
     else if(b == LASER)
         bullet = new Laser(pos, dir, m_faction);
     else if (b == ROUND)
