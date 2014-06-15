@@ -224,10 +224,12 @@ class ChasingBullet: public Projectile
 public:
     ChasingBullet(sf::Vector2f pos, float dir, int faction);
     virtual void act(BattleState& state);
+    virtual bool isDead(const BattleState &state) const;
 protected:
     Fighter* m_target;
     float m_dur;
     float m_turnDur, m_maxTurnDur;
+    float m_maxVel;
 };
 
 class SplittingBullet: public Projectile

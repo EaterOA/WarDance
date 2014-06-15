@@ -23,7 +23,7 @@ void Grunt::cooldown(BattleState& state)
 void Grunt::attack(BattleState& state)
 {
     m_attack_cd = RAND(500, 2000) / 1000.f;
-    shoot(state, REGULAR, 30.f, 7.f);
+    shoot(state, CHASING, 30.f, 7.f);
 }
 
 void Grunt::hit(BattleState &state, int damage)
@@ -39,9 +39,9 @@ void Grunt::act(BattleState& state)
 
     if (m_move_cd <= 0) {
         m_move_cd = RAND(300, 800) / 1000.f;
-        float dist = util::getDist(m_pos, state.player->getPos());
         sf::Vector2f unit = util::getUnitVector(m_pos, state.player->getPos());
         m_dir = util::toDir(unit.x, unit.y);
+        float dist = util::getDist(m_pos, state.player->getPos());
         if (dist > m_radius_far)
             m_vel = sf::Vector2f(unit.x * m_max_v, unit.y * m_max_v);
         else if (dist < m_radius_close)
@@ -51,7 +51,6 @@ void Grunt::act(BattleState& state)
     }
     m_pos += m_vel * state.elapsed.asSeconds();
     
-    if (m_attack_cd <= 0) {
+    if (m_attack_cd <= 0)
         attack(state);
-    }
 }
