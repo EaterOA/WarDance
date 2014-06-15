@@ -69,27 +69,6 @@ bool BattleHUD::init()
 
     return true;
 }
-/*
-void GameGUI::startLevelEndSequence(const std::map<std::string, int> levelEndStats)
-{
-    std::string dataList[] = {"accuracy", "time", "", "", "", "bonus"};
-    for (unsigned i = 0; i < 6; i++) {
-        std::wstringstream wss;
-        wss << levelEndStats.find(dataList[i])->second;
-        m_scoring_numbers[i].setString(wss.str());
-    }
-    int lvl = config.getInt("level");
-    unsigned idx = (unsigned)(lvl-1);
-    unsigned nextIdx = idx + (lvl < config.getInt("num_levels") ? 1 : 0);
-    util::copyTexture(&m_levelIcons[idx][0], m_scoringLevelDisplay);
-    util::copyTexture(&m_levelIcons[nextIdx][0], m_nextLevelDisplay);
-    util::setAlpha(m_nextLevelDisplay, 0);
-    m_scoring_timing_stage = 0;
-    m_scoring_timing = 1.f;
-    m_levelEndSequence_timing_stage = 0;
-    m_levelEndSequence_timing = 2.5f;
-}
-*/
 
 void BattleHUD::setTransition(float alpha)
 {
@@ -121,7 +100,7 @@ void BattleHUD::updateState(const BattleState& state)
 
     //Updating grenade display
     m_grenadeDisplay = std::vector<sf::Vertex>();
-    for (int i = 0; i < state.player->getNumGrenades(); i++) {
+    for (int i = 0; i < state.player->getGrenades(); i++) {
         sf::Vertex grenadeSprite[4];
         util::copySprite(m_grenadeBase, grenadeSprite);
         util::translateSprite(grenadeSprite, sf::Vector2f(-25.f * i, 0));

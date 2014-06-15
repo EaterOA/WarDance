@@ -29,8 +29,8 @@ protected:
     virtual void animate(float elapsed);
 
     Actor::Image m_image;
-    int m_frame, m_maxFrame;
-    float m_animationTime, m_maxAnimationTime;
+    int m_frame, m_frameCount;
+    float m_frameElapsed, m_frameDur;
     std::string m_frameBase;
     sf::Vector2f m_pos, m_vel, m_acc;
     float m_dir;
@@ -56,9 +56,9 @@ protected:
     void shoot(BattleState &state, Bullet b, sf::Vector2f &dest, float offsetX, float offsetY);
     void shoot(BattleState &state, Bullet b, float dir, float offsetX, float offsetY);
     void shoot(BattleState &state, Bullet b, sf::Vector2f pos, float dir);
-    float m_attack_cd;
+    float m_attackCD;
     int m_hp;
-    int m_maxHp;
+    int m_hpMax;
     int m_faction;
     bool m_collidable;
 };
@@ -86,7 +86,7 @@ public:
     virtual void restoreHP(int amt);
     virtual void applyStatus(StatusType s);
     std::list<Status> getStatuses() const;
-    int getNumGrenades() const;
+    int getGrenades() const;
     float getShield() const;
     float getMaxShield() const;
 private:
@@ -94,10 +94,10 @@ private:
     virtual void attack(BattleState& state);
     virtual void throwGrenade(BattleState& state);
 
-    float m_base_v;
-    int m_numGrenades;
-    float m_grenade_cd;
-    float m_shield, m_shield_cd, m_shield_regen, m_maxShield;
+    float m_velBase;
+    int m_grenades;
+    float m_grenadeCD;
+    float m_shield, m_shieldCD, m_shieldRegen, m_shieldMax;
     std::list<Status> m_status;
 };
 
@@ -113,7 +113,7 @@ public:
     float getDuration() const;
     bool isDead(const BattleState &state) const;
 protected:
-    float m_duration;
+    float m_dur;
 };
 
 class Medkit: public Item
@@ -122,7 +122,7 @@ public:
     Medkit(sf::Vector2f pos);
     virtual void act(BattleState& state);
 protected:
-    int m_hpRestore;
+    int m_restore;
 };
 
 
@@ -147,9 +147,9 @@ public:
 protected:
     virtual void attack(BattleState& state);
     virtual void cooldown(BattleState& state);
-    float m_max_v;
-    float m_radius_close, m_radius_far;
-    float m_move_cd;
+    float m_velMax;
+    float m_radiusClose, m_radiusFar;
+    float m_turnCD;
 };
 
 class Sprinkler: public Enemy
@@ -171,8 +171,8 @@ public:
 protected:
     virtual void attack(BattleState& state);
     virtual void cooldown(BattleState& state);
-    float m_move_cd;
-    float m_max_v;
+    float m_turnCD;
+    float m_velMax;
     float m_gunDir1, m_gunDir2;
 };
 
@@ -228,7 +228,7 @@ public:
 protected:
     Fighter* m_target;
     float m_dur;
-    float m_turnDur, m_maxTurnDur;
+    float m_turnCD;
     float m_maxVel;
 };
 
@@ -238,8 +238,8 @@ public:
     SplittingBullet(sf::Vector2f pos, float dir, int faction);
     virtual void act(BattleState& state);
 protected:
-    float m_dur, m_maxDur;
-    float m_angSpeed;
+    float m_dur, m_durMax;
+    float m_avel;
 };
 
 class RoundBullet: public Projectile
@@ -255,7 +255,7 @@ public:
     SplittingBulletRound(sf::Vector2f pos, float dir, int faction);
     virtual void act(BattleState& state);
 protected:
-    float m_dur, m_maxDur;
+    float m_dur, m_durMax;
 };
 
 class Wiper: public Projectile
@@ -265,7 +265,7 @@ public:
     virtual bool isDead(const BattleState& state) const;
     virtual void act(BattleState& state);
 protected:
-    float m_expandSpeed;
+    float m_expandVel;
 };
 
 class GrenadeWiper: public Wiper
@@ -276,7 +276,7 @@ public:
     virtual void act(BattleState& state);
 protected:
     virtual void attack(BattleState& state);
-    float m_expandAccel;
+    float m_expandAcc;
     float m_expandJerk;
     float m_range;
     std::set<Actor*> m_hit;

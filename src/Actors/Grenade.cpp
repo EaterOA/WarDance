@@ -12,12 +12,12 @@ Grenade::Grenade(sf::Vector2f pos, sf::Vector2f dest)
     m_attacked = false;
     m_dead = false;
     
-    m_maxFrame = 12;
-    m_maxAnimationTime = 0.04f;
+    m_frameCount = 12;
+    m_frameDur = 0.04f;
     m_frameBase = "exp";
     //Trick to make the first animate() switch to exp0
     m_frame = -1;
-    m_animationTime = m_maxAnimationTime;
+    m_frameElapsed = m_frameDur;
 
     m_image.frame = "grenade";
 }
@@ -30,10 +30,10 @@ bool Grenade::isDead(const BattleState &state) const
 void Grenade::attack(BattleState &state)
 {
     for (unsigned i = 0; i < state.enemies.size(); i++) {
-        if (util::hasCollided(m_pos, m_size.x, state.enemies[i]->getPos(), 0)) {
+        if (util::hasCollided(m_pos, m_size.x, state.enemies[i]->getPos(), 0))
             state.enemies[i]->hit(state, m_damage);
-        }
     }
+
     state.projectiles.push_back(new GrenadeWiper(m_pos));
 }
 
@@ -45,7 +45,7 @@ void Grenade::act(BattleState &state)
             m_attacked = true;
         }
         else {
-            if (m_animationTime+state.elapsed.asSeconds() >= m_maxAnimationTime && m_frame+1 >= m_maxFrame)
+            if (m_frameElapsed + state.elapsed.asSeconds() >= m_frameDur && m_frame+1 >= m_frameCount)
                 m_dead = true;
             else
                 animate(state.elapsed.asSeconds());

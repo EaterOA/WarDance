@@ -5,9 +5,9 @@ RegularBullet::RegularBullet(sf::Vector2f pos, float dir, int faction)
     : Projectile(pos, util::ShapeVector(util::Rectangle, 10, 2), 1, 50, faction)
 {
     m_dir = dir;
-    float maxV = (faction ? 100.f : 140.f);
-    m_vel.x = maxV * cos(m_dir);
-    m_vel.y = maxV * sin(m_dir);
+    float velMax = (faction ? 100.f : 140.f);
+    m_vel.x = velMax * cos(m_dir);
+    m_vel.y = velMax * sin(m_dir);
 
     m_image.frame = "reg_bullet";
     if (faction == 0) m_image.color = sf::Color(204, 204, 255);

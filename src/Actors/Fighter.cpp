@@ -5,9 +5,9 @@
 Fighter::Fighter(util::ShapeVector size, sf::Vector2f pos, int hp, int faction)
     : Actor(pos, size)
 {
-    m_attack_cd = 0;
+    m_attackCD = 0;
     m_hp = hp;
-    m_maxHp = hp;
+    m_hpMax = hp;
     m_faction = faction;
     m_collidable = true;
 }
@@ -19,7 +19,7 @@ bool Fighter::isCollidable() const
 
 int Fighter::getMaxHP() const
 {
-    return m_maxHp;
+    return m_hpMax;
 }
 
 int Fighter::getHP() const
@@ -39,8 +39,9 @@ void Fighter::hit(BattleState &state, int damage)
 
 void Fighter::cooldown(BattleState &state)
 {
-    m_attack_cd -= state.elapsed.asSeconds();
-    if (m_attack_cd < -5) m_attack_cd = 0;
+    m_attackCD -= state.elapsed.asSeconds();
+    if (m_attackCD < -5)
+        m_attackCD = 0;
 }
 
 bool Fighter::isDead(const BattleState &state) const

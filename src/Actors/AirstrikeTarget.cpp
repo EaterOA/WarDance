@@ -4,7 +4,7 @@
 AirstrikeTarget::AirstrikeTarget(sf::Vector2f pos)
     : Enemy(util::ShapeVector(util::Point), pos, 1, 1)
 {
-    m_attack_cd = 0;
+    m_attackCD = 0;
     m_collidable = false;
     m_summoned = false;
 

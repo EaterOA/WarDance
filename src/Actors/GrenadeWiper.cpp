@@ -5,8 +5,8 @@ GrenadeWiper::GrenadeWiper(sf::Vector2f pos)
     : Wiper(pos, 0)
 {
     m_size.x = -50;
-    m_expandSpeed = 1200.f;
-    m_expandAccel = -1000.f;
+    m_expandVel = 1200.f;
+    m_expandAcc = -1000.f;
     m_expandJerk = -10000.f;
     m_range = 300.f;
     
@@ -26,7 +26,8 @@ void GrenadeWiper::attack(BattleState &state)
     m_damage = (int)(350 - 250 * m_size.y / m_range);
     for (unsigned i = 0; i < state.enemies.size(); i++) {
         Fighter* e = state.enemies[i];
-        if (m_hit.find(e) != m_hit.end()) continue;
+        if (m_hit.find(e) != m_hit.end())
+            continue;
         if (util::hasCollided(m_pos, m_size, m_dir, e->getPos(), e->getSize(), e->getDir())) {
             e->hit(state, m_damage);
             m_hit.insert(e);
@@ -37,8 +38,9 @@ void GrenadeWiper::attack(BattleState &state)
 void GrenadeWiper::act(BattleState &state)
 {
     attack(state);
-    m_expandSpeed += m_expandAccel * state.elapsed.asSeconds();
-    m_expandAccel += m_expandJerk * state.elapsed.asSeconds();
-    if (m_expandSpeed <= 200) m_expandSpeed = 200.f;
+    m_expandVel += m_expandAcc * state.elapsed.asSeconds();
+    m_expandAcc += m_expandJerk * state.elapsed.asSeconds();
+    if (m_expandVel <= 200)
+        m_expandVel = 200.f;
     Wiper::act(state);
 }

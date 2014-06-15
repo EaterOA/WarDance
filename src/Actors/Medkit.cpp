@@ -4,7 +4,7 @@
 Medkit::Medkit(sf::Vector2f pos)
     : Item(pos, util::ShapeVector(util::Rectangle, 10, 10), 10)
 {
-    m_hpRestore = 250;
+    m_restore = 250;
 
     m_image.frame = "medkit";
     m_image.rotated = false;
@@ -13,8 +13,8 @@ Medkit::Medkit(sf::Vector2f pos)
 void Medkit::act(BattleState &state)
 {
     if (util::hasCollided(state.player->getPos(), state.player->getSize(), state.player->getDir(), m_pos, m_size, m_dir)) {
-        state.player->restoreHP(m_hpRestore);
-        m_duration = 0;
+        state.player->restoreHP(m_restore);
+        m_dur = 0;
     }
-    m_duration -= state.elapsed.asSeconds();
+    m_dur -= state.elapsed.asSeconds();
 }

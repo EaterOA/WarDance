@@ -23,25 +23,6 @@ bool appInit()
     return true;
 }
 
-/*
-void goToLevelEndSequence()
-{
-    appStates.push_back(LEVELENDSEQUENCE);
-    guiAgent.startLevelEndSequence(mAgent.getLevelStats());
-    mAgent.clearEnemyProjectiles();
-}
-
-void goToNextLevel()
-{
-    while (getAppState() != GAME) appStates.pop_back();
-    int lvl = config.getInt("level");
-    if (lvl < config.getInt("num_levels"))
-        config.setInt("level", lvl+1);
-    mAgent.clearPlayerProjectiles();
-    mAgent.startLevel();
-    guiAgent.transitionAppState();
-}*/
-
 
 std::vector<sf::Event> processEvents()
 {
