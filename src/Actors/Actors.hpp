@@ -26,7 +26,12 @@ public:
     util::ShapeVector getSize() const;
     virtual ~Actor();
 protected:
+    virtual void animate(float elapsed);
+
     Actor::Image m_image;
+    int m_frame, m_maxFrame;
+    float m_animationTime, m_maxAnimationTime;
+    std::string m_frameBase;
     sf::Vector2f m_pos, m_vel, m_acc;
     float m_dir;
     util::ShapeVector m_size;
@@ -202,9 +207,8 @@ public:
     virtual bool isDead(const BattleState &state) const;
 protected:
     virtual void attack(BattleState& state);
-    bool m_attacked;
-    float m_time;
-    float m_animationTime;
+    bool m_attacked, m_dead;
+    float m_dur;
 };
 
 class RegularBullet: public Projectile
@@ -213,6 +217,17 @@ public:
     RegularBullet(sf::Vector2f pos, float dir, int faction);
     virtual void act(BattleState& state);
 protected:
+};
+
+class ChasingBullet: public Projectile
+{
+public:
+    ChasingBullet(sf::Vector2f pos, float dir, int faction);
+    virtual void act(BattleState& state);
+protected:
+    Fighter* m_target;
+    float m_dur;
+    float m_turnDur, m_maxTurnDur;
 };
 
 class SplittingBullet: public Projectile
@@ -239,8 +254,6 @@ public:
     virtual void act(BattleState& state);
 protected:
     float m_dur, m_maxDur;
-    int m_frameCounter, m_frames;
-    float m_animationTime, m_maxAnimationTime;
 };
 
 class Wiper: public Projectile
@@ -274,8 +287,7 @@ public:
     virtual void act(BattleState& state);
 protected:
     virtual void attack(BattleState& state);
-    float m_time;
-    float m_fadeTime;
+    float m_dur, m_fadeDur;
     bool m_countHit;
 };
 

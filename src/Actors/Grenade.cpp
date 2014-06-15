@@ -8,16 +8,23 @@ Grenade::Grenade(sf::Vector2f pos, sf::Vector2f dest)
     m_dir = util::toDir(v.x, v.y);
     m_vel.x = 250.f * cos(m_dir);
     m_vel.y = 250.f * sin(m_dir);
-    m_time = sqrt(util::dot(v, v)) / 250.f;
-    m_animationTime = 0.499f;
+    m_dur = sqrt(util::dot(v, v)) / 250.f;
     m_attacked = false;
+    m_dead = false;
+    
+    m_maxFrame = 12;
+    m_maxAnimationTime = 0.04f;
+    m_frameBase = "exp";
+    //Trick to make the first animate() switch to exp0
+    m_frame = -1;
+    m_animationTime = m_maxAnimationTime;
 
     m_image.frame = "grenade";
 }
 
 bool Grenade::isDead(const BattleState &state) const
 {
-    return m_animationTime <= 0;
+    return m_dead;
 }
 
 void Grenade::attack(BattleState &state)
@@ -32,21 +39,21 @@ void Grenade::attack(BattleState &state)
 
 void Grenade::act(BattleState &state)
 {
-    if (m_time <= 0) {
+    if (m_dur <= 0) {
         if (!m_attacked) {
             attack(state);
             m_attacked = true;
         }
-        else if (m_animationTime > 0) {
-            std::stringstream ss;
-            ss << "exp" << (int)(m_animationTime * 24.f);
-            m_image.frame = ss.str();
+        else {
+            if (m_animationTime+state.elapsed.asSeconds() >= m_maxAnimationTime && m_frame+1 >= m_maxFrame)
+                m_dead = true;
+            else
+                animate(state.elapsed.asSeconds());
         }
-        m_animationTime -= state.elapsed.asSeconds();
     }
     else {
         Actor::act(state);
         m_dir = util::rotateRad(m_dir, state.elapsed.asSeconds() * 12);
-        m_time -= state.elapsed.asSeconds();
+        m_dur -= state.elapsed.asSeconds();
     }
 }

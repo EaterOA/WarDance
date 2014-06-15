@@ -9,8 +9,8 @@ Laser::Laser(sf::Vector2f pos, float dir, int faction)
     m_vel.y = 0;
     m_pos.x += m_size.x/2 * cos(m_dir);
     m_pos.y += m_size.x/2 * sin(m_dir);
-    m_time = 0.15f;
-    m_fadeTime = 0.08f;
+    m_dur = 0.15f;
+    m_fadeDur = 0.08f;
     m_countHit = false;
 
     m_image.frame = "m_laser";
@@ -45,17 +45,17 @@ void Laser::attack(BattleState &state)
 
 void Laser::act(BattleState& state)
 {
-    if (m_time >= 0) {
+    if (m_dur >= 0) {
         attack(state);
-        m_time -= state.elapsed.asSeconds();
-        m_fadeTime += state.elapsed.asSeconds();
-        if (m_fadeTime > 0.1f) m_fadeTime = 0.1f;
+        m_dur -= state.elapsed.asSeconds();
+        m_fadeDur += state.elapsed.asSeconds();
+        if (m_fadeDur > 0.1f) m_fadeDur = 0.1f;
     }
     else {
-        m_fadeTime -= state.elapsed.asSeconds();
-        if (m_fadeTime <= 0)
+        m_fadeDur -= state.elapsed.asSeconds();
+        if (m_fadeDur <= 0)
             m_hp = 0;
     }
-    m_image.color.a = (unsigned char)(255 * (m_fadeTime / 0.1f));
+    m_image.color.a = (unsigned char)(255 * (m_fadeDur / 0.1f));
 }
 

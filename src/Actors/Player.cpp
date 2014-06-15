@@ -112,7 +112,7 @@ void Player::attack(BattleState &state)
 {
     m_attack_cd = 0.15f;
     state.fired++;
-    shoot(state, SPLITTING_RND, 35.f, 10.f);
+    shoot(state, REGULAR, 35.f, 10.f);
 }
 
 void Player::throwGrenade(BattleState &state)

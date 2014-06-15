@@ -10,10 +10,9 @@ SplittingBulletRound::SplittingBulletRound(sf::Vector2f pos, float dir, int fact
     m_maxDur = RAND(30, 70) / 10.f;
     m_dur = m_maxDur;
     
-    m_frameCounter = 0;
-    m_frames = 3;
-    m_animationTime = 0;
+    m_maxFrame = 3;
     m_maxAnimationTime = 0.05f;
+    m_frameBase = "split_bullet_rnd";
 
     m_image.frame = "split_bullet_rnd0";
     m_image.rotated = false;
@@ -24,16 +23,7 @@ void SplittingBulletRound::act(BattleState &state)
     m_dur -= state.elapsed.asSeconds();
     m_image.color.b = m_image.color.g = (unsigned char)(55 + 200 * (m_dur / m_maxDur));
 
-    m_animationTime += state.elapsed.asSeconds();
-    if (m_animationTime >= m_maxAnimationTime) {
-        m_animationTime = 0;
-        m_frameCounter++;
-        if (m_frameCounter >= m_frames)
-            m_frameCounter = 0;
-        std::stringstream ss;
-        ss << "split_bullet_rnd" << m_frameCounter;
-        m_image.frame = ss.str();
-    }
+    animate(state.elapsed.asSeconds());
 
     if (m_dur <= 0) {
         for (float deg = 0; deg < 360; deg += 10) {
