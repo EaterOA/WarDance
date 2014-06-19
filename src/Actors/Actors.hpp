@@ -142,6 +142,7 @@ class Grunt: public Enemy
 {
 public:
     Grunt(sf::Vector2f pos, Item::Type drop = Item::None);
+    Grunt(util::ShapeVector size, sf::Vector2f pos, int hp, int faction, int bounty = 0, Item::Type drop = Item::None);
     virtual void act(BattleState& state);
     virtual void hit(BattleState& state, int damage);
 protected:
@@ -174,6 +175,17 @@ protected:
     float m_turnCD;
     float m_velMax;
     float m_gunDir1, m_gunDir2;
+};
+
+class Disappoint: public Grunt
+{
+public:
+    Disappoint(sf::Vector2f pos, Item::Type drop = Item::None);
+    virtual void onDeath(BattleState& state);
+protected:
+    virtual void attack(BattleState& state);
+    virtual void cooldown(BattleState& state);
+    float m_attackCD1, m_attackCD2;
 };
 
 class AirstrikeTarget: public Enemy

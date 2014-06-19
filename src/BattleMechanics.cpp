@@ -146,37 +146,36 @@ void BattleMechanics::updateState(const sf::Time &elapsed, sf::Vector2f mouse)
 
 void BattleMechanics::spawnEnemy(std::string &name, std::string &item)
 {
-    Item::Type i = Item::None;
-    if (item == "medkit") i = Item::Medkit;
+    sf::Vector2f pos;
 
-    if (name == "grunt") {
-        sf::Vector2f pos = offMapEntrance(25, 25);
-        m_state.enemies.push_back(new Grunt(pos, i));
-    }
-    else if (name == "alien") {
-        sf::Vector2f pos = offMapEntrance(60, 60);
-        m_state.enemies.push_back(new Alien(pos, i));
-    }
-    else if (name == "sprinkler") {
-        sf::Vector2f pos = inMapEntrance();
-        m_state.enemies.push_back(new Sprinkler(pos, i));
-    }
+    if (name == "grunt")
+        pos = offMapEntrance(25, 25);
+    else if (name == "disappoint")
+        pos = offMapEntrance(25, 25);
+    else if (name == "alien")
+        pos = offMapEntrance(60, 60);
+    else if (name == "sprinkler")
+        pos = inMapEntrance();
+
+    spawnEnemy(name, item, pos);
 }
 
 void BattleMechanics::spawnEnemy(std::string &name, std::string &item, sf::Vector2f pos)
 {
+    //Item mapping
     Item::Type i = Item::None;
-    if (item == "medkit") i = Item::Medkit;
+    if (item == "medkit")
+        i = Item::Medkit;
 
-    if (name == "grunt") {
+    //Enemy mapping
+    if (name == "grunt")
         m_state.enemies.push_back(new Grunt(pos, i));
-    }
-    else if (name == "alien") {
+    else if (name == "disappoint")
+        m_state.enemies.push_back(new Disappoint(pos, i));
+    else if (name == "alien")
         m_state.enemies.push_back(new Alien(pos, i));
-    }
-    else if (name == "sprinkler") {
+    else if (name == "sprinkler")
         m_state.enemies.push_back(new Sprinkler(pos, i));
-    }
 }
 
 sf::Vector2f BattleMechanics::inMapEntrance()

@@ -10,18 +10,19 @@ You dance.
 
 # Development #
 
-A 32-bit Windows executable version of WarDance (built on 3/09/14) is available in this root git directory. To run it, simply make sure config, fonts, and images are all present.
+A 32-bit Windows executable version of WarDance (built on 6/18/14) is available in this root git directory. To run it, simply make sure config, fonts, and images are all present.
 
 War Dance is not really built on top off any proper game engine. Rather, it's used as a project for me to gain experience with game development in C++ and with the Simple and Fast Media Library (SFML). It is still very much a work in progress, and even most of the sprites are temporary and will eventually be replaced. Sounds may be added in the future, although music will be another beast of its own in regards to licensing, etc.
 
 What it currently has:
 - Simple main, settings, and pause menus
 - Functional and reasonably efficient collision detection
-- Three enemy types: grunt, sprinkler, and alien
+- Four enemy types: grunt, sprinkler, alien, and disappoint
 - Two bullet types: regular bullet and instance laser
 - Five temporary levels
 - Smooth control and response of player movement and shooting
 - Configurable key bindings
+- **Temporary** sprites. Somewhere along the way I gave up on finding proper sprites, so some enemies may appear extremely bizarre. **You have been warned.**
 
 What it will have:
 - Complete GUI including splash screen and HUD

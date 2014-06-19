@@ -8,7 +8,6 @@ Each list is ordered by increasing estimated priority vs effort/time
 
 TODO anytime
 - MEC: Design more enemy and projectile types
-    * Chasing bullet (rocket)
     * Orbiting bullet
     * Missile strike
     * (Player) Broken laser

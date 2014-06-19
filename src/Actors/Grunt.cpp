@@ -13,18 +13,22 @@ Grunt::Grunt(sf::Vector2f pos, Item::Type drop)
     m_image.frame = "grunt";
 }
 
+
+Grunt::Grunt(util::ShapeVector size, sf::Vector2f pos, int hp, int faction, int bounty, Item::Type drop)
+    : Enemy(size, pos, hp, faction, bounty, drop)
+{
+}
+
 void Grunt::cooldown(BattleState& state)
 {
     Fighter::cooldown(state);
     m_turnCD -= state.elapsed.asSeconds();
-    if (m_turnCD < -5)
-        m_turnCD = 0;
 }
 
 void Grunt::attack(BattleState& state)
 {
     m_attackCD = RAND(500, 2000) / 1000.f;
-    shoot(state, CHASING, 30.f, 7.f);
+    shoot(state, REGULAR, 30.f, 7.f);
 }
 
 void Grunt::hit(BattleState &state, int damage)
@@ -50,6 +54,9 @@ void Grunt::act(BattleState& state)
         else
             m_vel = sf::Vector2f(0, 0);
     }
+    sf::Vector2f nextPos = m_pos + m_vel * state.elapsed.asSeconds();
+    if (util::inside(m_pos, state.map) && !util::inside(nextPos, state.map))
+        m_vel = sf::Vector2f(0, 0);
     m_pos += m_vel * state.elapsed.asSeconds();
     
     if (m_attackCD <= 0)

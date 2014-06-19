@@ -91,6 +91,11 @@ namespace util
         return sf::Vector2f(v.x / len, v.y / len);
     }
 
+    bool inside(sf::Vector2f p, sf::Vector2f area)
+    {
+        return (p.x >= 0 && p.x < area.x && p.y >= 0 && p.y < area.y);
+    }
+
     bool hasCollided(sf::Vector2f c1, util::ShapeVector s1, float dir1, sf::Vector2f c2, util::ShapeVector s2, float dir2)
     {
         if (s1.s == Point && s2.s == Point) return hasCollided(c1, c2);

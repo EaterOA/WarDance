@@ -5,9 +5,9 @@ SplittingBulletRound::SplittingBulletRound(sf::Vector2f pos, float dir, int fact
     : Projectile(pos, util::ShapeVector(util::Circle, 19.f), 1, 100, faction)
 {
     m_dir = dir;
-    m_vel.x = 100.f * cos(m_dir);
-    m_vel.y = 100.f * sin(m_dir);
-    m_durMax = RAND(30, 70) / 10.f;
+    m_vel.x = 150.f * cos(m_dir);
+    m_vel.y = 150.f * sin(m_dir);
+    m_durMax = RAND(20, 40) / 10.f;
     m_dur = m_durMax;
     
     m_frameCount = 3;
