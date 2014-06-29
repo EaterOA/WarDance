@@ -153,6 +153,21 @@ protected:
     float m_turnCD;
 };
 
+class Orange: public Enemy
+{
+public:
+    Orange(sf::Vector2f pos, Item::Type drop = Item::None);
+    Orange(util::ShapeVector size, sf::Vector2f pos, int hp, int faction, int bounty = 0, Item::Type drop = Item::None);
+    virtual void act(BattleState& state);
+    virtual void hit(BattleState& state, int damage);
+protected:
+    virtual void attack(BattleState& state);
+    virtual void cooldown(BattleState& state);
+    float m_velMax;
+    float m_radiusClose, m_radiusFar;
+    float m_turnCD;
+};
+
 class Sprinkler: public Enemy
 {
 public:

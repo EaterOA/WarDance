@@ -6,7 +6,7 @@ GameResourceManager resource;
 bool GameResourceManager::init()
 {
     const int numLevelBGs = 5;
-    const int numSpriteSheets = 2;
+    const int numSpriteSheets = 3;
 
     //Loading necessary textures
     std::map<std::string, std::string> loadList;

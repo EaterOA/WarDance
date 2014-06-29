@@ -99,6 +99,7 @@ AppLayer::Status SelectLevelDialog::tick(std::vector<sf::Event> &e, const sf::Ti
             }
             else if (enter) {
                 processChoice();
+                break;
             }
             else if (esc) {
                 Layer::back();
@@ -138,6 +139,7 @@ void SelectLevelDialog::processChoice()
 {
     config.setInt("level", (int)m_choice);
     Layer::back();
+    Layer::startBattle();
 }
 
 unsigned SelectLevelDialog::translateOption(float x, float y)
