@@ -25,20 +25,41 @@ namespace util
         return rad * 180.f / util::PI;
     }
 
+    //Collapses rad into a value from 0 to 2*PI
+    float normalizeRad(float rad) 
+    {
+        rad = fmod(rad, 2*PI);
+        if (rad < 0) rad += 2*PI;
+        return rad;
+    }
+
+    float normalizeDeg(float deg) 
+    {
+        deg = fmod(deg, 360.f);
+        if (deg < 0) deg += 2*PI;
+        return deg;
+    }
+
+    //Rotates rad by amt and normalizes the result
     float rotateRad(float rad, float amt)
     {
-        rad += amt;
-        while (rad < 0) rad += 2*PI;
-        while (rad > 2*PI) rad -= 2*PI;
-        return rad;
+        return normalizeRad(rad + amt);
     }
 
     float rotateDeg(float deg, float amt)
     {
-        deg += amt;
-        while (deg < 0) deg += 360;
-        while (deg > 360) deg -= 360;
-        return deg;
+        return normalizeDeg(deg + amt);
+    }
+    
+    //Computes the ccw difference from rad1 to rad2
+    float diffRad(float rad1, float rad2)
+    {
+        return normalizeRad(rad2 - rad1);
+    }
+
+    float diffDeg(float deg1, float deg2)
+    {
+        return normalizeDeg(deg2 - deg1);
     }
 
     float dot(sf::Vector2f v1, sf::Vector2f v2)
@@ -91,6 +112,11 @@ namespace util
         return sf::Vector2f(v.x / len, v.y / len);
     }
 
+    sf::Vector2f toVector(float rad)
+    {
+        return sf::Vector2f(cos(rad), sin(rad));
+    }
+
     bool inside(sf::Vector2f p, sf::Vector2f area)
     {
         return (p.x >= 0 && p.x < area.x && p.y >= 0 && p.y < area.y);
@@ -131,10 +157,9 @@ namespace util
         if (getMinRad(s2) > dist) return true;
 
         //Transforming vectors
-        float unitX2 = cos(dir2);
-        float unitY2 = sin(dir2);
-        sf::Vector2f rotWidth2(unitX2 * s2.x / 2.f, unitY2 * s2.x / 2.f);
-        sf::Vector2f rotHeight2(-unitY2 * s2.y / 2.f, unitX2 * s2.y / 2.f);
+        sf::Vector2f unit2 = toVector(dir2);
+        sf::Vector2f rotWidth2(unit2.x * s2.x / 2.f, unit2.y * s2.x / 2.f);
+        sf::Vector2f rotHeight2(-unit2.y * s2.y / 2.f, unit2.x * s2.y / 2.f);
         sf::Vector2f tr2[] = {c2 - rotWidth2 - rotHeight2,
             c2 + rotWidth2 - rotHeight2,
             c2 + rotWidth2 + rotHeight2,
@@ -188,10 +213,9 @@ namespace util
         if (r11 < 0) return false;
 
         //Transforming vectors
-        float unitX2 = cos(dir2);
-        float unitY2 = sin(dir2);
-        sf::Vector2f rotWidth2(unitX2 * s2.x / 2.f, unitY2 * s2.x / 2.f);
-        sf::Vector2f rotHeight2(-unitY2 * s2.y / 2.f, unitX2 * s2.y / 2.f);
+        sf::Vector2f unit2 = toVector(dir2);
+        sf::Vector2f rotWidth2(unit2.x * s2.x / 2.f, unit2.y * s2.x / 2.f);
+        sf::Vector2f rotHeight2(-unit2.y * s2.y / 2.f, unit2.x * s2.y / 2.f);
         sf::Vector2f tr2[] = {c2 - rotWidth2 - rotHeight2,
             c2 + rotWidth2 - rotHeight2,
             c2 + rotWidth2 + rotHeight2,
@@ -215,10 +239,9 @@ namespace util
         if (getMinRad(s1) + r2 > dist) return true;
 
         //Transforming vectors
-        float unitX1 = cos(dir1);
-        float unitY1 = sin(dir1);
-        sf::Vector2f rotWidth1(unitX1 * s1.x / 2.f, unitY1 * s1.x / 2.f);
-        sf::Vector2f rotHeight1(-unitY1 * s1.y / 2.f, unitX1 * s1.y / 2.f);
+        sf::Vector2f unit1 = toVector(dir1);
+        sf::Vector2f rotWidth1(unit1.x * s1.x / 2.f, unit1.y * s1.x / 2.f);
+        sf::Vector2f rotHeight1(-unit1.y * s1.y / 2.f, unit1.x * s1.y / 2.f);
         sf::Vector2f tr1[] = {c1 - rotWidth1 - rotHeight1,
             c1 + rotWidth1 - rotHeight1,
             c1 + rotWidth1 + rotHeight1,
@@ -250,18 +273,16 @@ namespace util
         if (getMinRad(s1) + getMinRad(s2) > dist) return true;
 
         //Transforming vectors
-        float unitX1 = cos(dir1);
-        float unitY1 = sin(dir1);
-        sf::Vector2f rotWidth1(unitX1 * s1.x / 2.f, unitY1 * s1.x / 2.f);
-        sf::Vector2f rotHeight1(-unitY1 * s1.y / 2.f, unitX1 * s1.y / 2.f);
+        sf::Vector2f unit1 = toVector(dir1);
+        sf::Vector2f rotWidth1(unit1.x * s1.x / 2.f, unit1.y * s1.x / 2.f);
+        sf::Vector2f rotHeight1(-unit1.y * s1.y / 2.f, unit1.x * s1.y / 2.f);
         sf::Vector2f tr1[] = {c1 - rotWidth1 - rotHeight1,
             c1 + rotWidth1 - rotHeight1,
             c1 + rotWidth1 + rotHeight1,
             c1 - rotWidth1 + rotHeight1};
-        float unitX2 = cos(dir2);
-        float unitY2 = sin(dir2);
-        sf::Vector2f rotWidth2(unitX2 * s2.x / 2.f, unitY2 * s2.x / 2.f);
-        sf::Vector2f rotHeight2(-unitY2 * s2.y / 2.f, unitX2 * s2.y / 2.f);
+        sf::Vector2f unit2 = toVector(dir2);
+        sf::Vector2f rotWidth2(unit2.x * s2.x / 2.f, unit2.y * s2.x / 2.f);
+        sf::Vector2f rotHeight2(-unit2.y * s2.y / 2.f, unit2.x * s2.y / 2.f);
         sf::Vector2f tr2[] = {c2 - rotWidth2 - rotHeight2,
             c2 + rotWidth2 - rotHeight2,
             c2 + rotWidth2 + rotHeight2,
@@ -349,10 +370,8 @@ namespace util
 
     sf::Vector2f translatePos(sf::Vector2f pos, float dir, float offsetX, float offsetY)
     {
-        float unitX, unitY;
-        unitX = cos(dir);
-        unitY = sin(dir);
-        return translatePos(pos, unitX, unitY, offsetX, offsetY);
+        sf::Vector2f unit = toVector(dir);
+        return translatePos(pos, unit.x, unit.y, offsetX, offsetY);
     }
 
     sf::Vector2f translatePos(sf::Vector2f pos, float unitX, float unitY, float offsetX, float offsetY)

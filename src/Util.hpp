@@ -36,8 +36,12 @@ namespace util
     float toDir(float vx, float vy);
     float toRad(float deg);
     float toDeg(float rad);
+    float normalizeRad(float rad);
+    float normalizeDeg(float deg);
     float rotateRad(float rad, float amt);
     float rotateDeg(float deg, float amt);
+    float diffRad(float rad1, float rad2);
+    float diffDeg(float deg1, float deg2);
     float dot(sf::Vector2f v1, sf::Vector2f v2);
     float crossZ(sf::Vector2f v1, sf::Vector2f v2);
     float getLen(sf::Vector2f v);
@@ -46,6 +50,7 @@ namespace util
     float getDist(sf::Vector2f p1, sf::Vector2f p2);
     float getDist(sf::Vector2f p, sf::Vector2f p1, sf::Vector2f p2);
     sf::Vector2f getUnitVector(sf::Vector2f p1, sf::Vector2f p2);
+    sf::Vector2f toVector(float rad);
 
     //Collision logic
     bool inside(sf::Vector2f p, sf::Vector2f area);

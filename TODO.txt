@@ -6,7 +6,7 @@ CODE: general code organization-related
 Each list is ordered by increasing estimated priority vs effort/time
 
 
-TODO anytime
+TODO soon
 - MEC: Design more enemy and projectile types
     * Orbiting bullet
     * Airstrike
@@ -14,10 +14,9 @@ TODO anytime
     * (Player) Persistent laser
 - MEC: Balance game
     * Program sprinkler to forewarn its appearance
-- MEC: Expand GameScript capability
+
+
+TODO later
+- GFX: Obtain proper sprites
 - GUI: Add initial splash/loading screen
-
-
-TODO future
-- GFX: Replace all sprites with properly licensed ones
 - GUI: Implement Credits in main menu

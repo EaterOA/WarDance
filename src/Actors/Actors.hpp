@@ -255,7 +255,7 @@ public:
 protected:
     Fighter* m_target;
     float m_dur;
-    float m_turnCD;
+    float m_turnRate;
     float m_maxVel;
 };
 
